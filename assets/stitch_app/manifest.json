@@ -1,0 +1,16 @@
+{
+  "name": "Stitch RPG Companion",
+  "short_name": "Stitch RPG",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#141311",
+  "theme_color": "#e9c176",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "Icon.PNG",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
