@@ -1,16 +1,26 @@
 {
   "name": "Stitch RPG Companion",
   "short_name": "Stitch RPG",
+  "description": "Dein digitaler Begleiter für das Stitch RPG-Brettspiel",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#141311",
   "theme_color": "#e9c176",
   "orientation": "portrait",
+  "lang": "de",
   "icons": [
     {
-      "src": "Icon.PNG",
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

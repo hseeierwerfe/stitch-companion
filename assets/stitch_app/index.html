@@ -3,6 +3,13 @@
 <head>
     <meta charset="utf-8"/>
     <link rel="icon" type="image/png" href="icon.png"/>
+    <!-- PWA: Manifest & iOS Meta-Tags -->
+    <link rel="manifest" href="manifest.json"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="apple-mobile-web-app-title" content="Stitch RPG"/>
+    <link rel="apple-touch-icon" href="icon.png"/>
+    <meta name="mobile-web-app-capable" content="yes"/>
     <script>
     // Beautiful Medieval Custom Alert Modal Interceptor
     window.alert = function(message) {
@@ -677,5 +684,15 @@
     <script src="items.js" charset="utf-8"></script>
     <script src="quests_data.js" charset="utf-8"></script>
     <script src="app.js" charset="utf-8"></script>
+    <!-- PWA: Service Worker registrieren -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./service-worker.js')
+            .then(reg => console.log('[PWA] Service Worker registriert:', reg.scope))
+            .catch(err => console.warn('[PWA] Service Worker Fehler:', err));
+        });
+      }
+    </script>
 </body>
 </html>
