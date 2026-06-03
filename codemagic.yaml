@@ -9,8 +9,7 @@ workflows:
       xcode: latest
       cocoapods: default
       ios_signing:
-        distribution_type: app_store        # Für App Store / TestFlight
-        # distribution_type: ad_hoc         # Alternativ: für direktes Gerät-Testing
+        distribution_type: development      # Kostenlose Apple-ID: auf eigenem Gerät testbar
         bundle_identifier: com.stitch.companion
 
     triggering:
@@ -42,7 +41,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - your-email@example.com        # <-- Hier deine E-Mail eintragen
+          - hseeierwerfe@example.com      # <-- Hier deine E-Mail eintragen
         notify:
           success: true
           failure: true
