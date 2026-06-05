@@ -72,6 +72,7 @@ flutter:
     - assets/stitch_app/tailwind.min.js
     - assets/stitch_app/material-symbols.css
     - assets/stitch_app/material-symbols.ttf
+    - assets/stitch_app/enemy3d.js
     - assets/stitch_app/bilder_karten/
     - assets/stitch_app/bilder_karten/questkarten/
     - assets/stitch_app/bilder_karten/ausruestung/
@@ -90,6 +91,7 @@ flutter:
     - assets/stitch_app/bilder_karten/waffen/
     - assets/stitch_app/bilder_karten/waffen/kapitel_1/
     - assets/stitch_app/bilder_karten/waffen/kapitel_2/
+    - assets/stitch_app/bilder_karten/monster/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

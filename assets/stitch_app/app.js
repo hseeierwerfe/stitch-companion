@@ -1115,6 +1115,37 @@ const enemyData = {
     'minecrawler': { name: 'Minecrawler',     sta:  6, ges: 4, bwg: 5, hp: 25, rust: 4, abilities: 'Präzisionsstreich 2 (Roll 2 D6, use highest)', chapter: 2, class: 3, type: 'insekt' }
 };
 
+// ─── Enemy Image Mapping ─────────────────────────────────────────────────────
+const ENEMY_IMAGES = {
+    'J Scavenger':      'bilder_karten/monster/junger_scavenger_karte.jpg',
+    'J Molerat':        'bilder_karten/monster/jungemolerat_karte.jpg',
+    'J Goblin':         'bilder_karten/monster/junger_goblin_karte.jpg',
+    'Scavenger':        'bilder_karten/monster/scavenger_karte.jpg',
+    'Molerat':          'bilder_karten/monster/molerat_karte.jpg',
+    'Blutfliege':       'bilder_karten/monster/blutfliege_karte.jpg',
+    'Wolf':             'bilder_karten/monster/junger_wolf_karte.jpg',
+    'Goblin':           'bilder_karten/monster/goblin_karte.jpg',
+    'Gr. Wolf':         'bilder_karten/monster/grosser_wolf.png',
+    'Waran':            'bilder_karten/monster/waran.png',
+    'Ork-Hund':         'bilder_karten/monster/orkhund.png',
+    'Schwarzer Goblin': 'bilder_karten/monster/schwarzer_goblin.png',
+    'Beißer':           'bilder_karten/monster/beisser.png',
+    'Ork':              'bilder_karten/monster/ork.png',
+    'Minecrawler':      'bilder_karten/monster/minecrawler.png',
+};
+
+function getEnemyImage(enemyName) {
+    if (!enemyName) return null;
+    // Exact match
+    if (ENEMY_IMAGES[enemyName]) return ENEMY_IMAGES[enemyName];
+    // Fuzzy match (case-insensitive partial)
+    const lower = enemyName.toLowerCase();
+    for (const [key, val] of Object.entries(ENEMY_IMAGES)) {
+        if (lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) return val;
+    }
+    return null;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function getTalentLevel(id) {
     if (!state.hero.talents) return 0;
@@ -2385,6 +2416,7 @@ window.executeEnemyTurn = async function() {
     }
     
     let hasMoved = false;
+    let enemyRemainingMov = enemyMov;
     for (let i = 0; i < enemyMov; i++) {
         const dr = Math.sign(sim.hero.pos.r - sim.enemy.pos.r);
         const dc = Math.sign(sim.hero.pos.c - sim.enemy.pos.c);
@@ -2395,13 +2427,16 @@ window.executeEnemyTurn = async function() {
         if (dr !== 0) sim.enemy.pos.r += dr;
         else if (dc !== 0) sim.enemy.pos.c += dc;
         hasMoved = true;
+        enemyRemainingMov--;
         
         render();
         await new Promise(r => setTimeout(r, 200));
     }
     
     const isAdjFinal = Math.abs(sim.hero.pos.r - sim.enemy.pos.r) + Math.abs(sim.hero.pos.c - sim.enemy.pos.c) === 1;
-    if (isAdjFinal) {
+    // Enemy can only attack if at least 1 movement point remains after movement
+    const canEnemyAttack = isAdjFinal && enemyRemainingMov >= 1;
+    if (canEnemyAttack) {
         // Präzisionsstreich: Roll 2 D6, use highest
         const prez = window.getAbilityValues(sim.enemy.abilities, 'Präzisionsstreich');
         const roll = prez ? Math.max(d6(), d6()) : d6();
@@ -2451,7 +2486,11 @@ window.executeEnemyTurn = async function() {
         sim.flashRed = true;
         setTimeout(() => { sim.flashRed = false; render(); }, 600);
     } else {
-        sim.log.unshift(`${sim.enemy.name} kann nicht angreifen.`);
+        if (isAdjFinal && enemyRemainingMov < 1) {
+            sim.log.unshift(`${sim.enemy.name} hat nach der Bewegung keine BWG mehr für einen Angriff.`);
+        } else {
+            sim.log.unshift(`${sim.enemy.name} kann nicht angreifen.`);
+        }
     }
     
     if (sim.hero.hp <= 0) {
@@ -2876,7 +2915,11 @@ function render() {
     
     if (templateFn) {
         try {
+            // Cleanup existing 3D scenes before DOM replacement
+            if (window.Enemy3D) window.Enemy3D.cleanup();
             content.innerHTML = templateFn();
+            // Initialize 3D miniatures after DOM is ready
+            if (window.Enemy3D) setTimeout(() => window.Enemy3D.init(), 0);
         } catch (e) {
             console.error("Render Error:", e);
             content.innerHTML = `<div class="p-10 text-error">Fehler beim Laden der Seite: ${e.message}</div>`;
@@ -4685,8 +4728,14 @@ const templates = {
                     cellContent = '<span class="material-symbols-outlined text-primary scale-125">person</span>';
                     cellClass += ' bg-primary/20';
                 } else if (isEnemy) {
-                    cellContent = '<span class="material-symbols-outlined text-error scale-125">skull</span>';
-                    cellClass += ' bg-error/20';
+                    const _enemyImg = getEnemyImage(sim.enemy.name);
+                    if (_enemyImg) {
+                        cellContent = `<div class="enemy-3d-mount" data-enemy3d-img="${_enemyImg}" data-enemy3d-name="${sim.enemy.name}"></div>`;
+                        cellClass += ' enemy-cell';
+                    } else {
+                        cellContent = '<span class="material-symbols-outlined text-error scale-125">skull</span>';
+                        cellClass += ' bg-error/20';
+                    }
                 }
                 
                 if (sim.mode === 'moving') {
@@ -4708,7 +4757,7 @@ const templates = {
         return `
             <style>
                 .grid-battlefield { display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); width: 100%; max-width: 390px; aspect-ratio: 1 / 1; border: 2px solid #e9c176; background-color: #0e0e0e; position: relative; margin: 0 auto; }
-                .grid-cell { border: 1px solid rgba(233, 193, 118, 0.1); display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', serif; font-weight: 800; color: #e9c176; font-size: 0.8rem; cursor: pointer; width: 100%; height: 100%; }
+                .grid-cell { border: 1px solid rgba(233, 193, 118, 0.1); display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', serif; font-weight: 800; color: #e9c176; font-size: 0.8rem; cursor: pointer; width: 100%; height: 100%; overflow: visible; }
                 .grid-cell.highlight { background-color: rgba(233, 193, 118, 0.2); }
                 .bento-action-button { transition: all 0.2s ease-out; border: 1px solid rgba(233, 193, 118, 0.15); }
                 .bento-action-button:disabled { opacity: 0.3; cursor: not-allowed; background-color: #1a1a1a; }
@@ -4716,6 +4765,16 @@ const templates = {
                 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
                 .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b463c; }
+
+                /* ── 3D Enemy Miniature Mount ──────────────────────────── */
+                .enemy-cell { overflow: visible !important; position: relative; z-index: 5; }
+                .enemy-3d-mount {
+                    position: absolute;
+                    inset: 0;
+                    overflow: visible;
+                    pointer-events: none;
+                }
+                /* ─────────────────────────────────────────────────────── */
             </style>
             <div class="flex flex-col font-sans select-none pb-24">
                 <!-- Header -->
