@@ -5247,8 +5247,7 @@ function confirmQuestCompletion() {
 
     state.hero.quests = state.hero.quests.filter(q => q.id !== qId);
     
-    // 100 XP Belohnung bei Abschluss der Passiv-Quest oder Hauptquest
-    if (qId === 'main_quest' || qId === 'hero_quest') {
+    if (qId === 'hero_quest') {
         window.gainXp(100);
     }
     
@@ -6209,8 +6208,8 @@ function checkLevelUp() {
         hero.xp.current -= hero.xp.next;
         hero.level++;
         hero.xp.next += 100;
-        // Manfred erhält 4 HP pro Level nur nach Abschluss seiner Passiv-Quest
-        const manfredQuestDone = !hero.quests || !hero.quests.some(q => q.id === 'hero_quest');
+        // Manfred bekommt +4 HP pro Level NUR wenn seine hero_quest abgeschlossen ist
+        const manfredQuestDone = hero.quests && !hero.quests.some(q => q.id === 'hero_quest');
         if (hero.name === 'Manfred der Stämmige' && manfredQuestDone) {
             hero.hp.max += 4;
         } else {
