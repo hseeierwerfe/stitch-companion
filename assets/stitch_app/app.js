@@ -1,4 +1,4 @@
-﻿console.log("Stitch RPG Companion - Version 4.4");
+console.log("Stitch RPG Companion - Version 4.4");
 const APP_VERSION = "4.4";
 
 // Background Music (BGM) Manager
@@ -5247,7 +5247,8 @@ function confirmQuestCompletion() {
 
     state.hero.quests = state.hero.quests.filter(q => q.id !== qId);
     
-    if (qId === 'main_quest') {
+    // 100 XP Belohnung bei Abschluss der Passiv-Quest oder Hauptquest
+    if (qId === 'main_quest' || qId === 'hero_quest') {
         window.gainXp(100);
     }
     
@@ -6208,7 +6209,9 @@ function checkLevelUp() {
         hero.xp.current -= hero.xp.next;
         hero.level++;
         hero.xp.next += 100;
-        if (hero.name === 'Manfred der Stämmige') {
+        // Manfred erhält 4 HP pro Level nur nach Abschluss seiner Passiv-Quest
+        const manfredQuestDone = !hero.quests || !hero.quests.some(q => q.id === 'hero_quest');
+        if (hero.name === 'Manfred der Stämmige' && manfredQuestDone) {
             hero.hp.max += 4;
         } else {
             hero.hp.max += 2;
