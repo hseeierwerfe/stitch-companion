@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html class="dark" lang="de">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="icon" type="image/png" href="icon.png"/>
+    <script>
+    // Beautiful Medieval Custom Alert Modal Interceptor
+    window.alert = function(message) {
+        const existing = document.getElementById('custom-alert-popup');
+        if (existing) existing.remove();
+
+        const alertHtml = `
+            <div id="custom-alert-popup" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 animate-fade-in" style="font-family: 'Noto Serif', serif; color: #e5e2e1;">
+                <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="document.getElementById('custom-alert-popup').remove()"></div>
+                <div class="wood-card w-full max-w-sm p-6 relative shadow-2xl border-2 border-secondary/40 text-center animate-scale-up">
+                    <div class="flex justify-center mb-3">
+                        <span class="material-symbols-outlined text-secondary text-5xl">auto_awesome</span>
+                    </div>
+                    <h4 class="font-headline text-lg text-primary mb-2 italic">Aufmerksamkeit</h4>
+                    <p class="text-on-surface text-xs leading-relaxed mb-5" style="color: #e5e2e1;">${message.replace(/\n/g, '<br>')}</p>
+                    <button onclick="document.getElementById('custom-alert-popup').remove()" 
+                            class="w-full bg-secondary text-on-secondary py-2.5 font-headline font-bold uppercase text-[10px] tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-md">
+                        SCHLIESSEN
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', alertHtml);
+    };
+
+    // Universal Local Asset Path Clean-up and URL-encoding Interceptor
+    (function() {
+        const cleanAndEncode = function(val) {
+            if (typeof val === 'string' && val.length > 0 && !val.startsWith('data:') && !val.startsWith('http:') && !val.startsWith('https:')) {
+                // Decode first to prevent double percent-encoding
+                let clean = val;
+                try {
+                    clean = decodeURIComponent(clean);
+                } catch(e) {
+                    try {
+                        clean = decodeURI(clean);
+                    } catch(err) {}
+                }
+                
+                // Recovery replacements for Latin-1 interpreted UTF-8 corruptions before lowercase
+                clean = clean.replace(/Ã¤/g, 'ae');
+                clean = clean.replace(/Ã¶/g, 'oe');
+                clean = clean.replace(/Ã¼/g, 'ue');
+                clean = clean.replace(/ÃŸ/g, 'ss');
+                clean = clean.replace(/Ã„/g, 'ae');
+                clean = clean.replace(/Ã–/g, 'oe');
+                clean = clean.replace(/Ãœ/g, 'ue');
+                clean = clean.replace(/Ã\u0084/g, 'ae');
+                clean = clean.replace(/Ã\u201e/g, 'ae');
+
+                // Map to lowercase to standardize
+                clean = clean.toLowerCase();
+
+                // Recovery replacements for lowercase Latin-1 interpreted UTF-8 corruptions
+                clean = clean.replace(/ã¤/g, 'ae');
+                clean = clean.replace(/ã¶/g, 'oe');
+                clean = clean.replace(/ã¼/g, 'ue');
+                clean = clean.replace(/ãÿ/g, 'ss');
+
+                // Ultimate fallback regex-based healing of encoding corruptions in folder/file names
+                clean = clean.replace(/h[^a-z0-9\/]ndler/g, 'haendler');
+                clean = clean.replace(/r[^a-z0-9\/]stung/g, 'ruestung');
+                clean = clean.replace(/r[^a-z0-9\/]stungen/g, 'ruestungen');
+                clean = clean.replace(/str[^a-z0-9\/]flings/g, 'straeflings');
+                
+                // If the path contains "bilder_karten/" or "bilder karten/", extract starting from it
+                let idx = clean.indexOf('bilder_karten/');
+                if (idx === -1) {
+                    idx = clean.indexOf('bilder karten/');
+                }
+                
+                if (idx !== -1) {
+                    // Extract relative path from "bilder_karten/" onwards
+                    clean = clean.substring(idx);
+                } else {
+                    // Otherwise strip relative parent directories if present
+                    clean = clean.replace(/^\.\.\/\.\.\//, '');
+                }
+                
+                // Perform robust ASCII space-to-underscore and Umlaut sanitization
+                clean = clean.replace(/ /g, '_');
+                clean = clean.replace(/,/g, '');
+                clean = clean.replace(/ä/g, 'ae');
+                clean = clean.replace(/ö/g, 'oe');
+                clean = clean.replace(/ü/g, 'ue');
+                clean = clean.replace(/ß/g, 'ss');
+                clean = clean.replace(/&/g, 'und');
+                clean = clean.replace(/´/g, '');
+                clean = clean.replace(/`/g, '');
+                clean = clean.replace(/'/g, '');
+                
+                return encodeURI(clean);
+            }
+            return val;
+        };
+
+        // Intercept HTMLImageElement.src setter
+        const imgDescriptor = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+        if (imgDescriptor && imgDescriptor.set) {
+            const originalImgSet = imgDescriptor.set;
+            Object.defineProperty(HTMLImageElement.prototype, 'src', {
+                set: function(val) {
+                    originalImgSet.call(this, cleanAndEncode(val));
+                },
+                get: imgDescriptor.get,
+                configurable: true,
+                enumerable: true
+            });
+        }
+
+        // Intercept HTMLAudioElement.src setter
+        const audioDescriptor = Object.getOwnPropertyDescriptor(HTMLAudioElement.prototype, 'src') 
+            || Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'src');
+        if (audioDescriptor && audioDescriptor.set) {
+            const originalAudioSet = audioDescriptor.set;
+            Object.defineProperty(HTMLAudioElement.prototype, 'src', {
+                set: function(val) {
+                    originalAudioSet.call(this, cleanAndEncode(val));
+                },
+                get: audioDescriptor.get,
+                configurable: true,
+                enumerable: true
+            });
+        }
+
+        // Setup MutationObserver to intercept and sanitize all image and audio elements added via innerHTML/DOM mutation
+        const sanitizeElement = function(el) {
+            if (el.tagName === 'IMG') {
+                let srcVal = el.getAttribute('src');
+                if (srcVal) {
+                    let clean = cleanAndEncode(srcVal);
+                    if (el.getAttribute('src') !== clean) {
+                        el.setAttribute('src', clean);
+                    }
+                }
+            } else if (el.tagName === 'AUDIO') {
+                let srcVal = el.getAttribute('src');
+                if (srcVal) {
+                    let clean = cleanAndEncode(srcVal);
+                    if (el.getAttribute('src') !== clean) {
+                        el.setAttribute('src', clean);
+                    }
+                }
+            }
+        };
+
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            sanitizeElement(node);
+                            node.querySelectorAll('img, audio').forEach(sanitizeElement);
+                        }
+                    });
+                } else if (mutation.type === 'attributes') {
+                    sanitizeElement(mutation.target);
+                }
+            });
+        });
+
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['src']
+        });
+    })();
+    </script>
+    <script>
+    window.onerror = function(message, source, lineno, colno, error) {
+        var div = document.createElement('div');
+        div.style.position = 'fixed';
+        div.style.inset = '0';
+        div.style.background = 'red';
+        div.style.color = 'white';
+        div.style.zIndex = '9999';
+        div.style.padding = '20px';
+        div.style.fontFamily = 'monospace';
+        div.style.fontSize = '16px';
+        div.style.overflow = 'auto';
+        div.innerHTML = '<h1>Syntax/Runtime Error:</h1><p><b>Error:</b> ' + message + '</p><p><b>Line:</b> ' + lineno + ', <b>Col:</b> ' + colno + '</p><p><b>Source:</b> ' + source + '</p><p><b>Stack:</b> ' + (error ? error.stack : 'N/A') + '</p>';
+        document.documentElement.appendChild(div);
+    };
+    </script>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Stitch RPG Companion</title>
+    <script src="tailwind.min.js"></script>
+    <link href="material-symbols.css" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#e7e3e3",
+                        "secondary-fixed-dim": "#e4c375",
+                        "on-error": "#690005",
+                        "inverse-surface": "#e7e2dd",
+                        "secondary": "#e4c375",
+                        "secondary-container": "#5c4601",
+                        "on-tertiary-container": "#555353",
+                        "primary": "#f3e3bb",
+                        "surface": "#141311",
+                        "tertiary-container": "#cbc7c7",
+                        "surface-container": "#211f1d",
+                        "on-surface-variant": "#cdc6b8",
+                        "tertiary-fixed": "#e6e1e1",
+                        "on-primary-container": "#5d5335",
+                        "tertiary-fixed-dim": "#c9c6c5",
+                        "secondary-fixed": "#ffdf97",
+                        "on-secondary-fixed-variant": "#5a4300",
+                        "surface-bright": "#3b3936",
+                        "surface-variant": "#363431",
+                        "outline-variant": "#4b463c",
+                        "background": "#141311",
+                        "on-primary": "#383015",
+                        "primary-fixed-dim": "#d4c59f",
+                        "on-secondary": "#3e2e00",
+                        "on-tertiary-fixed-variant": "#484646",
+                        "on-secondary-fixed": "#251a00",
+                        "surface-container-high": "#2b2a27",
+                        "on-primary-fixed-variant": "#504629",
+                        "on-background": "#e7e2dd",
+                        "on-secondary-container": "#d5b569",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#1c1b1b",
+                        "on-primary-fixed": "#221b03",
+                        "surface-tint": "#d4c59f",
+                        "primary-container": "#d6c7a1",
+                        "outline": "#969084",
+                        "on-error-container": "#ffdad6",
+                        "surface-dim": "#141311",
+                        "on-surface": "#e7e2dd",
+                        "surface-container-low": "#1d1b19",
+                        "inverse-primary": "#695e3f",
+                        "surface-container-lowest": "#0f0e0c",
+                        "primary-fixed": "#f1e1ba",
+                        "on-tertiary": "#313030",
+                        "inverse-on-surface": "#32302d",
+                        "error": "#ffb4ab",
+                        "surface-container-highest": "#363431"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "margin-page": "40px",
+                        "unit": "8px",
+                        "stack-lg": "32px",
+                        "container-max": "1200px",
+                        "stack-md": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Newsreader"],
+                        "body-md": ["Work Sans"],
+                        "label-md": ["Work Sans"],
+                        "headline-xl": ["Newsreader"],
+                        "body-lg": ["Work Sans"],
+                        "headline-lg": ["Newsreader"],
+                        "label-sm": ["Work Sans"],
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Work Sans", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-xl": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "label-sm": ["12px", {"lineHeight": "1.4", "letterSpacing": "0.1em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.15s ease-out forwards;
+        }
+        .animate-scale-up {
+            animation: scaleUp 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .leather-texture {
+            background-color: #141311;
+            background-image: radial-gradient(circle at 50% 50%, rgba(42, 27, 14, 0.4) 0%, rgba(20, 19, 17, 1) 100%);
+        }
+        .wood-card {
+            background-color: #3D2B1F;
+            border: 1px solid rgba(212, 197, 159, 0.1);
+            position: relative;
+        }
+        .wood-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuB7tG3JtnhGqqXliGc87r3PXGQxjIdj2bIbab8yln2D-E1unTtTmQHZPowbuUqaa3Ou_UODDv5ZEciFf670Bw-CTeBKyqmctzuXKAKUe9D4HXtcDLx2EX5Ej5iUvoroJwhTAgffFrUZhf8fIPxdXxZG0PbzutDiKrcpyZYW6tKofiJ1UZ60GvcCFVSmv7IV_Fu0S8m0UyIlZ-yJwqGAlOshBdo9dEU3KAfYZlWXh2WpPkAMKIJ03RmwN1Xz9xiu7eV8wQD8tDT_84o);
+            opacity: 0.05;
+            pointer-events: none;
+        }
+        .parchment-accent { color: #f3e3bb; }
+        .gilden-select {
+            background-color: #211f1d;
+            border: 1px solid #4b463c;
+            color: #d4c59f;
+            padding: 4px 12px;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 14px;
+            border-radius: 0.25rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: none !important;
+            cursor: pointer;
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b463c; }
+
+        /* Force hide video controls, play buttons, and overlays on WebKit/Blink (Android/iOS) */
+        video::-webkit-media-controls {
+            display: none !important;
+        }
+        video::-webkit-media-controls-enclosure {
+            display: none !important;
+        }
+        video::-webkit-media-controls-panel {
+            display: none !important;
+        }
+        video::-webkit-media-controls-play-button {
+            display: none !important;
+        }
+        video::-webkit-media-controls-overlay-play-button {
+            display: none !important;
+        }
+        video {
+            pointer-events: none !important;
+        }
+
+        /* Combat Simulator Styles */
+        .grid-battlefield {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            width: 100%;
+            max-width: 390px;
+            aspect-ratio: 1 / 1;
+            border: 2px solid #e9c176;
+            background-color: #0e0e0e;
+            position: relative;
+            margin: 0 auto;
+        }
+        .grid-cell {
+            border: 1px solid rgba(233, 193, 118, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Newsreader', serif;
+            font-weight: 800;
+            color: #e9c176;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .grid-cell.highlight {
+            background-color: rgba(233, 193, 118, 0.2);
+        }
+        .bento-action-button {
+            transition: all 0.2s ease-out;
+            border: 1px solid rgba(233, 193, 118, 0.15);
+        }
+        .bento-action-button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background-color: #1a1a1a;
+        }
+        .flash-red-overlay {
+            pointer-events: none;
+            position: absolute;
+            inset: 0;
+            z-index: 50;
+        }
+        @keyframes flash-green {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(34, 197, 94, 0.2); }
+        }
+        @keyframes flash-red {
+            0%, 100% { background-color: transparent; }
+            50% { background-color: rgba(239, 68, 68, 0.4); }
+        }
+        .animate-flash-green {
+            animation: flash-green 1.5s infinite;
+        }
+        .animate-flash-red {
+            animation: flash-red 0.2s 3;
+        }
+
+        .parchment-texture {
+            background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBD7oG1z7dPUhkTroKCetYpXz_33zZY_Et_K3RZ1RYi9qVAb2vH9KlyC1Xo73WOs9FNixogRfWXqOzePQ7nywTTUTiCu35WGBhxwEvKty4MeBaY1JuoZOZE-wLOdWegue8Zk3pGj_qj3OqfA3Foly0xOsuC7lvnRejfvAD4FsmAJ6G91GuZGkxMAc32qhqhBXny5KVvsnvuco92LDjOFvgZRN47tixIPDZX3xwqfUaH_b06JkCz2l7rQOIbFf3-3nUXx0tV6WdZvJ4);
+            background-color: #211f1d;
+        }
+        .inner-gold-stroke {
+            box-shadow: inset 0 0 0 1px rgba(212, 197, 159, 0.1);
+        }
+        .ink-bleed {
+            filter: contrast(120%) brightness(90%);
+        }
+        /* New Questlog Styles */
+        .wax-seal {
+            background: radial-gradient(circle at 30% 30%, #93000a 0%, #690005 100%);
+            border: 2px solid #5c4601;
+        }
+        .parchment-glow {
+            box-shadow: inset 0 0 40px rgba(243, 227, 187, 0.05);
+        }
+        html, body {
+            overflow-y: auto !important;
+            height: auto !important;
+            min-height: 100% !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 12px !important;
+            }
+            body {
+                font-size: 12px !important;
+            }
+            
+            /* Make top bar and bottom nav bar compact to save space */
+            header.bg-surface-dim {
+                padding: 8px 12px !important;
+                height: auto !important;
+                min-height: 56px !important;
+            }
+            header.bg-surface-dim img {
+                width: 32px !important;
+                height: 32px !important;
+            }
+            header.bg-surface-dim h1 {
+                font-size: 18px !important;
+            }
+            nav.fixed.bottom-0 {
+                height: 60px !important;
+            }
+            nav.fixed.bottom-0 button {
+                min-width: 52px !important;
+                padding: 4px !important;
+            }
+            nav.fixed.bottom-0 button .material-symbols-outlined {
+                font-size: 20px !important;
+            }
+            nav.fixed.bottom-0 button span.text-\[10px\] {
+                font-size: 8px !important;
+            }
+            
+            /* Main content padding reduction */
+            main {
+                padding-bottom: 80px !important;
+                padding-left: 12px !important;
+                padding-right: 12px !important;
+            }
+            
+            /* Bento grid responsiveness */
+            .grid-cols-12 {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            }
+            .md\:col-span-4, .md\:col-span-8, .md\:col-span-3, .md\:col-span-9 {
+                grid-column: span 1 / span 1 !important;
+            }
+            
+            /* Custom popups and modals mobile scroll fix */
+            .fixed.inset-0.z-\[100\], 
+            .fixed.inset-0.z-\[110\],
+            .fixed.inset-0.z-50.flex.items-center {
+                align-items: flex-start !important;
+                justify-content: center !important;
+                overflow-y: auto !important;
+                padding: 16px 12px !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            
+            /* Modal wood cards should grow naturally, not be capped at 90vh */
+            .wood-card {
+                max-height: none !important;
+                height: auto !important;
+                overflow: visible !important;
+                padding: 16px !important;
+                width: 100% !important;
+                max-width: 450px !important;
+            }
+            .wood-card.max-w-5xl, .wood-card.max-w-4xl {
+                max-height: none !important;
+                height: auto !important;
+                overflow: visible !important;
+            }
+            
+            /* Hero Selection Grid: 2 columns on mobile */
+            .grid.grid-cols-3 {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 12px !important;
+                max-height: none !important;
+                overflow: visible !important;
+            }
+            .grid.grid-cols-3 button {
+                width: 100% !important;
+            }
+            
+            /* Detail Modal Hero Image size reduction & center */
+            .wood-card.max-w-4xl.flex-col.md\:flex-row {
+                flex-direction: column !important;
+                gap: 16px !important;
+            }
+            .w-full.md\:w-1\/2.aspect-square {
+                width: 140px !important;
+                height: 140px !important;
+                margin: 0 auto !important;
+                aspect-ratio: 1/1 !important;
+            }
+            
+            /* Combat Simulator grid-battlefield mobile support */
+            .grid-battlefield {
+                width: 100% !important;
+                max-width: 320px !important;
+                height: auto !important;
+                aspect-ratio: 1 / 1 !important;
+                margin: 0 auto !important;
+            }
+            
+            /* Button adjustments */
+            button {
+                padding: 10px 12px !important;
+            }
+        }
+    </style>
+</head>
+<body class="leather-texture min-h-screen text-on-surface font-body selection:bg-secondary/30 flex flex-col">
+    <!-- Video Intro Overlay with Spinner -->
+    <div id="intro-overlay" class="fixed inset-0 z-[999] bg-black flex items-center justify-center">
+        <div id="intro-spinner" class="absolute z-10 flex flex-col items-center gap-3">
+            <div class="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-[10px] text-secondary font-headline uppercase tracking-widest italic">Lade Abenteuer...</p>
+        </div>
+        <video id="intro-video" class="w-full h-full object-contain opacity-0 transition-opacity duration-300" autoplay muted playsinline webkit-playsinline preload="auto">
+            <source src="intro.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- TopAppBar -->
+    <header class="bg-surface-dim shadow-[0_10px_30px_rgba(0,0,0,0.6)] border-b border-outline-variant/20 sticky top-0 z-40 flex flex-col md:flex-row justify-between items-center w-full px-6 md:px-10 h-auto py-2 md:h-20 gap-3">
+        <div class="flex items-center gap-4 w-full md:w-auto">
+            <div class="relative w-10 h-10 flex items-center justify-center bg-primary/10 rounded-md border border-[#e9c176]/30 shadow-lg overflow-hidden shrink-0">
+                <img src="icon.png" onerror="this.style.display='none'; document.getElementById('top-bar-fallback-icon').classList.remove('hidden');" class="absolute inset-0 w-full h-full object-contain" alt="Icon"/>
+                <span id="top-bar-fallback-icon" class="hidden material-symbols-outlined text-primary text-2xl font-bold">auto_awesome</span>
+            </div>
+            <button data-nav="startseite" id="btn-menu" class="text-secondary hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-3xl">menu</span>
+            </button>
+            <div class="flex flex-col flex-1">
+                <div class="flex items-center gap-2">
+                    <h1 id="top-hero-name" class="text-primary font-headline text-2xl md:text-3xl leading-none">Ingo der Flotte</h1>
+                    <span id="top-hero-level" class="bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-widest">Level 14</span>
+                </div>
+                <div class="mt-1 relative w-full flex items-center gap-2">
+                    <select id="top-chapter-select" class="gilden-select !bg-transparent border-none !p-0 !h-auto text-on-surface-variant text-[11px] font-label-sm uppercase tracking-wider">
+                        <option value="1">Kapitel 1: Die Ankunft</option>
+                        <option value="2">Kapitel 2: Die ersten Prüfungen</option>
+                        <option value="3" selected>Kapitel 3: Artefakte der Ur-Ahnen</option>
+                        <option value="4">Kapitel 4: Der Überfall</option>
+                        <option value="5">Kapitel 5: Die Entscheidung</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+            <!-- Kapitel bestätigen Button -->
+            <button id="btn-confirm-chapter" onclick="window.confirmChapterSelection()" class="bg-secondary text-on-secondary px-3 py-1.5 text-[9px] font-headline uppercase font-bold tracking-wider rounded-sm hover:brightness-110 active:scale-95 transition-all shadow-md">Kapitel bestätigen</button>
+            <!-- Audio Toggle Button -->
+            <button onclick="window.BGM?.toggleMute(); this.querySelector('.material-symbols-outlined').innerText = window.BGM?.isMuted ? 'volume_off' : 'volume_up';" class="text-secondary hover:text-primary transition-all p-2 rounded bg-surface-container-high border border-outline-variant/30 flex items-center justify-center shadow-md" title="Musik an/aus">
+                <span class="material-symbols-outlined text-lg">volume_up</span>
+            </button>
+            <!-- Sync Status Button -->
+            <button onclick="window.openSyncModal()" class="text-secondary hover:text-primary transition-all p-2 rounded bg-surface-container-high border border-outline-variant/30 flex items-center justify-center shadow-md" id="btn-sync" title="Partie-Synchronisation">
+                <span class="material-symbols-outlined text-lg text-red-500" id="sync-icon">sync_disabled</span>
+            </button>
+            <div class="flex items-center gap-2 px-4 py-1 bg-surface-container-high rounded-sm border border-outline-variant/30">
+                <span id="top-ore-display" class="font-bold text-secondary">1.450 Erz</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="app-content" class="flex-grow pb-24">
+        <!-- Content will be injected here -->
+    </main>
+
+    <!-- BottomNavBar -->
+    <nav class="fixed bottom-0 left-0 w-full z-40 flex justify-around items-center bg-surface-container-high h-20 shadow-[0_-15px_35px_rgba(0,0,0,0.5)] border-t border-outline-variant/30 overflow-x-auto no-scrollbar">
+        <button data-nav="status" id="nav-status" class="nav-item flex flex-col items-center justify-center text-on-tertiary-container h-full min-w-[72px] px-2 opacity-60 hover:bg-surface-variant/50 transition-all duration-200">
+            <span class="material-symbols-outlined">person_4</span>
+            <span class="text-[10px] uppercase tracking-widest mt-1">Status</span>
+        </button>
+        <button data-nav="beutel" id="nav-beutel" class="nav-item flex flex-col items-center justify-center text-on-tertiary-container h-full min-w-[72px] px-2 opacity-60 hover:bg-surface-variant/50 transition-all duration-200">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            <span class="text-[10px] uppercase tracking-widest mt-1">Beutel</span>
+        </button>
+        <button data-nav="handeln" id="nav-handeln" class="nav-item flex flex-col items-center justify-center text-on-tertiary-container h-full min-w-[72px] px-2 opacity-60 hover:bg-surface-variant/50 transition-all duration-200">
+            <span class="material-symbols-outlined">currency_exchange</span>
+            <span class="text-[10px] uppercase tracking-widest mt-1">Handeln</span>
+        </button>
+        <button data-nav="finden" id="nav-finden" class="nav-item flex flex-col items-center justify-center text-on-tertiary-container h-full min-w-[72px] px-2 opacity-60 hover:bg-surface-variant/50 transition-all duration-200">
+            <span class="material-symbols-outlined">search_check</span>
+            <span class="text-[10px] uppercase tracking-widest mt-1">Finden</span>
+        </button>
+        <button data-nav="questlog" id="nav-questlog" class="nav-item flex flex-col items-center justify-center text-on-tertiary-container h-full min-w-[72px] px-2 opacity-60 hover:bg-surface-variant/50 transition-all duration-200">
+            <span class="material-symbols-outlined">menu_book</span>
+            <span class="text-[10px] uppercase tracking-widest mt-1">Questlog</span>
+        </button>
+    </nav>
+
+    <!-- Sync Management Modal -->
+    <div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" id="sync-modal">
+        <div class="modal-overlay absolute inset-0" onclick="window.closeSyncModal()"></div>
+        <div class="wood-card w-full max-w-md p-8 relative shadow-[0_20px_50px_rgba(0,0,0,0.8)] border-2 border-secondary/30 text-on-surface">
+            
+            <!-- SCREEN 1: MAIN MENU -->
+            <div id="sync-screen-main" class="flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4 flex justify-between items-center">
+                    <div>
+                        <h4 class="font-headline text-2xl parchment-accent">Spiel-Synchronisation</h4>
+                        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1" id="sync-status-text">Keine aktive Verbindung</p>
+                    </div>
+                    <button class="text-secondary hover:text-primary flex items-center justify-center" onclick="window.closeSyncModal()">
+                        <span class="material-symbols-outlined text-xl">close</span>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-3 py-4">
+                    <button class="w-full bg-secondary text-on-secondary font-bold py-3 rounded-sm hover:brightness-110 active:scale-95 transition-all shadow-md text-sm" onclick="window.SyncManager.showNewPartyScreen()">
+                        NEUE PARTIE STARTEN
+                    </button>
+                    <button class="w-full bg-surface-container-high text-on-surface border border-outline-variant/30 font-bold py-3 rounded-sm hover:bg-surface-container-highest active:scale-95 transition-all text-sm" onclick="window.SyncManager.showJoinScreen()">
+                        PARTIE BEITRETEN
+                    </button>
+                    <button class="w-full bg-surface-container-high text-on-surface border border-outline-variant/30 font-bold py-3 rounded-sm hover:bg-surface-container-highest active:scale-95 transition-all text-sm" onclick="window.SyncManager.showResumeScreen()">
+                        PARTIE FORTSETZEN
+                    </button>
+                    <button class="w-full bg-surface-container-high text-on-surface border border-outline-variant/30 font-bold py-3 rounded-sm hover:bg-surface-container-highest active:scale-95 transition-all text-sm" id="btn-sync-save" onclick="window.SyncManager.saveParty()">
+                        PARTIE SPEICHERN
+                    </button>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.closeSyncModal()">
+                        SCHLIESSEN
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: NEW PARTY FORM -->
+            <div id="sync-screen-new" class="hidden flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4">
+                    <h4 class="font-headline text-2xl parchment-accent">Neue Partie starten</h4>
+                    <p class="text-[10px] text-secondary uppercase tracking-widest mt-1">Geben Sie Ihrer Gruppe einen Namen</p>
+                </div>
+                <div class="py-4">
+                    <label class="block text-xs uppercase tracking-wider text-on-surface-variant mb-2">Partie-Name (z.B. Abenteuer1)</label>
+                    <input type="text" id="new-party-name-input" class="w-full bg-surface-container-high border border-outline-variant/30 rounded-sm px-3 py-2 text-on-surface focus:outline-none focus:border-secondary transition-all" placeholder="Name eingeben..."/>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.SyncManager.showMainScreen()">
+                        ABBRECHEN
+                    </button>
+                    <button class="flex-1 bg-secondary text-on-secondary font-bold py-3 rounded-sm hover:brightness-110 shadow-lg active:scale-95 transition-all" onclick="window.SyncManager.startNewParty(document.getElementById('new-party-name-input').value)">
+                        PARTIE STARTEN
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: JOIN PARTY SCANNER -->
+            <div id="sync-screen-join" class="hidden flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4">
+                    <h4 class="font-headline text-2xl parchment-accent">Partie beitreten</h4>
+                    <p class="text-[10px] text-secondary uppercase tracking-widest mt-1">Offene Spiele im Netzwerk</p>
+                </div>
+                <div class="py-4 max-h-60 overflow-y-auto pr-1" id="discovered-parties-list">
+                    <!-- Dynamic party list loaded here -->
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.SyncManager.showMainScreen()">
+                        ZURÜCK
+                    </button>
+                    <button class="bg-secondary text-on-secondary p-3 rounded-sm hover:brightness-110 flex items-center justify-center" onclick="window.SyncManager.startDiscovery()" title="Aktualisieren">
+                        <span class="material-symbols-outlined text-lg">refresh</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 4: RESUME SAVED PARTIES -->
+            <div id="sync-screen-resume" class="hidden flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4">
+                    <h4 class="font-headline text-2xl parchment-accent">Partie fortsetzen</h4>
+                    <p class="text-[10px] text-secondary uppercase tracking-widest mt-1">Gespeicherte Gruppenstände laden</p>
+                </div>
+                <div class="py-4 max-h-60 overflow-y-auto pr-1" id="saved-parties-list">
+                    <!-- Dynamic saved party list loaded here -->
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.SyncManager.showMainScreen()">
+                        ZURÜCK
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 5: LOBBY & PLAYER LIST -->
+            <div id="sync-screen-lobby" class="hidden flex flex-col gap-4 text-on-surface">
+                <div class="border-b border-outline-variant/30 pb-4 flex justify-between items-center">
+                    <div>
+                        <h4 class="font-headline text-2xl parchment-accent" id="lobby-party-title">Partie-Lobby</h4>
+                        <p class="text-[10px] text-secondary uppercase tracking-widest mt-1">Teilnehmende Spieler</p>
+                    </div>
+                    <button class="text-red-400 hover:text-red-300 flex items-center justify-center p-1 bg-red-950/20 border border-red-900/30 rounded-sm" onclick="window.SyncManager.leaveParty()" title="Lobby verlassen">
+                        <span class="material-symbols-outlined text-lg">logout</span>
+                    </button>
+                </div>
+                <div class="py-2 max-h-[28rem] overflow-y-auto pr-1 custom-scrollbar" id="lobby-players-list">
+                    <!-- Players listed here with rich cards -->
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.closeSyncModal()">
+                        SCHLIESSEN
+                    </button>
+                    <button class="flex-1 bg-secondary text-on-secondary font-bold py-3 rounded-sm hover:brightness-110 shadow-lg active:scale-95 transition-all hidden" id="btn-lobby-start" onclick="window.SyncManager.startGame()">
+                        STARTEN
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Talent Upgrade Modal -->
+    <div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" id="talent-modal">
+        <div class="modal-overlay absolute inset-0" id="talent-modal-overlay"></div>
+        <div class="wood-card w-full max-w-md p-8 relative shadow-[0_20px_50px_rgba(0,0,0,0.8)] border-2 border-secondary/30">
+            <div class="flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4">
+                    <h4 class="font-headline text-2xl parchment-accent" id="modal-talent-name">Talent Name</h4>
+                    <p class="font-bold text-secondary uppercase tracking-widest mt-1" id="modal-talent-level">STUFE X</p>
+                </div>
+                <div class="py-4">
+                    <p class="text-on-surface leading-relaxed italic" id="modal-talent-explanation">
+                        Regeltext wird hier geladen...
+                     </p>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="closeTalentModal()">
+                        ABBRECHEN
+                    </button>
+                    <button class="flex-1 bg-secondary text-on-secondary font-bold py-3 rounded-sm hover:brightness-110 shadow-lg active:scale-95 transition-all" id="modal-confirm-btn">
+                        BESTÄTIGEN
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onerror = function(msg, url, line, col, error) {
+            const stack = error && error.stack ? "\n\nStack:\n" + error.stack : "";
+            alert("Fehler erkannt: " + msg + "\nZeile: " + line + "\nDatei: " + url + stack);
+            return false;
+        };
+    </script>
+    <script src="items.js" charset="utf-8"></script>
+    <script src="quests_data.js" charset="utf-8"></script>
+    <script src="enemy3d.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    <script src="sync.js" charset="utf-8"></script>
+    <script src="app.js" charset="utf-8"></script>
+</body>
+</html>
