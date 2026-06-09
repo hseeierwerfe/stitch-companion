@@ -2325,14 +2325,36 @@ window.startCombatMovement = function() {
     render();
 };
 
-window.executeCombatMeleeAttack = function() {
+window.executeCombatMeleeAttack = function(targetKey = null) {
     const sim = state.combatSimulator;
     if (!sim) return;
     const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
     
-    // Determine target enemy (closest of the two)
+    if (!targetKey && sim.enemy2 && sim.enemy2.hp > 0 && sim.enemy.hp > 0) {
+        const ex = document.getElementById('target-selection-popup'); if (ex) ex.remove();
+        const pop = document.createElement('div');
+        pop.id = 'target-selection-popup';
+        pop.className = 'fixed inset-0 z-[160] flex items-center justify-center p-4';
+        pop.innerHTML = `
+            <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="document.getElementById('target-selection-popup').remove()"></div>
+            <div class="wood-card w-full max-w-sm p-8 relative shadow-2xl border-2 border-primary/50 text-center">
+                <h3 class="font-headline text-2xl text-primary mb-6 italic">Ziel wählen</h3>
+                <button onclick="document.getElementById('target-selection-popup').remove(); window.executeCombatMeleeAttack('enemy1')" class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-3 font-bold uppercase text-xs mb-3 border border-primary/40">${sim.enemy.name} (HP: ${sim.enemy.hp})</button>
+                <button onclick="document.getElementById('target-selection-popup').remove(); window.executeCombatMeleeAttack('enemy2')" class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-3 font-bold uppercase text-xs mb-3 border border-primary/40">${sim.enemy2.name} (HP: ${sim.enemy2.hp})</button>
+                <button onclick="document.getElementById('target-selection-popup').remove()" class="w-full mt-2 border border-outline-variant/30 text-on-surface-variant py-2 text-xs uppercase font-bold">Abbrechen</button>
+            </div>
+        `;
+        (document.getElementById('app-content') || document.body).appendChild(pop);
+        return;
+    }
+    
+    // Determine target enemy
     let enemy = sim.enemy;
-    if (sim.enemy2 && sim.enemy2.hp > 0) {
+    if (targetKey === 'enemy2') {
+        enemy = sim.enemy2;
+    } else if (targetKey === 'enemy1') {
+        enemy = sim.enemy;
+    } else if (sim.enemy2 && sim.enemy2.hp > 0) {
         if (sim.enemy.hp <= 0) {
             enemy = sim.enemy2;
         } else {
@@ -2456,14 +2478,36 @@ window.executeCombatMeleeAttack = function() {
     render();
 };
 
-window.executeCombatRangedAttack = function() {
+window.executeCombatRangedAttack = function(targetKey = null) {
     const sim = state.combatSimulator;
     if (!sim) return;
     const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
     
-    // Determine target enemy (closest of the two)
+    if (!targetKey && sim.enemy2 && sim.enemy2.hp > 0 && sim.enemy.hp > 0) {
+        const ex = document.getElementById('target-selection-popup'); if (ex) ex.remove();
+        const pop = document.createElement('div');
+        pop.id = 'target-selection-popup';
+        pop.className = 'fixed inset-0 z-[160] flex items-center justify-center p-4';
+        pop.innerHTML = `
+            <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="document.getElementById('target-selection-popup').remove()"></div>
+            <div class="wood-card w-full max-w-sm p-8 relative shadow-2xl border-2 border-primary/50 text-center">
+                <h3 class="font-headline text-2xl text-primary mb-6 italic">Ziel wählen</h3>
+                <button onclick="document.getElementById('target-selection-popup').remove(); window.executeCombatRangedAttack('enemy1')" class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-3 font-bold uppercase text-xs mb-3 border border-primary/40">${sim.enemy.name} (HP: ${sim.enemy.hp})</button>
+                <button onclick="document.getElementById('target-selection-popup').remove(); window.executeCombatRangedAttack('enemy2')" class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-3 font-bold uppercase text-xs mb-3 border border-primary/40">${sim.enemy2.name} (HP: ${sim.enemy2.hp})</button>
+                <button onclick="document.getElementById('target-selection-popup').remove()" class="w-full mt-2 border border-outline-variant/30 text-on-surface-variant py-2 text-xs uppercase font-bold">Abbrechen</button>
+            </div>
+        `;
+        (document.getElementById('app-content') || document.body).appendChild(pop);
+        return;
+    }
+    
+    // Determine target enemy
     let enemy = sim.enemy;
-    if (sim.enemy2 && sim.enemy2.hp > 0) {
+    if (targetKey === 'enemy2') {
+        enemy = sim.enemy2;
+    } else if (targetKey === 'enemy1') {
+        enemy = sim.enemy;
+    } else if (sim.enemy2 && sim.enemy2.hp > 0) {
         if (sim.enemy.hp <= 0) {
             enemy = sim.enemy2;
         } else {
@@ -7402,15 +7446,37 @@ window.executeCastSpell = function() {
     }
 };
 
-window._fireInstantSpell = function(spell) {
+window._fireInstantSpell = function(spell, targetKey = null) {
     const sim = state.combatSimulator;
     if (!sim) return;
     const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
     const kreis = hero.talents.magie || 0;
     
-    // Determine target enemy (closest of the two)
+    if (!targetKey && sim.enemy2 && sim.enemy2.hp > 0 && sim.enemy.hp > 0) {
+        const ex = document.getElementById('target-selection-popup'); if (ex) ex.remove();
+        const pop = document.createElement('div');
+        pop.id = 'target-selection-popup';
+        pop.className = 'fixed inset-0 z-[160] flex items-center justify-center p-4';
+        pop.innerHTML = `
+            <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="document.getElementById('target-selection-popup').remove()"></div>
+            <div class="wood-card w-full max-w-sm p-8 relative shadow-2xl border-2 border-primary/50 text-center">
+                <h3 class="font-headline text-2xl text-primary mb-6 italic">Ziel wählen</h3>
+                <button onclick="document.getElementById('target-selection-popup').remove(); window._fireInstantSpell(sim.hero.spells[sim.hero.primarySpell||0], 'enemy1')" class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-3 font-bold uppercase text-xs mb-3 border border-primary/40">${sim.enemy.name} (HP: ${sim.enemy.hp})</button>
+                <button onclick="document.getElementById('target-selection-popup').remove(); window._fireInstantSpell(sim.hero.spells[sim.hero.primarySpell||0], 'enemy2')" class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-3 font-bold uppercase text-xs mb-3 border border-primary/40">${sim.enemy2.name} (HP: ${sim.enemy2.hp})</button>
+                <button onclick="document.getElementById('target-selection-popup').remove()" class="w-full mt-2 border border-outline-variant/30 text-on-surface-variant py-2 text-xs uppercase font-bold">Abbrechen</button>
+            </div>
+        `;
+        (document.getElementById('app-content') || document.body).appendChild(pop);
+        return;
+    }
+    
+    // Determine target enemy
     let enemy = sim.enemy;
-    if (sim.enemy2 && sim.enemy2.hp > 0) {
+    if (targetKey === 'enemy2') {
+        enemy = sim.enemy2;
+    } else if (targetKey === 'enemy1') {
+        enemy = sim.enemy;
+    } else if (sim.enemy2 && sim.enemy2.hp > 0) {
         if (sim.enemy.hp <= 0) {
             enemy = sim.enemy2;
         } else {
@@ -7464,16 +7530,38 @@ window._fireInstantSpell = function(spell) {
     render();
 };
 
-window._fireChargingSpell = function(level) {
+window._fireChargingSpell = function(level, targetKey = null) {
     const sim = state.combatSimulator;
     if (!sim) return;
     const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
     const spell = sim.chargingSpell || (hero.spells ? hero.spells[hero.primarySpell || 0] : null);
     if (!spell) return;
     
-    // Determine target enemy (closest of the two)
+    if (!targetKey && sim.enemy2 && sim.enemy2.hp > 0 && sim.enemy.hp > 0) {
+        const ex = document.getElementById('target-selection-popup'); if (ex) ex.remove();
+        const pop = document.createElement('div');
+        pop.id = 'target-selection-popup';
+        pop.className = 'fixed inset-0 z-[160] flex items-center justify-center p-4';
+        pop.innerHTML = `
+            <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="document.getElementById('target-selection-popup').remove()"></div>
+            <div class="wood-card w-full max-w-sm p-8 relative shadow-2xl border-2 border-primary/50 text-center">
+                <h3 class="font-headline text-2xl text-primary mb-6 italic">Ziel wählen</h3>
+                <button onclick="document.getElementById('target-selection-popup').remove(); window._fireChargingSpell(${level}, 'enemy1')" class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-3 font-bold uppercase text-xs mb-3 border border-primary/40">${sim.enemy.name} (HP: ${sim.enemy.hp})</button>
+                <button onclick="document.getElementById('target-selection-popup').remove(); window._fireChargingSpell(${level}, 'enemy2')" class="w-full bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-3 font-bold uppercase text-xs mb-3 border border-primary/40">${sim.enemy2.name} (HP: ${sim.enemy2.hp})</button>
+                <button onclick="document.getElementById('target-selection-popup').remove()" class="w-full mt-2 border border-outline-variant/30 text-on-surface-variant py-2 text-xs uppercase font-bold">Abbrechen</button>
+            </div>
+        `;
+        (document.getElementById('app-content') || document.body).appendChild(pop);
+        return;
+    }
+    
+    // Determine target enemy
     let enemy = sim.enemy;
-    if (sim.enemy2 && sim.enemy2.hp > 0) {
+    if (targetKey === 'enemy2') {
+        enemy = sim.enemy2;
+    } else if (targetKey === 'enemy1') {
+        enemy = sim.enemy;
+    } else if (sim.enemy2 && sim.enemy2.hp > 0) {
         if (sim.enemy.hp <= 0) {
             enemy = sim.enemy2;
         } else {
