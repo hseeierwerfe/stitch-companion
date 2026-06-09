@@ -139,6 +139,77 @@ window.SyncManager = {
                     }
                     break;
 
+                case "combat_sync":
+                    // 2nd device receives combat state - show battlefield
+                    if (typeof state !== 'undefined' && payload.combatState) {
+                        const cs = payload.combatState;
+                        if (!state.combatSimulator) {
+                            // Build a minimal sim for the 2nd device view
+                            state.combatSimulator = {
+                                active: true, isAdmin: false, multiMode: cs.multiMode || '2v1',
+                                hero: { name: '(Fernsicht)', hp: 1, maxHp: 1, pos: {r:3,c:3}, remainingMov: 0, mov: 0, weapons: [], talents: {}, mana: 0, maxMana: 0, spells: [] },
+                                hero2: cs.hero2,
+                                enemy: cs.enemy,
+                                enemy2: cs.enemy2 || null,
+                                turn: cs.turn, mode: cs.mode || 'idle',
+                                log: cs.log || [], endScreen: cs.endScreen || null,
+                                isRemoteView: true,
+                                turnOrder: ['hero','hero2','enemy'], turnIndex: 0,
+                                actionDone: false, flashRed: false, confirmMoveDialog: false,
+                                simWins:0, simLosses:0, simsCompleted:0, simHeroHpOnWin:0, simEnemyHpOnLoss:0,
+                                lastFiveSummaries:[], lastFiveDetailedLogs:[], simStyle:'hybrid', isSimulating:false,
+                                rewards: cs.rewards || null
+                            };
+                        } else {
+                            // Update existing sim
+                            state.combatSimulator.hero2 = cs.hero2;
+                            state.combatSimulator.enemy = cs.enemy;
+                            if (cs.enemy2) state.combatSimulator.enemy2 = cs.enemy2;
+                            state.combatSimulator.turn = cs.turn;
+                            state.combatSimulator.mode = cs.mode || 'idle';
+                            if (cs.endScreen) state.combatSimulator.endScreen = cs.endScreen;
+                            if (cs.log) state.combatSimulator.log = cs.log;
+                            state.combatSimulator.rewards = cs.rewards || null;
+                        }
+                        // Sync HP/Mana back to local player 2 hero state
+                        if (cs.hero2 && cs.hero2.name === state.hero.name) {
+                            state.hero.hp.current = cs.hero2.hp;
+                            if (cs.hero2.mana !== undefined) {
+                                state.hero.manaCurrent = cs.hero2.mana;
+                            }
+                        }
+                        if (cs.turn === 'hero2' && state.combatSimulator.hero2) {
+                            state.currentScreen = 'schlachtfeld';
+                        }
+                        if (typeof render === 'function') render();
+                    }
+                    break;
+
+                case "combat_move":
+                    // Host device receives hero2 move from 2nd device
+                    if (typeof state !== 'undefined' && state.combatSimulator && state.combatSimulator.hero2) {
+                        if (payload.hero2pos) state.combatSimulator.hero2.pos = payload.hero2pos;
+                        if (payload.hero2hp !== undefined) state.combatSimulator.hero2.hp = payload.hero2hp;
+                        if (payload.hero2remainingMov !== undefined) state.combatSimulator.hero2.remainingMov = payload.hero2remainingMov;
+                        if (payload.hero2weapons) state.combatSimulator.hero2.weapons = payload.hero2weapons;
+                        if (payload.logEntry) state.combatSimulator.log.unshift(payload.logEntry);
+                        if (payload.lootedItems) {
+                            // Peer looted the items, clear them on host to prevent double looting
+                            if (state.combatSimulator.rewards) {
+                                state.combatSimulator.rewards.items = [];
+                            }
+                        }
+                        if (payload.endTurn) {
+                            // Advance turn on host
+                            if (typeof window.advanceCombatTurn === 'function') window.advanceCombatTurn();
+                        } else {
+                            // Sync changes back to all peers
+                            if (typeof window.broadcastCombatSync === 'function') window.broadcastCombatSync();
+                        }
+                        if (typeof render === 'function') render();
+                    }
+                    break;
+
                 case "leave":
                     if (this.players[payload.senderId]) {
                         if (this.isHost) {
@@ -225,6 +296,11 @@ window.SyncManager = {
             type: "hero_update",
             hero: state.hero
         });
+    },
+
+    broadcastCombatMove(moveData) {
+        if (!this.partyName || !this.isConnected) return;
+        this.sendPayload({ type: 'combat_move', ...moveData });
     },
 
     startPingInterval() {

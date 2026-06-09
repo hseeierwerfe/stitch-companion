@@ -1159,17 +1159,87 @@ function getTalentLevel(id) {
 window.confirmEnemySelection = function() {
     const key = state.combatPopup.selectedEnemy;
     if (!key) return;
-    const enemy = JSON.parse(JSON.stringify(enemyData[key]));
-    const isAdmin = !!state.combatPopup.isAdmin;
-    
-    // Close selection modal
-    state.combatPopup.active = false;
-    
-    // Initialize & launch the Combat Simulator
-    window.startCombatSimulator(enemy, isAdmin);
+    // Instead of starting directly, go to multi-mode selection
+    state.combatPopup.step = 'multiMode';
+    render();
 };
 
-window.startCombatSimulator = function(selectedEnemy, isAdmin = false) {
+window.handleMultiModeNext = function() {
+    const m = state.combatPopup.multiMode || '1v1';
+    if (m === '2v1' || m === '2v2') { 
+        state.combatPopup.step = 'selectHero2'; 
+        render(); 
+    } else if (m === '1v2' || m === '2v2') { 
+        state.combatPopup.step = 'selectEnemy2'; 
+        state.combatPopup.selectedEnemy2 = null; 
+        render(); 
+    } else { 
+        confirmMultiCombat(); 
+    }
+};
+
+window.handleSelectHero2Next = function() {
+    const m = state.combatPopup.multiMode || '2v1';
+    if (m === '2v2') { 
+        state.combatPopup.step = 'selectEnemy2'; 
+        state.combatPopup.selectedEnemy2 = null; 
+        render(); 
+    } else { 
+        confirmMultiCombat(); 
+    }
+};
+
+window.confirmMultiCombat = function() {
+    const popup = state.combatPopup;
+    const key = popup.selectedEnemy;
+    if (!key) return;
+    const enemy = JSON.parse(JSON.stringify(enemyData[key]));
+    const isAdmin = !!popup.isAdmin;
+    const multiMode = popup.multiMode || '1v1';
+
+    let enemy2 = null;
+    if ((multiMode === '1v2' || multiMode === '2v2') && popup.selectedEnemy2) {
+        enemy2 = JSON.parse(JSON.stringify(enemyData[popup.selectedEnemy2]));
+    }
+
+    let hero2Data = null;
+    if ((multiMode === '2v1' || multiMode === '2v2') && popup.selectedHero2) {
+        hero2Data = popup.selectedHero2; // full hero object from sync
+    }
+
+    // Dice roll for 2-hero modes: determines who gets lower start number
+    let hero1GetsLow = true;
+    if (hero2Data) {
+        const roll1 = Math.floor(Math.random() * 6) + 1;
+        const roll2 = Math.floor(Math.random() * 6) + 1;
+        hero1GetsLow = roll1 >= roll2; // ties go to hero1
+        popup.diceRollResult = { roll1, roll2, hero1GetsLow };
+    }
+
+    state.combatPopup.active = false;
+    window.startCombatSimulator(enemy, isAdmin, { multiMode, enemy2, hero2Data, hero1GetsLow });
+};
+
+window.broadcastCombatSync = function() {
+    if (!window.SyncManager || !window.SyncManager.isConnected || !window.SyncManager.partyName) return;
+    const sim = state.combatSimulator;
+    if (!sim || !sim.hero2) return;
+    window.SyncManager.sendPayload({
+        type: 'combat_sync',
+        combatState: {
+            hero2: sim.hero2,
+            enemy: sim.enemy,
+            enemy2: sim.enemy2 || null,
+            turn: sim.turn,
+            mode: sim.mode,
+            log: sim.log.slice(0, 5),
+            endScreen: sim.endScreen || null,
+            multiMode: sim.multiMode
+        }
+    });
+};
+
+window.startCombatSimulator = function(selectedEnemy, isAdmin = false, multiOpts = null) {
     const hero = state.hero;
     const eq = hero.equipment || {};
     
@@ -1272,63 +1342,126 @@ window.startCombatSimulator = function(selectedEnemy, isAdmin = false) {
         }
     }
     
+    // --- Multi-fight position setup ---
+    const mOpts = multiOpts || {};
+    const multiMode = mOpts.multiMode || '1v1';
+    const hero1GetsLow = mOpts.hero1GetsLow !== false;
+
+    // Hero positions
+    let heroPos, hero2Pos;
+    if (multiMode === '1v1' || multiMode === '1v2') {
+        heroPos = { r: 3, c: 8 }; // marker 1
+    } else {
+        // 2 heroes: markers 2 (r3,c3) and 3 (r3,c13)
+        heroPos  = hero1GetsLow ? { r: 3, c: 3 } : { r: 3, c: 13 };
+        hero2Pos = hero1GetsLow ? { r: 3, c: 13 } : { r: 3, c: 3 };
+    }
+
+    // Enemy positions
+    let enemyPos, enemy2Pos;
+    if (multiMode === '1v1' || multiMode === '2v1') {
+        enemyPos = { r: 13, c: 8 }; // marker 4
+    } else {
+        // 2 enemies: markers 5 (r13,c3) and 6 (r13,c13)
+        enemyPos  = { r: 13, c: 3 };
+        enemy2Pos = { r: 13, c: 13 };
+    }
+
+    // Build turn order
+    const turnOrder = ['hero'];
+    if (multiMode === '2v1' || multiMode === '2v2') turnOrder.push('hero2');
+    turnOrder.push('enemy');
+    if (multiMode === '1v2' || multiMode === '2v2') turnOrder.push('enemy2');
+
+    // Build hero2 from sync data if provided
+    let hero2Obj = null;
+    if (mOpts.hero2Data) {
+        const h2 = mOpts.hero2Data;
+        const h2eq = h2.equipment || {};
+        const h2weapons = [];
+        const h2melee = h2eq.melee || h2eq.ranged;
+        if (h2melee) h2weapons.push({ name: h2melee.name, type: h2melee.art || h2melee.style || 'Waffe', dmg: h2melee.damage || 1, ability: h2melee.ability || 'Keine' });
+        else h2weapons.push({ name: 'Faust', type: 'Nahkampf', dmg: 1, ability: 'Keine' });
+        if (h2eq.ranged && h2eq.ranged !== h2eq.melee) h2weapons.push({ name: h2eq.ranged.name, type: h2eq.ranged.art || h2eq.ranged.style || 'Waffe', dmg: h2eq.ranged.damage || 1, ability: h2eq.ranged.ability || 'Keine' });
+        const getH2Talent = (id) => { const t = (h2.talents || []).find(x => x.id === id); return t ? t.level || 0 : 0; };
+        hero2Obj = {
+            name: h2.name || 'Held 2',
+            hp: h2.hp ? h2.hp.current : 10,
+            maxHp: h2.hp ? h2.hp.max : 10,
+            arm: 0, str: (h2.attributes ? h2.attributes.str : 1) || 1,
+            dex: (h2.attributes ? h2.attributes.dex : 1) || 1,
+            mov: (h2.attributes ? h2.attributes.mov : 4) || 4,
+            remainingMov: (h2.attributes ? h2.attributes.mov : 4) || 4,
+            pos: JSON.parse(JSON.stringify(hero2Pos)),
+            startPos: JSON.parse(JSON.stringify(hero2Pos)),
+            weapons: h2weapons,
+            mana: h2.manaCurrent || 0, maxMana: 0,
+            spells: [],
+            primarySpell: 0,
+            isRemote: true, // controlled by 2nd device
+            syncPlayerId: mOpts.hero2Data._syncPlayerId || null,
+            talents: { einhand: getH2Talent('einhand'), zweihand: getH2Talent('zweihand'), bogen: getH2Talent('bogen'), armbrust: getH2Talent('armbrust'), magie: getH2Talent('magie'), praesenz: 0 }
+        };
+    }
+
+    // Build enemy2 if provided
+    let enemy2Obj = null;
+    if (mOpts.enemy2) {
+        const e2 = mOpts.enemy2;
+        enemy2Obj = {
+            name: e2.name, hp: e2.hp, maxHp: e2.hp,
+            arm: e2.rust, str: e2.sta, dex: e2.ges, mov: e2.bwg,
+            pos: JSON.parse(JSON.stringify(enemy2Pos)),
+            abilities: e2.abilities || '', type: e2.type || '', weapon: null
+        };
+    }
+
     state.combatSimulator = {
         active: true,
         isAdmin: isAdmin,
+        multiMode: multiMode,
         originalEnemy: originalEnemy,
+        originalEnemy2: mOpts.enemy2 ? JSON.parse(JSON.stringify(mOpts.enemy2)) : null,
         originalWeapons: originalWeapons,
-        simWins: 0,
-        simLosses: 0,
-        simsCompleted: 0,
-        simHeroHpOnWin: 0,
-        simEnemyHpOnLoss: 0,
-        lastFiveSummaries: [],
-        lastFiveDetailedLogs: [],
-        simStyle: 'hybrid',
-        isSimulating: false,
+        simWins: 0, simLosses: 0, simsCompleted: 0,
+        simHeroHpOnWin: 0, simEnemyHpOnLoss: 0,
+        lastFiveSummaries: [], lastFiveDetailedLogs: [],
+        simStyle: 'hybrid', isSimulating: false,
+        turnOrder: turnOrder,
+        turnIndex: 0,
         hero: {
             name: hero.name || 'Valerius',
-            hp: hp,
-            maxHp: maxHp,
-            arm: arm,
-            str: str,
-            dex: dex,
-            mov: finalMov,
-            remainingMov: finalMov,
-            pos: { r: 3, c: 8 },
-            startPos: { r: 3, c: 8 },
+            hp: hp, maxHp: maxHp, arm: arm, str: str, dex: dex,
+            mov: finalMov, remainingMov: finalMov,
+            pos: JSON.parse(JSON.stringify(heroPos)),
+            startPos: JSON.parse(JSON.stringify(heroPos)),
             weapons: weaponsList,
             mana: hero.manaCurrent || window.getTotalStat('mana') || 0,
             maxMana: window.getTotalStat('mana') || 0,
             spells: JSON.parse(JSON.stringify((eq.spells || []).map(s => ({ ...s, currentCharges: s.maxCapacity || 3 })))),
             primarySpell: eq.primarySpell || 0,
             talents: {
-                einhand: getTalentLevel('einhand'),
-                zweihand: getTalentLevel('zweihand'),
-                bogen: getTalentLevel('bogen'),
-                armbrust: getTalentLevel('armbrust'),
-                magie: getTalentLevel('magie'),
-                praesenz: getTalentLevel('praesenz')
+                einhand: getTalentLevel('einhand'), zweihand: getTalentLevel('zweihand'),
+                bogen: getTalentLevel('bogen'), armbrust: getTalentLevel('armbrust'),
+                magie: getTalentLevel('magie'), praesenz: getTalentLevel('praesenz')
             }
         },
+        hero2: hero2Obj,
         enemy: {
             name: selectedEnemy.name,
-            hp: selectedEnemy.hp,
-            maxHp: selectedEnemy.hp,
-            arm: selectedEnemy.rust,
-            str: selectedEnemy.sta,
-            dex: selectedEnemy.ges,
-            mov: selectedEnemy.bwg,
-            pos: { r: 13, c: 8 },
+            hp: selectedEnemy.hp, maxHp: selectedEnemy.hp,
+            arm: selectedEnemy.rust, str: selectedEnemy.sta,
+            dex: selectedEnemy.ges, mov: selectedEnemy.bwg,
+            pos: JSON.parse(JSON.stringify(enemyPos)),
             abilities: selectedEnemy.abilities || '',
-            type: selectedEnemy.type || '',
-            weapon: enemyWeapon
+            type: selectedEnemy.type || '', weapon: enemyWeapon
         },
+        enemy2: enemy2Obj,
         turn: 'hero',
         mode: 'idle',
         actionDone: false,
         chargingSpell: null,
-        log: ['Kampf beginnt. ' + (hero.name || 'Held') + ' positioniert sich...'],
+        log: ['Mehrfachkampf (' + multiMode + ') beginnt! ' + (hero.name || 'Held') + ' positioniert sich...'],
         flashRed: false,
         confirmMoveDialog: false,
         endScreen: null
@@ -2146,24 +2279,47 @@ window.handleCombatCellClick = function(r, c) {
     const sim = state.combatSimulator;
     if (!sim || sim.mode !== 'moving') return;
     
-    const dist = Math.abs(r - sim.hero.pos.r) + Math.abs(c - sim.hero.pos.c);
-    const isOccupied = (sim.hero.pos.r === r && sim.hero.pos.c === c) || (sim.enemy.pos.r === r && sim.enemy.pos.c === c);
+    const activeHero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    const dist = Math.abs(r - activeHero.pos.r) + Math.abs(c - activeHero.pos.c);
     
-    if (dist > 0 && dist <= sim.hero.remainingMov && !isOccupied) {
-        sim.hero.pos = { r, c };
-        sim.hero.remainingMov -= dist;
+    // Check if cell is occupied by any other combatant
+    const isOccupied = (sim.hero.pos.r === r && sim.hero.pos.c === c) || 
+                       (sim.hero2 && sim.hero2.pos.r === r && sim.hero2.pos.c === c) ||
+                       (sim.enemy.pos.r === r && sim.enemy.pos.c === c) ||
+                       (sim.enemy2 && sim.enemy2.pos.r === r && sim.enemy2.pos.c === c);
+    
+    if (dist > 0 && dist <= activeHero.remainingMov && !isOccupied) {
+        activeHero.pos = { r, c };
+        activeHero.remainingMov -= dist;
         sim.mode = 'idle';
-        sim.log.unshift(`${sim.hero.name} bewegt sich nach (${r}, ${c}).`);
-        if (sim.hero.remainingMov === 0) {
+        const logMsg = `${activeHero.name} bewegt sich nach (${r}, ${c}).`;
+        sim.log.unshift(logMsg);
+        
+        if (activeHero.remainingMov === 0) {
             sim.confirmMoveDialog = true;
         }
+        
+        // Sync movement if remote client
+        if (sim.isRemoteView && window.SyncManager && window.SyncManager.isConnected) {
+            window.SyncManager.broadcastCombatMove({
+                hero2pos: activeHero.pos,
+                hero2remainingMov: activeHero.remainingMov,
+                logEntry: logMsg
+            });
+        } else if (typeof window.broadcastCombatSync === 'function') {
+            // If host, broadcast the updated state to peers
+            window.broadcastCombatSync();
+        }
+        
         render();
     }
 };
 
 window.startCombatMovement = function() {
     const sim = state.combatSimulator;
-    if (sim.turn !== 'hero') return;
+    if (!sim) return;
+    const isHeroTurn = sim.turn === 'hero' || sim.turn === 'hero2';
+    if (!isHeroTurn) return;
     sim.mode = 'moving';
     sim.log.unshift("Wähle ein Zielquadrat...");
     render();
@@ -2171,8 +2327,23 @@ window.startCombatMovement = function() {
 
 window.executeCombatMeleeAttack = function() {
     const sim = state.combatSimulator;
-    const hero = sim.hero;
-    const enemy = sim.enemy;
+    if (!sim) return;
+    const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    
+    // Determine target enemy (closest of the two)
+    let enemy = sim.enemy;
+    if (sim.enemy2 && sim.enemy2.hp > 0) {
+        if (sim.enemy.hp <= 0) {
+            enemy = sim.enemy2;
+        } else {
+            const dist1 = Math.abs(hero.pos.r - sim.enemy.pos.r) + Math.abs(hero.pos.c - sim.enemy.pos.c);
+            const dist2 = Math.abs(hero.pos.r - sim.enemy2.pos.r) + Math.abs(hero.pos.c - sim.enemy2.pos.c);
+            if (dist2 < dist1) {
+                enemy = sim.enemy2;
+            }
+        }
+    }
+    
     const activeWeapon = hero.weapons[0];
     if (!activeWeapon) return;
     
@@ -2191,10 +2362,16 @@ window.executeCombatMeleeAttack = function() {
         if (sRoll >= schein.x) {
             logs.push(`${enemy.name} weicht mit Scheintreffer aus! (Wurf: ${sRoll} >= ${schein.x})`);
             sim.log.unshift(...logs.reverse());
-            sim.hero.remainingMov = 0;
+            hero.remainingMov = 0;
             sim.flashRed = true;
             setTimeout(() => { sim.flashRed = false; render(); }, 600);
-            sim.turn = 'enemy';
+            
+            // Sync & turn change
+            if (hero.isRemote && window.SyncManager && window.SyncManager.isConnected) {
+                window.SyncManager.broadcastCombatMove({ hero2remainingMov: 0, logEntry: logs[0], endTurn: true });
+            } else {
+                window.advanceCombatTurn();
+            }
             render();
             return;
         }
@@ -2242,7 +2419,7 @@ window.executeCombatMeleeAttack = function() {
     }
     
     // Zweihand level 2 ignore armor on 6
-    if (is2H && hero.talents.zweihand === 2 && roll === 12) { // 6 * 2 = 12
+    if (is2H && hero.talents.zweihand === 2 && roll === 12) {
         effEnemyArm = 0;
         logs.push(`Meisterhafter Zweihand-Wurf! Rüstung des Gegners wird vollständig ignoriert!`);
     }
@@ -2260,23 +2437,44 @@ window.executeCombatMeleeAttack = function() {
     }
     
     sim.log.unshift(...logs.reverse());
-    sim.hero.remainingMov = 0;
+    hero.remainingMov = 0;
     sim.flashRed = true;
     setTimeout(() => { sim.flashRed = false; render(); }, 600);
     
-    if (enemy.hp <= 0) {
+    const bothEnemiesDead = sim.enemy.hp <= 0 && (!sim.enemy2 || sim.enemy2.hp <= 0);
+    if (bothEnemiesDead) {
         sim.endScreen = 'WON';
-        if (!sim.isAdmin) sim.rewards = window.calculateCombatRewards(sim.originalEnemy);
+        if (!sim.isAdmin) sim.rewards = window.calculateCombatRewards(sim.originalEnemy, sim.enemy2);
     } else {
-        sim.turn = 'enemy';
+        // Sync & turn change
+        if (hero.isRemote && window.SyncManager && window.SyncManager.isConnected) {
+            window.SyncManager.broadcastCombatMove({ hero2remainingMov: 0, hero2hp: hero.hp, logEntry: logs[0], endTurn: true });
+        } else {
+            window.advanceCombatTurn();
+        }
     }
     render();
 };
 
 window.executeCombatRangedAttack = function() {
     const sim = state.combatSimulator;
-    const hero = sim.hero;
-    const enemy = sim.enemy;
+    if (!sim) return;
+    const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    
+    // Determine target enemy (closest of the two)
+    let enemy = sim.enemy;
+    if (sim.enemy2 && sim.enemy2.hp > 0) {
+        if (sim.enemy.hp <= 0) {
+            enemy = sim.enemy2;
+        } else {
+            const dist1 = Math.abs(hero.pos.r - sim.enemy.pos.r) + Math.abs(hero.pos.c - sim.enemy.pos.c);
+            const dist2 = Math.abs(hero.pos.r - sim.enemy2.pos.r) + Math.abs(hero.pos.c - sim.enemy2.pos.c);
+            if (dist2 < dist1) {
+                enemy = sim.enemy2;
+            }
+        }
+    }
+    
     const activeWeapon = hero.weapons[0];
     if (!activeWeapon) return;
     
@@ -2355,25 +2553,36 @@ window.executeCombatRangedAttack = function() {
     
     sim.log.unshift(...logs.reverse());
     
-    if (enemy.hp <= 0) {
+    const bothEnemiesDead = sim.enemy.hp <= 0 && (!sim.enemy2 || sim.enemy2.hp <= 0);
+    if (bothEnemiesDead) {
         sim.endScreen = 'WON';
-        if (!sim.isAdmin) sim.rewards = window.calculateCombatRewards(sim.originalEnemy);
-        sim.hero.remainingMov = 0;
+        if (!sim.isAdmin) sim.rewards = window.calculateCombatRewards(sim.originalEnemy, sim.enemy2);
+        hero.remainingMov = 0;
     } else {
-        const hasMoved = sim.hero.remainingMov < sim.hero.mov;
+        const hasMoved = hero.remainingMov < hero.mov;
         if (isBow && hero.talents.bogen >= 1 && !hasMoved) {
             sim.heroAttacksThisTurn = (sim.heroAttacksThisTurn || 0) + 1;
             if (sim.heroAttacksThisTurn >= 2) {
                 sim.heroAttacksThisTurn = 0;
-                sim.turn = 'enemy';
-                sim.hero.remainingMov = 0;
+                hero.remainingMov = 0;
+                // Sync & turn change
+                if (hero.isRemote && window.SyncManager && window.SyncManager.isConnected) {
+                    window.SyncManager.broadcastCombatMove({ hero2remainingMov: 0, hero2hp: hero.hp, logEntry: logs[0], endTurn: true });
+                } else {
+                    window.advanceCombatTurn();
+                }
             } else {
-                sim.hero.remainingMov = 0; // Prevent moving after first attack
+                hero.remainingMov = 0; // Prevent moving after first attack
                 sim.log.unshift(`🏹 Bogenschütze-Effekt: Erste Attacke durchgeführt. Führe die zweite Attacke aus!`);
             }
         } else {
-            sim.turn = 'enemy';
-            sim.hero.remainingMov = 0;
+            hero.remainingMov = 0;
+            // Sync & turn change
+            if (hero.isRemote && window.SyncManager && window.SyncManager.isConnected) {
+                window.SyncManager.broadcastCombatMove({ hero2remainingMov: 0, hero2hp: hero.hp, logEntry: logs[0], endTurn: true });
+            } else {
+                window.advanceCombatTurn();
+            }
         }
     }
     render();
@@ -2381,108 +2590,152 @@ window.executeCombatRangedAttack = function() {
 
 window.executeCombatWeaponSwap = function() {
     const sim = state.combatSimulator;
-    if (!sim || sim.hero.weapons.length < 2) return;
+    if (!sim) return;
+    const activeHero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    if (!activeHero || !activeHero.weapons || activeHero.weapons.length < 2) return;
     
-    const temp = sim.hero.weapons[0];
-    sim.hero.weapons[0] = sim.hero.weapons[1];
-    sim.hero.weapons[1] = temp;
+    const temp = activeHero.weapons[0];
+    activeHero.weapons[0] = activeHero.weapons[1];
+    activeHero.weapons[1] = temp;
     
-    sim.hero.remainingMov = Math.max(0, sim.hero.remainingMov - 1);
-    sim.log.unshift(`Waffe gewechselt zu: ${sim.hero.weapons[0].name}. (Kostet 1 BWG)`);
+    activeHero.remainingMov = Math.max(0, activeHero.remainingMov - 1);
+    const logMsg = `${activeHero.name}: Waffe gewechselt zu: ${activeHero.weapons[0].name}. (Kostet 1 BWG)`;
+    sim.log.unshift(logMsg);
+    
+    if (sim.isRemoteView && window.SyncManager && window.SyncManager.isConnected) {
+        window.SyncManager.broadcastCombatMove({
+            hero2remainingMov: activeHero.remainingMov,
+            hero2weapons: activeHero.weapons,
+            logEntry: logMsg
+        });
+    } else if (typeof window.broadcastCombatSync === 'function') {
+        window.broadcastCombatSync();
+    }
     render();
 };
 
 window.executeEnemyTurn = async function() {
     const sim = state.combatSimulator;
-    if (!sim || sim.turn !== 'enemy') return;
+    if (!sim) return;
+    if (sim.turn !== 'enemy' && sim.turn !== 'enemy2') return;
     
-    sim.log.unshift(`Der ${sim.enemy.name} lauert...`);
+    const activeEnemy = (sim.turn === 'enemy2' && sim.enemy2) ? sim.enemy2 : sim.enemy;
+    if (!activeEnemy || activeEnemy.hp <= 0) {
+        // Active enemy is dead, skip turn
+        window.advanceCombatTurn();
+        return;
+    }
+    
+    sim.log.unshift(`Der ${activeEnemy.name} lauert...`);
     render();
     
     const d6 = () => Math.floor(Math.random() * 6) + 1;
     
-    // Parse Adrenalin for Ork
-    const adr = window.getAbilityValues(sim.enemy.abilities, 'Adrenalin');
-    let enemyStr = sim.enemy.str;
-    let enemyMov = sim.enemy.mov;
-    if (adr && sim.enemy.hp <= adr.x) {
+    // Parse Adrenalin
+    const adr = window.getAbilityValues(activeEnemy.abilities, 'Adrenalin');
+    let enemyStr = activeEnemy.str;
+    let enemyMov = activeEnemy.mov;
+    if (adr && activeEnemy.hp <= adr.x) {
         enemyStr += adr.y;
         enemyMov *= 2;
-        sim.log.unshift(`${sim.enemy.name} nutzt Adrenalin! Stärke +${adr.y}, doppelte Bewegung.`);
+        sim.log.unshift(`${activeEnemy.name} nutzt Adrenalin! Stärke +${adr.y}, doppelte Bewegung.`);
     }
     
-    // Apply slow effect (from Level 2 Crossbow talent)
-    if (sim.enemy.slowTurns > 0) {
-        sim.enemy.slowTurns--;
+    // Apply slow effect
+    if (activeEnemy.slowTurns > 0) {
+        activeEnemy.slowTurns--;
         enemyMov = Math.max(1, Math.floor(enemyMov / 2));
-        sim.log.unshift(`❄️ Verlangsamung aktiv: Bewegung von ${sim.enemy.name} halbiert auf ${enemyMov}!`);
+        sim.log.unshift(`❄️ Verlangsamung aktiv: Bewegung von ${activeEnemy.name} halbiert auf ${enemyMov}!`);
+    }
+    
+    // Find nearest living target hero
+    let targetHero = sim.hero;
+    if (sim.hero2 && sim.hero2.hp > 0) {
+        if (sim.hero.hp <= 0) {
+            targetHero = sim.hero2;
+        } else {
+            const dist1 = Math.abs(sim.hero.pos.r - activeEnemy.pos.r) + Math.abs(sim.hero.pos.c - activeEnemy.pos.c);
+            const dist2 = Math.abs(sim.hero2.pos.r - activeEnemy.pos.r) + Math.abs(sim.hero2.pos.c - activeEnemy.pos.c);
+            if (dist2 < dist1) {
+                targetHero = sim.hero2;
+            }
+        }
     }
     
     let hasMoved = false;
     let enemyRemainingMov = enemyMov;
     for (let i = 0; i < enemyMov; i++) {
-        const dr = Math.sign(sim.hero.pos.r - sim.enemy.pos.r);
-        const dc = Math.sign(sim.hero.pos.c - sim.enemy.pos.c);
+        const dr = Math.sign(targetHero.pos.r - activeEnemy.pos.r);
+        const dc = Math.sign(targetHero.pos.c - activeEnemy.pos.c);
         
-        const isAdj = Math.abs(sim.hero.pos.r - sim.enemy.pos.r) + Math.abs(sim.hero.pos.c - sim.enemy.pos.c) === 1;
+        const isAdj = Math.abs(targetHero.pos.r - activeEnemy.pos.r) + Math.abs(targetHero.pos.c - activeEnemy.pos.c) === 1;
         if (isAdj) break;
         
-        if (dr !== 0) sim.enemy.pos.r += dr;
-        else if (dc !== 0) sim.enemy.pos.c += dc;
-        hasMoved = true;
-        enemyRemainingMov--;
+        // Ensure not stepping on another combatant
+        const nextR = activeEnemy.pos.r + dr;
+        const nextC = activeEnemy.pos.c + dc;
+        const isOccupied = (sim.hero.pos.r === nextR && sim.hero.pos.c === nextC) ||
+                           (sim.hero2 && sim.hero2.pos.r === nextR && sim.hero2.pos.c === nextC) ||
+                           (sim.enemy.pos.r === nextR && sim.enemy.pos.c === nextC) ||
+                           (sim.enemy2 && sim.enemy2.pos.r === nextR && sim.enemy2.pos.c === nextC);
         
-        render();
-        await new Promise(r => setTimeout(r, 200));
+        if (!isOccupied) {
+            if (dr !== 0) activeEnemy.pos.r += dr;
+            else if (dc !== 0) activeEnemy.pos.c += dc;
+            hasMoved = true;
+            enemyRemainingMov--;
+            render();
+            // Broadcast movement to 2nd device
+            if (typeof window.broadcastCombatSync === 'function') window.broadcastCombatSync();
+            await new Promise(r => setTimeout(r, 200));
+        } else {
+            break;
+        }
     }
     
-    const isAdjFinal = Math.abs(sim.hero.pos.r - sim.enemy.pos.r) + Math.abs(sim.hero.pos.c - sim.enemy.pos.c) === 1;
-    // Enemy can only attack if at least 1 movement point remains after movement
+    const isAdjFinal = Math.abs(targetHero.pos.r - activeEnemy.pos.r) + Math.abs(targetHero.pos.c - activeEnemy.pos.c) === 1;
     const canEnemyAttack = isAdjFinal && enemyRemainingMov >= 1;
     if (canEnemyAttack) {
-        // Präzisionsstreich: Roll 2 D6, use highest
-        const prez = window.getAbilityValues(sim.enemy.abilities, 'Präzisionsstreich');
+        const prez = window.getAbilityValues(activeEnemy.abilities, 'Präzisionsstreich');
         const roll = prez ? Math.max(d6(), d6()) : d6();
         
         let extraDmg = 0;
-        if (sim.enemy.name === 'Leichenfresser') extraDmg = 2;
+        if (activeEnemy.name === 'Leichenfresser') extraDmg = 2;
         
-        // Sturmangriff: +X Strength after movement
-        const sturm = window.getAbilityValues(sim.enemy.abilities, 'Sturmangriff');
+        const sturm = window.getAbilityValues(activeEnemy.abilities, 'Sturmangriff');
         if (hasMoved && sturm) {
             enemyStr += sturm.x;
-            sim.log.unshift(`${sim.enemy.name} nutzt Sturmangriff! (+${sturm.x} Stärke nach Bwg)`);
+            sim.log.unshift(`${activeEnemy.name} nutzt Sturmangriff! (+${sturm.x} Stärke nach Bwg)`);
         }
         
-        // Panzerbrecher: Roll D6, on X+ ignore armor
-        const panzer = window.getAbilityValues(sim.enemy.abilities, 'Panzerbrecher');
-        let effHeroArmor = sim.hero.arm;
+        const panzer = window.getAbilityValues(activeEnemy.abilities, 'Panzerbrecher');
+        let effHeroArmor = targetHero.arm;
         if (panzer) {
             const pRoll = d6();
             if (pRoll >= panzer.x) {
                 effHeroArmor = 0;
-                sim.log.unshift(`${sim.enemy.name} durchbricht Rüstung vollständig! (Panzerbrecher-Wurf: ${pRoll} >= ${panzer.x})`);
+                sim.log.unshift(`${activeEnemy.name} durchbricht Rüstung vollständig! (Panzerbrecher-Wurf: ${pRoll} >= ${panzer.x})`);
             }
         }
         
-        const enemyWeaponDmg = sim.enemy.weapon ? sim.enemy.weapon.dmg || 0 : 0;
+        const enemyWeaponDmg = activeEnemy.weapon ? activeEnemy.weapon.dmg || 0 : 0;
         const damage = Math.max(0, enemyStr + roll + enemyWeaponDmg - effHeroArmor + extraDmg);
-        sim.hero.hp = Math.max(0, sim.hero.hp - damage);
+        targetHero.hp = Math.max(0, targetHero.hp - damage);
         
-        let msg = `${sim.enemy.name} schlägt zu! Schaden: ${damage} HP. (Wurf: ${roll}`;
-        if (sim.enemy.weapon) {
-            msg += `, mit Waffe: ${sim.enemy.weapon.name}`;
+        let msg = `${activeEnemy.name} schlägt zu! Schaden: ${damage} HP an ${targetHero.name}. (Wurf: ${roll}`;
+        if (activeEnemy.weapon) {
+            msg += `, mit Waffe: ${activeEnemy.weapon.name}`;
         }
         msg += `)`;
         sim.log.unshift(msg);
         
-        // Lähmung: Roll D6, on X+ hero paralyzed for 1 turn
-        const laeh = window.getAbilityValues(sim.enemy.abilities, 'Lähmung');
-        if (laeh) {
+        // Lähmung
+        const laeh = window.getAbilityValues(activeEnemy.abilities, 'Lähmung');
+        if (laeh && targetHero === sim.hero) { // only paralyze main hero for simplicity
             const lRoll = d6();
             if (lRoll >= laeh.x) {
                 sim.heroParalyzed = true;
-                sim.log.unshift(`${sim.enemy.name} betäubt dich mit Lähmung! (Lähmung-Wurf: ${lRoll} >= ${laeh.x})`);
+                sim.log.unshift(`${activeEnemy.name} betäubt dich mit Lähmung! (Lähmung-Wurf: ${lRoll} >= ${laeh.x})`);
             }
         }
         
@@ -2490,41 +2743,21 @@ window.executeEnemyTurn = async function() {
         setTimeout(() => { sim.flashRed = false; render(); }, 600);
     } else {
         if (isAdjFinal && enemyRemainingMov < 1) {
-            sim.log.unshift(`${sim.enemy.name} hat nach der Bewegung keine BWG mehr für einen Angriff.`);
+            sim.log.unshift(`${activeEnemy.name} hat nach der Bewegung keine BWG mehr für einen Angriff.`);
         } else {
-            sim.log.unshift(`${sim.enemy.name} kann nicht angreifen.`);
+            sim.log.unshift(`${activeEnemy.name} kann nicht angreifen.`);
         }
     }
     
-    if (sim.hero.hp <= 0) {
+    // Broadcast health updates
+    if (typeof window.broadcastCombatSync === 'function') window.broadcastCombatSync();
+    
+    // Check game over
+    const allHeroesDead = sim.hero.hp <= 0 && (!sim.hero2 || sim.hero2.hp <= 0);
+    if (allHeroesDead) {
         sim.endScreen = 'LOST';
     } else {
-        if (sim.heroParalyzed) {
-            sim.heroParalyzed = false;
-            sim.log.unshift(`Du bist diese Runde betäubt und kannst nicht handeln!`);
-            sim.turn = 'enemy';
-            render();
-            setTimeout(() => { window.executeEnemyTurn(); }, 1500);
-            return;
-        } else {
-            sim.turn = 'hero';
-            sim.heroAttacksThisTurn = 0;
-            
-            let extraMov = 0;
-            const activeWeapon = sim.hero.weapons[0];
-            if (activeWeapon && activeWeapon.name.toLowerCase().includes('armbrust')) {
-                const armbrustLvl = sim.hero.talents.armbrust || 0;
-                if (armbrustLvl === 1) extraMov = 1;
-                else if (armbrustLvl === 2) extraMov = 2;
-            }
-            sim.hero.remainingMov = sim.hero.mov + extraMov;
-            sim.hero.startPos = { ...sim.hero.pos };
-            sim.actionDone = false;
-            // If a charging spell was in progress, continue it
-            if (sim.chargingSpell) {
-                sim.log.unshift(`⚡ Aufladung von "${sim.chargingSpell.name}" bereit! Wähle Aufladungsstufe.`);
-            }
-        }
+        window.advanceCombatTurn();
     }
     render();
 };
@@ -2537,19 +2770,32 @@ window.confirmCombatMoveEnd = function() {
 
 window.resetCombatMove = function() {
     const sim = state.combatSimulator;
-    sim.hero.pos = { ...sim.hero.startPos };
+    if (!sim) return;
+    const activeHero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    activeHero.pos = { ...activeHero.startPos };
     
     let extraMov = 0;
-    const activeWeapon = sim.hero.weapons[0];
+    const activeWeapon = activeHero.weapons ? activeHero.weapons[0] : null;
     if (activeWeapon && activeWeapon.name.toLowerCase().includes('armbrust')) {
-        const armbrustLvl = sim.hero.talents.armbrust || 0;
+        const armbrustLvl = activeHero.talents?.armbrust || 0;
         if (armbrustLvl === 1) extraMov = 1;
         else if (armbrustLvl === 2) extraMov = 2;
     }
-    sim.hero.remainingMov = sim.hero.mov + extraMov;
+    activeHero.remainingMov = activeHero.mov + extraMov;
     
     sim.confirmMoveDialog = false;
-    sim.log.unshift("Bewegung zurückgesetzt.");
+    const logMsg = `${activeHero.name}: Bewegung zurückgesetzt.`;
+    sim.log.unshift(logMsg);
+    
+    if (sim.isRemoteView && window.SyncManager && window.SyncManager.isConnected) {
+        window.SyncManager.broadcastCombatMove({
+            hero2pos: activeHero.pos,
+            hero2remainingMov: activeHero.remainingMov,
+            logEntry: logMsg
+        });
+    } else if (typeof window.broadcastCombatSync === 'function') {
+        window.broadcastCombatSync();
+    }
     render();
 };
 
@@ -3706,8 +3952,94 @@ const templates = {
                                     <button onclick="confirmEnemySelection()" 
                                             ${!state.combatPopup.selectedEnemy ? 'disabled' : ''} 
                                             class="flex-1 bg-secondary text-on-secondary py-2.5 text-[10px] font-bold uppercase shadow-md rounded-sm disabled:opacity-30 disabled:pointer-events-none">
-                                        Bestätigen
+                                        Weiter
                                     </button>
+                                </div>
+                            `;
+                        })() : ''}
+
+                        ${state.combatPopup.step === 'multiMode' ? `
+                            <h3 class="font-headline text-2xl text-primary mb-3 text-center">Mehrfachkampf</h3>
+                            <p class="text-xs text-on-surface-variant text-center mb-5">Wie viele Helden und Kreaturen kämpfen? (Helden v Kreaturen)</p>
+                            <div class="grid grid-cols-2 gap-3 w-full mb-5">
+                                ${['1v1','1v2','2v1','2v2'].map(mode => {
+                                    const sel = state.combatPopup.multiMode === mode;
+                                    const [h,e] = mode.split('v');
+                                    return `<button onclick="state.combatPopup.multiMode='${mode}'; render();"
+                                        class="p-3 border rounded-sm flex flex-col items-center gap-1 transition-all text-sm font-bold uppercase
+                                        ${sel ? 'border-primary bg-primary/20 text-primary shadow-[0_0_10px_rgba(233,193,118,0.3)]' : 'border-outline-variant/30 bg-surface-container text-on-surface-variant hover:border-primary/50'}">
+                                        <span class="text-2xl font-headline">${mode}</span>
+                                        <span class="text-[9px] opacity-70">${h} Held${h>1?'en':''} · ${e} Kreatur${e>1?'en':''}</span>
+                                    </button>`;
+                                }).join('')}
+                            </div>
+                            <div class="flex gap-3 w-full">
+                                <button onclick="state.combatPopup.step='selectEnemy'; render();" class="flex-1 border border-outline-variant text-on-surface-variant py-2.5 text-[10px] font-bold uppercase rounded-sm">Zurück</button>
+                                <button onclick="window.handleMultiModeNext()" ${!state.combatPopup.multiMode ? 'disabled' : ''}
+                                class="flex-1 bg-secondary text-on-secondary py-2.5 text-[10px] font-bold uppercase shadow-md rounded-sm disabled:opacity-30 disabled:pointer-events-none">Weiter</button>
+                            </div>
+                        ` : ''}
+
+                        ${state.combatPopup.step === 'selectHero2' ? (() => {
+                            const peers = window.SyncManager ? Object.values(window.SyncManager.players).filter(p => p.id !== window.SyncManager.playerId) : [];
+                            const sel2 = state.combatPopup.selectedHero2;
+                            return `
+                                <h3 class="font-headline text-2xl text-primary mb-2 text-center">2. Held wählen</h3>
+                                <p class="text-xs text-on-surface-variant text-center mb-4">Wähle einen synchronisierten Mitspieler als 2. Held:</p>
+                                ${peers.length === 0 ? `
+                                    <div class="text-center py-6 text-on-surface-variant/60 italic text-xs border border-dashed border-outline-variant/30 rounded-sm mb-4">
+                                        <span class="material-symbols-outlined block text-2xl mb-2">sync_disabled</span>
+                                        Keine synchronisierten Spieler gefunden.<br>Stelle sicher, dass ihr in derselben Partie seid.
+                                    </div>
+                                ` : `
+                                    <div class="flex flex-col gap-2 w-full max-h-48 overflow-y-auto custom-scrollbar mb-4 pr-1">
+                                        ${peers.map(p => {
+                                            const isSel = sel2 && sel2.name === p.hero.name;
+                                            const hpPct = p.hero.hp ? Math.round((p.hero.hp.current/p.hero.hp.max)*100) : 100;
+                                            return `<button onclick="state.combatPopup.selectedHero2 = Object.assign({}, window.SyncManager.players['${p.id}'].hero, {_syncPlayerId: '${p.id}'}); render();"
+                                                class="p-2.5 border rounded-sm flex items-center gap-3 transition-all text-left
+                                                ${isSel ? 'border-primary bg-primary/20 text-primary' : 'border-outline-variant/30 bg-surface-container text-on-surface-variant hover:border-primary/50'}">
+                                                <span class="material-symbols-outlined text-2xl ${isSel ? 'text-primary' : 'text-on-surface-variant'}">person</span>
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="font-bold text-sm truncate">${p.hero.name}</p>
+                                                    <p class="text-[9px] opacity-70">HP: ${p.hero.hp ? p.hero.hp.current : '?'}/${p.hero.hp ? p.hero.hp.max : '?'} · ${p.online ? '<span class="text-green-400">Online</span>' : '<span class="text-red-400">Offline</span>'}</p>
+                                                </div>
+                                                ${isSel ? '<span class="material-symbols-outlined text-primary text-sm">check_circle</span>' : ''}
+                                            </button>`;
+                                        }).join('')}
+                                    </div>
+                                `}
+                                <div class="flex gap-3 w-full">
+                                    <button onclick="state.combatPopup.step='multiMode'; render();" class="flex-1 border border-outline-variant text-on-surface-variant py-2.5 text-[10px] font-bold uppercase rounded-sm">Zurück</button>
+                                    <button onclick="window.handleSelectHero2Next()" ${!state.combatPopup.selectedHero2 && peers.length > 0 ? 'disabled' : ''}
+                                    class="flex-1 bg-secondary text-on-secondary py-2.5 text-[10px] font-bold uppercase shadow-md rounded-sm disabled:opacity-30 disabled:pointer-events-none">Weiter</button>
+                                </div>
+                            `;
+                        })() : ''}
+
+                        ${state.combatPopup.step === 'selectEnemy2' ? (() => {
+                            const currentChapter = state.hero.chapter || 1;
+                            let enemies2 = Object.keys(enemyData).filter(key => enemyData[key].chapter === currentChapter);
+                            if (enemies2.length === 0) enemies2 = Object.keys(enemyData).filter(key => enemyData[key].chapter === 1);
+                            return `
+                                <h3 class="font-headline text-2xl text-primary mb-2 text-center">2. Kreatur wählen</h3>
+                                <p class="text-xs text-on-surface-variant text-center mb-4">Wähle die zweite Kreatur (Kapitel ${currentChapter}):</p>
+                                <div class="grid grid-cols-2 gap-2 w-full max-h-48 overflow-y-auto custom-scrollbar mb-4 pr-1">
+                                    ${enemies2.map(key => {
+                                        const enemy = enemyData[key];
+                                        const isSel = state.combatPopup.selectedEnemy2 === key;
+                                        return `<button onclick="state.combatPopup.selectedEnemy2 = '${key}'; render();"
+                                                class="p-2 border text-xs font-bold uppercase rounded-sm transition-all flex flex-col items-center gap-1
+                                                ${isSel ? 'border-primary bg-primary/20 text-primary shadow-[0_0_8px_rgba(233,193,118,0.3)]' : 'border-outline-variant/30 bg-surface-container text-on-surface-variant hover:border-primary/50'}">
+                                            <span class="font-bold text-center leading-tight">${enemy.name}</span>
+                                            <span class="text-[9px] opacity-60">HP: ${enemy.hp} | Rüst: ${enemy.rust}</span>
+                                        </button>`;
+                                    }).join('')}
+                                </div>
+                                <div class="flex gap-3 w-full">
+                                    <button onclick="state.combatPopup.step = (state.combatPopup.multiMode === '2v2' ? 'selectHero2' : 'multiMode'); render();" class="flex-1 border border-outline-variant text-on-surface-variant py-2.5 text-[10px] font-bold uppercase rounded-sm">Zurück</button>
+                                    <button onclick="confirmMultiCombat()" ${!state.combatPopup.selectedEnemy2 ? 'disabled' : ''}
+                                    class="flex-1 bg-secondary text-on-secondary py-2.5 text-[10px] font-bold uppercase shadow-md rounded-sm disabled:opacity-30 disabled:pointer-events-none">Kampf starten!</button>
                                 </div>
                             `;
                         })() : ''}
@@ -4680,10 +5012,26 @@ const templates = {
         const sim = state.combatSimulator;
         if (!sim) return '<div class="p-10 text-error">Kein aktiver Kampf simulator</div>';
 
-        const activeWeapon = sim.hero.weapons[0];
-        const dist = Math.abs(sim.hero.pos.r - sim.enemy.pos.r) + Math.abs(sim.hero.pos.c - sim.enemy.pos.c);
+        const activeHero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+
+        // Target the closest living enemy
+        let targetEnemy = sim.enemy;
+        if (sim.enemy2 && sim.enemy2.hp > 0) {
+            if (sim.enemy.hp <= 0) {
+                targetEnemy = sim.enemy2;
+            } else {
+                const dist1 = Math.abs(activeHero.pos.r - sim.enemy.pos.r) + Math.abs(activeHero.pos.c - sim.enemy.pos.c);
+                const dist2 = Math.abs(activeHero.pos.r - sim.enemy2.pos.r) + Math.abs(activeHero.pos.c - sim.enemy2.pos.c);
+                if (dist2 < dist1) {
+                    targetEnemy = sim.enemy2;
+                }
+            }
+        }
+
+        const activeWeapon = activeHero.weapons ? activeHero.weapons[0] : null;
+        const dist = Math.abs(activeHero.pos.r - targetEnemy.pos.r) + Math.abs(activeHero.pos.c - targetEnemy.pos.c);
         let maxMeleeDist = 1;
-        if (activeWeapon && (activeWeapon.type === '2H' || activeWeapon.type.toLowerCase().includes('zweihand')) && (sim.hero.talents.zweihand || 0) >= 1) {
+        if (activeWeapon && (activeWeapon.type === '2H' || activeWeapon.type.toLowerCase().includes('zweihand')) && (activeHero.talents?.zweihand || 0) >= 1) {
             maxMeleeDist = 2;
         }
         const isWithinMeleeRange = dist <= maxMeleeDist;
@@ -4695,23 +5043,30 @@ const templates = {
             activeWeapon.type.includes('FK')
         );
         
-        const activeSpell = sim.hero.spells && sim.hero.spells.length > 0 ? sim.hero.spells[sim.hero.primarySpell || 0] : null;
+        const activeSpell = activeHero.spells && activeHero.spells.length > 0 ? activeHero.spells[activeHero.primarySpell || 0] : null;
         const isMagicActive = activeWeapon && activeWeapon.type === 'Magie';
         
-        let canMelee = !isRangedWeapon && !isMagicActive && isWithinMeleeRange && sim.hero.remainingMov >= 0;
-        if (activeWeapon && (activeWeapon.type === '2H' || activeWeapon.type.toLowerCase().includes('zweihand')) && sim.hero.remainingMov < sim.hero.mov && (sim.hero.talents.zweihand || 0) < 1) {
+        let canMelee = !isRangedWeapon && !isMagicActive && isWithinMeleeRange && activeHero.remainingMov >= 0;
+        if (activeWeapon && (activeWeapon.type === '2H' || activeWeapon.type.toLowerCase().includes('zweihand')) && activeHero.remainingMov < activeHero.mov && (activeHero.talents?.zweihand || 0) < 1) {
             canMelee = false;
         }
-        const canRanged = isRangedWeapon && !isMagicActive && dist > 1 && sim.hero.remainingMov >= 0;
-        const hasMana = activeSpell ? (sim.hero.mana || 0) >= (activeSpell.reqMana || 1) : false;
-        const canCastSpell = activeSpell && hasMana && sim.turn === 'hero' && !sim.actionDone && sim.hero.remainingMov === sim.hero.mov;
-        const canSwapSpell = sim.hero.spells && sim.hero.spells.length > 0 && sim.turn === 'hero';
+        const canRanged = isRangedWeapon && !isMagicActive && dist > 1 && activeHero.remainingMov >= 0;
+        const hasMana = activeSpell ? (activeHero.mana || 0) >= (activeSpell.reqMana || 1) : false;
+
+        const isMyTurn = sim.isRemoteView 
+            ? (sim.turn === 'hero2') 
+            : (sim.turn === 'hero' || (sim.turn === 'hero2' && sim.hero2 && !sim.hero2.isRemote));
+
+        const canCastSpell = activeSpell && hasMana && isMyTurn && !sim.actionDone && activeHero.remainingMov === activeHero.mov;
+        const canSwapSpell = activeHero.spells && activeHero.spells.length > 0 && isMyTurn;
         
         let cellsHtml = '';
         for (let r = 1; r <= 15; r++) {
             for (let c = 1; c <= 15; c++) {
-                const isHero = sim.hero.pos.r === r && sim.hero.pos.c === c;
-                const isEnemy = sim.enemy.pos.r === r && sim.enemy.pos.c === c;
+                const isHero  = sim.hero.pos.r === r && sim.hero.pos.c === c;
+                const isHero2 = sim.hero2 && sim.hero2.pos.r === r && sim.hero2.pos.c === c;
+                const isEnemy  = sim.enemy.pos.r === r && sim.enemy.pos.c === c;
+                const isEnemy2 = sim.enemy2 && sim.enemy2.pos.r === r && sim.enemy2.pos.c === c;
                 
                 let cellContent = '';
                 let cellClass = 'grid-cell';
@@ -4722,7 +5077,7 @@ const templates = {
                     "13-8": "4", "13-3": "5", "13-13": "6"
                 };
                 
-                if (markers[key] && !isHero && !isEnemy) {
+                if (markers[key] && !isHero && !isHero2 && !isEnemy && !isEnemy2) {
                     cellContent = markers[key];
                     cellClass += ' bg-primary/5';
                 }
@@ -4730,6 +5085,9 @@ const templates = {
                 if (isHero) {
                     cellContent = '<span class="material-symbols-outlined text-primary scale-125">person</span>';
                     cellClass += ' bg-primary/20';
+                } else if (isHero2) {
+                    cellContent = '<span class="material-symbols-outlined text-secondary scale-125">person</span>';
+                    cellClass += ' bg-secondary/20';
                 } else if (isEnemy) {
                     const _enemyImg = getEnemyImage(sim.enemy.name);
                     if (_enemyImg) {
@@ -4739,12 +5097,21 @@ const templates = {
                         cellContent = '<span class="material-symbols-outlined text-error scale-125">skull</span>';
                         cellClass += ' bg-error/20';
                     }
+                } else if (isEnemy2) {
+                    const _enemy2Img = getEnemyImage(sim.enemy2.name);
+                    if (_enemy2Img) {
+                        cellContent = `<div class="enemy-3d-mount" data-enemy3d-img="${_enemy2Img}" data-enemy3d-name="${sim.enemy2.name}"></div>`;
+                        cellClass += ' enemy-cell';
+                    } else {
+                        cellContent = '<span class="material-symbols-outlined text-orange-400 scale-125">skull</span>';
+                        cellClass += ' bg-orange-900/20';
+                    }
                 }
                 
                 if (sim.mode === 'moving') {
-                    const dist = Math.abs(r - sim.hero.pos.r) + Math.abs(c - sim.hero.pos.c);
-                    const isOccupied = isHero || isEnemy;
-                    if (dist > 0 && dist <= sim.hero.remainingMov && !isOccupied) {
+                    const dist = Math.abs(r - activeHero.pos.r) + Math.abs(c - activeHero.pos.c);
+                    const isOccupied = isHero || isHero2 || isEnemy || isEnemy2;
+                    if (dist > 0 && dist <= activeHero.remainingMov && !isOccupied) {
                         cellClass += ' highlight';
                     }
                 }
@@ -4799,8 +5166,50 @@ const templates = {
                             ${cellsHtml}
                         </div>
                     </section>
-                    
-                    <!-- Action / Favoritensuche Buttons -->
+
+                    ${(sim.multiMode && sim.multiMode !== '1v1') || sim.hero2 || sim.enemy2 ? `
+                    <!-- Multi-fight info banner -->
+                    <section class="px-4 py-2 bg-[#181717] border-b border-primary/20 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant/60">Modus</span>
+                            <span class="text-[10px] font-headline text-primary font-bold">${sim.multiMode || '1v1'}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[9px] uppercase tracking-wider text-on-surface-variant/60">Zug:</span>
+                            <span class="px-2 py-0.5 rounded-sm text-[10px] font-bold uppercase
+                                ${sim.turn === 'hero' ? 'bg-primary/30 text-primary' :
+                                  sim.turn === 'hero2' ? 'bg-secondary/30 text-secondary' :
+                                  sim.turn === 'enemy2' ? 'bg-orange-500/30 text-orange-300' : 'bg-error/30 text-error'}">
+                                ${sim.turn === 'hero' ? '⚔️ ' + sim.hero.name :
+                                  sim.turn === 'hero2' ? '🛡️ ' + (sim.hero2 ? sim.hero2.name : 'Held 2') :
+                                  sim.turn === 'enemy2' ? '💀 ' + (sim.enemy2 ? sim.enemy2.name : 'Kreatur 2') :
+                                  '👹 ' + sim.enemy.name}
+                            </span>
+                        </div>
+                        ${sim.isRemoteView ? '<span class="text-[9px] text-secondary font-bold animate-pulse">FERNKAMPF-SICHT</span>' : ''}
+                    </section>
+                    <!-- Combatant HP Summary -->
+                    <section class="px-4 py-2 bg-[#0f0f0f] border-b border-outline-variant/10 flex gap-2 flex-wrap">
+                        ${[
+                            { label: sim.hero.name, hp: sim.hero.hp, maxHp: sim.hero.maxHp, color: 'bg-primary' },
+                            sim.hero2 ? { label: sim.hero2.name, hp: sim.hero2.hp, maxHp: sim.hero2.maxHp, color: 'bg-secondary' } : null,
+                            { label: sim.enemy.name, hp: sim.enemy.hp, maxHp: sim.enemy.maxHp, color: 'bg-error' },
+                            sim.enemy2 ? { label: sim.enemy2.name, hp: sim.enemy2.hp, maxHp: sim.enemy2.maxHp, color: 'bg-orange-500' } : null
+                        ].filter(Boolean).map(c => `
+                            <div class="flex-1 min-w-[80px]">
+                                <div class="flex justify-between text-[8px] mb-0.5">
+                                    <span class="text-on-surface-variant truncate max-w-[60px]">${c.label}</span>
+                                    <span class="font-mono font-bold text-on-surface">${c.hp}/${c.maxHp}</span>
+                                </div>
+                                <div class="h-1 bg-surface-container rounded-full overflow-hidden">
+                                    <div class="${c.color} h-full rounded-full transition-all" style="width:${Math.max(0,Math.min(100,Math.round((c.hp/c.maxHp)*100)))}%"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </section>
+                    ` : ''}
+
+
                     ${sim.isAdmin ? `
                         <!-- Admin: Combined Style Selector, Favoritensuche and beautiful inline Analysis Console -->
                         <section class="p-4 bg-surface space-y-4">
@@ -4989,27 +5398,27 @@ const templates = {
                         <!-- Normal Mode: Manual Turn Bento Grid -->
                         <section class="p-4 grid grid-cols-2 gap-2.5 bg-surface">
                             <button onclick="startCombatMovement()" 
-                                    ${sim.turn !== 'hero' || sim.hero.remainingMov === 0 ? 'disabled' : ''}
+                                    ${!isMyTurn || activeHero.remainingMov === 0 ? 'disabled' : ''}
                                     class="bento-action-button bg-surface-container-high h-14 font-headline tracking-widest text-primary text-xs uppercase flex items-center justify-center font-bold">
                                 BEWEGEN
                             </button>
                             <button onclick="executeCombatRangedAttack()" 
-                                    ${sim.turn !== 'hero' || !canRanged ? 'disabled' : ''}
+                                    ${!isMyTurn || !canRanged ? 'disabled' : ''}
                                     class="bento-action-button bg-surface-container-high h-14 font-headline tracking-widest text-primary text-xs uppercase flex items-center justify-center font-bold">
                                 ANGRIFF (FK)
                             </button>
                             <button onclick="executeCombatMeleeAttack()" 
-                                    ${sim.turn !== 'hero' || !canMelee ? 'disabled' : ''}
+                                    ${!isMyTurn || !canMelee ? 'disabled' : ''}
                                     class="bento-action-button bg-surface-container-high h-14 font-headline tracking-widest text-primary text-xs uppercase flex items-center justify-center font-bold">
                                 ANGRIFF (NK)
                             </button>
-                            <button onclick="if(state.combatSimulator.turn === 'hero') { window.endHeroTurn(); } executeEnemyTurn();" 
-                                    ${(sim.turn !== 'hero' && sim.turn !== 'enemy') ? 'disabled' : ''}
-                                    class="bento-action-button bg-surface-container-high h-14 font-headline tracking-widest text-primary text-xs uppercase flex items-center justify-center font-bold ${sim.turn === 'enemy' ? 'animate-flash-green' : ''}">
-                                GEGNERZUG
+                            <button onclick="if(state.combatSimulator.turn === 'hero' || state.combatSimulator.turn === 'hero2') { window.endHeroTurn(); } else { executeEnemyTurn(); }" 
+                                    ${(sim.turn !== 'hero' && sim.turn !== 'hero2' && sim.turn !== 'enemy' && sim.turn !== 'enemy2') ? 'disabled' : ''}
+                                    class="bento-action-button bg-surface-container-high h-14 font-headline tracking-widest text-primary text-xs uppercase flex items-center justify-center font-bold ${(sim.turn === 'enemy' || sim.turn === 'enemy2') ? 'animate-flash-green' : ''}">
+                                ${(sim.turn === 'hero' || sim.turn === 'hero2') ? 'ZUG BEENDEN' : 'GEGNERZUG'}
                             </button>
                         </section>
-
+ 
                         <!-- Zauber wirken / wechseln Buttons -->
                         <section class="px-4 py-2 bg-surface flex flex-col gap-2">
                             <button onclick="executeCastSpell()"
@@ -5023,7 +5432,7 @@ const templates = {
                         <!-- Weapon Swap / Spell Swap Buttons -->
                         <section class="px-4 py-2 bg-surface flex flex-col gap-2">
                             <button onclick="executeCombatWeaponSwap()" 
-                                    ${sim.turn !== 'hero' || sim.hero.weapons.length < 2 || sim.hero.remainingMov < 1 ? 'disabled' : ''}
+                                    ${!isMyTurn || !activeHero.weapons || activeHero.weapons.length < 2 || activeHero.remainingMov < 1 ? 'disabled' : ''}
                                     class="bento-action-button bg-primary/10 border border-primary/30 w-full h-10 font-headline tracking-widest text-primary text-[10px] uppercase flex items-center justify-center font-bold">
                                 WAFFENWECHSEL (-1 BWG)
                             </button>
@@ -6453,24 +6862,52 @@ window.syncAuraHp = function() {
     }
 };
 
+window.advanceCombatTurn = function() {
+    const sim = state.combatSimulator;
+    if (!sim) return;
+    const order = sim.turnOrder || ['hero', 'enemy'];
+    sim.turnIndex = ((sim.turnIndex || 0) + 1) % order.length;
+    sim.turn = order[sim.turnIndex];
+    sim.mode = 'idle';
+    sim.actionDone = false;
+    // Reset movement for the new actor
+    if (sim.turn === 'hero') { sim.hero.remainingMov = sim.hero.mov; sim.hero.startPos = { ...sim.hero.pos }; }
+    if (sim.turn === 'hero2' && sim.hero2) { sim.hero2.remainingMov = sim.hero2.mov; sim.hero2.startPos = { ...sim.hero2.pos }; }
+    sim.log.unshift(`🎲 Zug: ${sim.turn === 'hero' ? sim.hero.name : sim.turn === 'hero2' ? (sim.hero2 ? sim.hero2.name : 'Held 2') : sim.turn === 'enemy2' ? (sim.enemy2 ? sim.enemy2.name : 'Kreatur 2') : sim.enemy.name} ist an der Reihe.`);
+    // Broadcast to 2nd device
+    if (typeof window.broadcastCombatSync === 'function') window.broadcastCombatSync();
+    render();
+};
+
 window.endHeroTurn = function() {
     const sim = state.combatSimulator;
     if (!sim) return;
     
+    const activeHero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    
     // Magic Circle 3 & 5 mana regeneration
-    const magieLvl = sim.hero.talents?.magie || 0;
-    if (magieLvl >= 3 && sim.hero.remainingMov > 0) {
+    const magieLvl = activeHero.talents?.magie || 0;
+    if (magieLvl >= 3 && activeHero.remainingMov > 0) {
         let regenPerPoint = 1;
         if (magieLvl >= 5) regenPerPoint = 3;
-        const regen = sim.hero.remainingMov * regenPerPoint;
-        const oldMana = sim.hero.mana || 0;
-        sim.hero.mana = Math.min(sim.hero.maxMana, oldMana + regen);
-        state.hero.manaCurrent = Math.min(window.getTotalStat('mana'), (state.hero.manaCurrent || 0) + regen);
-        sim.log.unshift(`🔮 Kreis ${magieLvl} Passiv: ${sim.hero.mana - oldMana} Mana regeneriert (${sim.hero.remainingMov} ungenutzte BWG).`);
+        const regen = activeHero.remainingMov * regenPerPoint;
+        const oldMana = activeHero.mana || 0;
+        activeHero.mana = Math.min(activeHero.maxMana || 0, oldMana + regen);
+        
+        // If it's the main hero, also update state.hero
+        if (activeHero === sim.hero) {
+            state.hero.manaCurrent = Math.min(window.getTotalStat('mana'), (state.hero.manaCurrent || 0) + regen);
+        }
+        sim.log.unshift(`🔮 Kreis ${magieLvl} Passiv: ${activeHero.name} hat ${activeHero.mana - oldMana} Mana regeneriert (${activeHero.remainingMov} ungenutzte BWG).`);
     }
-    
-    sim.turn = 'enemy';
-    render();
+
+    // Use turn order if available
+    if (sim.turnOrder && sim.turnOrder.length > 1) {
+        window.advanceCombatTurn();
+    } else {
+        sim.turn = 'enemy';
+        render();
+    }
 };
 
 window.applySpellPushEffect = function(spell, chargeLevel = 1) {
@@ -6967,91 +7404,163 @@ window.executeCastSpell = function() {
 
 window._fireInstantSpell = function(spell) {
     const sim = state.combatSimulator;
-    const kreis = sim.hero.talents.magie || 0;
+    if (!sim) return;
+    const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    const kreis = hero.talents.magie || 0;
+    
+    // Determine target enemy (closest of the two)
+    let enemy = sim.enemy;
+    if (sim.enemy2 && sim.enemy2.hp > 0) {
+        if (sim.enemy.hp <= 0) {
+            enemy = sim.enemy2;
+        } else {
+            const dist1 = Math.abs(hero.pos.r - sim.enemy.pos.r) + Math.abs(hero.pos.c - sim.enemy.pos.c);
+            const dist2 = Math.abs(hero.pos.r - sim.enemy2.pos.r) + Math.abs(hero.pos.c - sim.enemy2.pos.c);
+            if (dist2 < dist1) {
+                enemy = sim.enemy2;
+            }
+        }
+    }
     
     let cost = spell.reqMana || 1;
     if (kreis >= 2) cost = Math.max(1, cost - 1);
     
-    sim.hero.mana = Math.max(0, (sim.hero.mana || 0) - cost);
-    state.hero.manaCurrent = Math.max(0, (state.hero.manaCurrent || 0) - cost);
+    hero.mana = Math.max(0, (hero.mana || 0) - cost);
+    if (hero === sim.hero) {
+        state.hero.manaCurrent = Math.max(0, (state.hero.manaCurrent || 0) - cost);
+    }
     if (spell.art === 'Spruchrolle') {
-        [(state.hero.equipment.spells || []), (sim.hero.spells || [])].forEach(arr => { const s = arr.find(x => x.name === spell.name); if (s) s.currentCharges = Math.max(0, (s.currentCharges || 1) - 1); });
+        const spellsArr = (hero === sim.hero && state.hero.equipment) ? (state.hero.equipment.spells || []) : [];
+        [spellsArr, (hero.spells || [])].forEach(arr => { const s = arr.find(x => x.name === spell.name); if (s) s.currentCharges = Math.max(0, (s.currentCharges || 1) - 1); });
     }
     const isFire = spell.element === 'Feuer' || spell.name.toLowerCase().includes('feuer');
-    const isInsect = sim.enemy.type === 'insekt' || (sim.originalEnemy && sim.originalEnemy.type === 'insekt');
+    const isInsect = enemy.type === 'insekt' || (sim.originalEnemy && sim.originalEnemy.type === 'insekt');
     const bonusDmg = (isFire && isInsect) ? 2 : 0;
     
     let rawDmg = (spell.damage || 0) + bonusDmg;
     if (kreis >= 1) rawDmg += 1;
     
-    const mArm = sim.enemy.magicArm || 0;
+    const mArm = enemy.magicArm || 0;
     const dmg = Math.max(0, rawDmg - mArm);
-    sim.enemy.hp = Math.max(0, sim.enemy.hp - dmg);
+    enemy.hp = Math.max(0, enemy.hp - dmg);
     const logBonusStr = bonusDmg > 0 ? ` (+2 Feuerschaden gegen Insekt)` : '';
-    sim.log.unshift(`\u2728 ${spell.name}: ${rawDmg}${logBonusStr}-${mArm}=${dmg} Schaden! Mana -${cost} (noch: ${sim.hero.mana})`);
+    const logMsg = `\u2728 ${spell.name}: ${rawDmg}${logBonusStr}-${mArm}=${dmg} Schaden! Mana -${cost} (noch: ${hero.mana})`;
+    sim.log.unshift(logMsg);
     if (spell.effect && spell.effect !== 'Keine' && spell.effect !== 'Keiner') sim.log.unshift(`\u{1F52E} ${spell.effect}`);
     
     if (window.applySpellPushEffect) window.applySpellPushEffect(spell);
     
-    if (sim.enemy.hp <= 0) { sim.endScreen = 'WON'; if (!sim.isAdmin) sim.rewards = window.calculateCombatRewards(sim.originalEnemy); } else { sim.turn = 'enemy'; }
+    const bothEnemiesDead = sim.enemy.hp <= 0 && (!sim.enemy2 || sim.enemy2.hp <= 0);
+    if (bothEnemiesDead) {
+        sim.endScreen = 'WON';
+        if (!sim.isAdmin) sim.rewards = window.calculateCombatRewards(sim.originalEnemy, sim.enemy2);
+    } else {
+        if (hero.isRemote && window.SyncManager && window.SyncManager.isConnected) {
+            window.SyncManager.broadcastCombatMove({ hero2remainingMov: 0, hero2hp: hero.hp, logEntry: logMsg, endTurn: true });
+        } else {
+            window.advanceCombatTurn();
+        }
+    }
     render();
 };
 
 window._fireChargingSpell = function(level) {
     const sim = state.combatSimulator;
-    const spell = sim.chargingSpell || (sim.hero.spells ? sim.hero.spells[sim.hero.primarySpell || 0] : null);
+    if (!sim) return;
+    const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    const spell = sim.chargingSpell || (hero.spells ? hero.spells[hero.primarySpell || 0] : null);
     if (!spell) return;
-    const kreis = sim.hero.talents.magie || 0;
+    
+    // Determine target enemy (closest of the two)
+    let enemy = sim.enemy;
+    if (sim.enemy2 && sim.enemy2.hp > 0) {
+        if (sim.enemy.hp <= 0) {
+            enemy = sim.enemy2;
+        } else {
+            const dist1 = Math.abs(hero.pos.r - sim.enemy.pos.r) + Math.abs(hero.pos.c - sim.enemy.pos.c);
+            const dist2 = Math.abs(hero.pos.r - sim.enemy2.pos.r) + Math.abs(hero.pos.c - sim.enemy2.pos.c);
+            if (dist2 < dist1) {
+                enemy = sim.enemy2;
+            }
+        }
+    }
+    
+    const kreis = hero.talents.magie || 0;
     const min = spell.reqMana || 1; const max = spell.maxMana || min; const maxLvl = Math.max(1, Math.floor(max / min));
     const lvl = Math.max(1, Math.min(level, maxLvl));
     
     let cost = min * lvl;
     if (kreis >= 2) cost = Math.max(1, cost - 1);
     
-    if ((sim.hero.mana || 0) < cost) { sim.log.unshift(`Nicht gen\u00fcgend Mana! Ben\u00f6tigt: ${cost}`); sim.chargingSpell = null; render(); return; }
-    sim.hero.mana = Math.max(0, sim.hero.mana - cost);
-    state.hero.manaCurrent = Math.max(0, (state.hero.manaCurrent || 0) - cost);
-    if (spell.art === 'Spruchrolle') { [(state.hero.equipment.spells || []), (sim.hero.spells || [])].forEach(arr => { const s = arr.find(x => x.name === spell.name); if (s) s.currentCharges = Math.max(0, (s.currentCharges || 1) - 1); }); }
+    if ((hero.mana || 0) < cost) { sim.log.unshift(`Nicht gen\u00fcgend Mana! Ben\u00f6tigt: ${cost}`); sim.chargingSpell = null; render(); return; }
+    hero.mana = Math.max(0, hero.mana - cost);
+    if (hero === sim.hero) {
+        state.hero.manaCurrent = Math.max(0, (state.hero.manaCurrent || 0) - cost);
+    }
+    if (spell.art === 'Spruchrolle') {
+        const spellsArr = (hero === sim.hero && state.hero.equipment) ? (state.hero.equipment.spells || []) : [];
+        [spellsArr, (hero.spells || [])].forEach(arr => { const s = arr.find(x => x.name === spell.name); if (s) s.currentCharges = Math.max(0, (s.currentCharges || 1) - 1); });
+    }
     const isFire = spell.element === 'Feuer' || spell.name.toLowerCase().includes('feuer');
-    const isInsect = sim.enemy.type === 'insekt' || (sim.originalEnemy && sim.originalEnemy.type === 'insekt');
+    const isInsect = enemy.type === 'insekt' || (sim.originalEnemy && sim.originalEnemy.type === 'insekt');
     const bonusDmg = (isFire && isInsect) ? 2 : 0;
     
     let raw = (spell.damage || 0) * lvl + bonusDmg;
     if (kreis >= 1) raw += 1;
     if (kreis >= 4) raw += cost;
     
-    const mArm = sim.enemy.magicArm || 0; const dmg = Math.max(0, raw - mArm);
-    sim.enemy.hp = Math.max(0, sim.enemy.hp - dmg); sim.chargingSpell = null;
+    const mArm = enemy.magicArm || 0; const dmg = Math.max(0, raw - mArm);
+    enemy.hp = Math.max(0, enemy.hp - dmg); sim.chargingSpell = null;
     const logBonusStr = bonusDmg > 0 ? ` (+2 Feuerschaden gegen Insekt)` : '';
-    sim.log.unshift(`\u26a1 ${spell.name} Stufe ${lvl}: ${spell.damage}\u00d7${lvl}${logBonusStr}=${raw}-${mArm}=${dmg} Schaden! Mana -${cost}`);
+    const logMsg = `\u26a1 ${spell.name} Stufe ${lvl}: ${spell.damage}\u00d7${lvl}${logBonusStr}=${raw}-${mArm}=${dmg} Schaden! Mana -${cost}`;
+    sim.log.unshift(logMsg);
     if (spell.effect && spell.effect !== 'Keine' && spell.effect !== 'Keiner') sim.log.unshift(`\u{1F52E} ${spell.effect}`);
     
     if (window.applySpellPushEffect) window.applySpellPushEffect(spell, lvl);
     
-    if (sim.enemy.hp <= 0) { sim.endScreen = 'WON'; if (!sim.isAdmin) sim.rewards = window.calculateCombatRewards(sim.originalEnemy); } else { sim.turn = 'enemy'; }
+    const bothEnemiesDead = sim.enemy.hp <= 0 && (!sim.enemy2 || sim.enemy2.hp <= 0);
+    if (bothEnemiesDead) {
+        sim.endScreen = 'WON';
+        if (!sim.isAdmin) sim.rewards = window.calculateCombatRewards(sim.originalEnemy, sim.enemy2);
+    } else {
+        if (hero.isRemote && window.SyncManager && window.SyncManager.isConnected) {
+            window.SyncManager.broadcastCombatMove({ hero2remainingMov: 0, hero2hp: hero.hp, logEntry: logMsg, endTurn: true });
+        } else {
+            window.advanceCombatTurn();
+        }
+    }
     render();
 };
 
 window._continueCharging = function() {
     const sim = state.combatSimulator;
-    const spell = sim.hero.spells ? sim.hero.spells[sim.hero.primarySpell || 0] : null;
+    if (!sim) return;
+    const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
+    const spell = hero.spells ? hero.spells[hero.primarySpell || 0] : null;
     if (!spell) return;
     sim.chargingSpell = { ...spell };
     sim.log.unshift(`\u23f3 "${spell.name}" wird aufgeladen... n\u00e4chste Runde Stufe w\u00e4hlen.`);
-    sim.turn = 'enemy'; render();
+    
+    if (hero.isRemote && window.SyncManager && window.SyncManager.isConnected) {
+        window.SyncManager.broadcastCombatMove({ logEntry: 'Zauber wird aufgeladen', endTurn: true });
+    } else {
+        window.advanceCombatTurn();
+    }
+    render();
 };
 
 window.showChargingLevelPopup = function() {
     const sim = state.combatSimulator; const spell = sim.chargingSpell; if (!spell) return;
+    const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
     const min = spell.reqMana || 1; const max = spell.maxMana || min;
-    const kreis = sim.hero.talents.magie || 0;
+    const kreis = hero.talents.magie || 0;
     const maxSpellLvl = Math.max(1, Math.floor(max / min));
     
     let maxAffordableLvl = 0;
     for (let l = 1; l <= maxSpellLvl; l++) {
         let c = min * l;
         if (kreis >= 2) c = Math.max(1, c - 1);
-        if ((sim.hero.mana || 0) >= c) {
+        if ((hero.mana || 0) >= c) {
             maxAffordableLvl = l;
         }
     }
@@ -7115,47 +7624,64 @@ const _XP_TABLE = {
     '3_1': 60, '3_2': 70, '3_3': 80
 };
 
-window.calculateCombatRewards = function(enemy) {
+window.calculateCombatRewards = function(enemy, enemy2 = null) {
     const rewards = { xp: 0, items: [] };
+    if (!enemy) return rewards;
 
-    // XP from table
+    // First enemy XP
     const chap = enemy.chapter || 1;
     const cls  = enemy.class  || 1;
-    rewards.xp = _XP_TABLE[`${chap}_${cls}`] || 20;
+    let totalXp = _XP_TABLE[`${chap}_${cls}`] || 20;
 
-    // Allesfresser → random food card
-    if (enemy.type === 'allesfresser') {
-        const pool = (typeof itemPools !== 'undefined' && itemPools.nahrung) ? itemPools.nahrung : [];
-        if (pool.length > 0) {
-            const food = pool[Math.floor(Math.random() * pool.length)];
-            rewards.items.push({ ...food, type: 'Konsum' });
-        }
+    // Resolve real second enemy
+    const realEnemy2 = (enemy2 && state.combatSimulator && state.combatSimulator.originalEnemy2) ? state.combatSimulator.originalEnemy2 : enemy2;
+
+    // Second enemy XP
+    if (realEnemy2) {
+        const chap2 = realEnemy2.chapter || 1;
+        const cls2  = realEnemy2.class  || 1;
+        totalXp += _XP_TABLE[`${chap2}_${cls2}`] || 20;
     }
+    rewards.xp = totalXp;
 
-    // Enemy with loot entries → draw from specified pool or fixed item
-    if (enemy.loot && Array.isArray(enemy.loot)) {
-        enemy.loot.forEach(lootSpec => {
-            if (lootSpec.type === 'fixed' && typeof itemPools !== 'undefined') {
-                // Fixed named item – search all item pools
-                const allItems = [
-                    ...(itemPools.waffen || []),
-                    ...(itemPools.ausruestung || []),
-                    ...(itemPools.nahrung || []),
-                    ...(itemPools.ruestung || []),
-                    ...(itemPools.magie || [])
-                ];
-                const found = allItems.find(i => i.name === lootSpec.name);
-                if (found) rewards.items.push({ ...found });
-            } else if (lootSpec.type === 'weapon' && typeof itemPools !== 'undefined') {
-                const pool = itemPools[lootSpec.pool] || itemPools.waffen || [];
-                const eligibleHero = state.hero.chapter || 1;
-                const filtered = pool.filter(i => !i.chapter || parseInt(i.chapter) <= eligibleHero);
-                if (filtered.length > 0) {
-                    const w = filtered[Math.floor(Math.random() * filtered.length)];
-                    rewards.items.push({ ...w });
-                }
+    const parseLoot = (e) => {
+        const items = [];
+        if (e.type === 'allesfresser') {
+            const pool = (typeof itemPools !== 'undefined' && itemPools.nahrung) ? itemPools.nahrung : [];
+            if (pool.length > 0) {
+                const food = pool[Math.floor(Math.random() * pool.length)];
+                items.push({ ...food, type: 'Konsum' });
             }
-        });
+        }
+        if (e.loot && Array.isArray(e.loot)) {
+            e.loot.forEach(lootSpec => {
+                if (lootSpec.type === 'fixed' && typeof itemPools !== 'undefined') {
+                    const allItems = [
+                        ...(itemPools.waffen || []),
+                        ...(itemPools.ausruestung || []),
+                        ...(itemPools.nahrung || []),
+                        ...(itemPools.ruestung || []),
+                        ...(itemPools.magie || [])
+                    ];
+                    const found = allItems.find(i => i.name === lootSpec.name);
+                    if (found) items.push({ ...found });
+                } else if (lootSpec.type === 'weapon' && typeof itemPools !== 'undefined') {
+                    const pool = itemPools[lootSpec.pool] || itemPools.waffen || [];
+                    const eligibleHero = state.hero.chapter || 1;
+                    const filtered = pool.filter(i => !i.chapter || parseInt(i.chapter) <= eligibleHero);
+                    if (filtered.length > 0) {
+                        const w = filtered[Math.floor(Math.random() * filtered.length)];
+                        items.push({ ...w });
+                    }
+                }
+            });
+        }
+        return items;
+    };
+
+    rewards.items = parseLoot(enemy);
+    if (realEnemy2) {
+        rewards.items = rewards.items.concat(parseLoot(realEnemy2));
     }
 
     return rewards;
@@ -7169,20 +7695,36 @@ window.collectCombatRewards = function() {
     if (sim.rewards) {
         const hero = state.hero;
 
-        // Apply XP
-        if (sim.rewards.xp > 0) {
-            window.gainXp(sim.rewards.xp);
+        // Apply XP (shared equally and rounded down to the nearest multiple of 10)
+        const isMultiHero = sim.multiMode === '2v1' || sim.multiMode === '2v2';
+        const shareCount = isMultiHero ? 2 : 1;
+        const sharedXp = Math.floor((sim.rewards.xp / shareCount) / 10) * 10;
+        
+        if (sharedXp > 0) {
+            window.gainXp(sharedXp);
         }
 
-        // Add items to inventory
-        (sim.rewards.items || []).forEach(item => {
-            const existing = hero.inventory.find(i => i.name === item.name);
-            if (existing) {
-                existing.count = (existing.count || 1) + 1;
-            } else {
-                hero.inventory.push({ ...item, count: 1 });
+        // Add items to inventory if they haven't been looted yet
+        const itemsToLoot = sim.rewards.items || [];
+        if (itemsToLoot.length > 0) {
+            itemsToLoot.forEach(item => {
+                const existing = hero.inventory.find(i => i.name === item.name);
+                if (existing) {
+                    existing.count = (existing.count || 1) + 1;
+                } else {
+                    hero.inventory.push({ ...item, count: 1 });
+                }
+            });
+            // Clear the items so the other player sees them as looted
+            sim.rewards.items = [];
+            
+            // Sync the looted state
+            if (sim.isRemoteView && window.SyncManager && window.SyncManager.isConnected) {
+                window.SyncManager.broadcastCombatMove({ lootedItems: true });
+            } else if (typeof window.broadcastCombatSync === 'function') {
+                window.broadcastCombatSync();
             }
-        });
+        }
     }
 
     window.exitCombatSimulator();
