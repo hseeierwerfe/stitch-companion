@@ -2330,7 +2330,19 @@ window.executeCombatMeleeAttack = function(targetKey = null) {
     if (!sim) return;
     const hero = (sim.turn === 'hero2' && sim.hero2) ? sim.hero2 : sim.hero;
     
-    if (!targetKey && sim.enemy2 && sim.enemy2.hp > 0 && sim.enemy.hp > 0) {
+    const activeWeapon = hero.weapons && hero.weapons.length > 0 ? hero.weapons[0] : null;
+    let maxMeleeDist = 1;
+    if (activeWeapon && (activeWeapon.type === '2H' || activeWeapon.type.toLowerCase().includes('zweihand')) && (hero.talents?.zweihand || 0) >= 1) {
+        maxMeleeDist = 2;
+    }
+    
+    const dist1 = Math.abs(hero.pos.r - sim.enemy.pos.r) + Math.abs(hero.pos.c - sim.enemy.pos.c);
+    const dist2 = sim.enemy2 ? (Math.abs(hero.pos.r - sim.enemy2.pos.r) + Math.abs(hero.pos.c - sim.enemy2.pos.c)) : 999;
+    
+    const canHit1 = sim.enemy.hp > 0 && dist1 <= maxMeleeDist;
+    const canHit2 = sim.enemy2 && sim.enemy2.hp > 0 && dist2 <= maxMeleeDist;
+    
+    if (!targetKey && canHit1 && canHit2) {
         const ex = document.getElementById('target-selection-popup'); if (ex) ex.remove();
         const pop = document.createElement('div');
         pop.id = 'target-selection-popup';
@@ -2348,25 +2360,23 @@ window.executeCombatMeleeAttack = function(targetKey = null) {
         return;
     }
     
-    // Determine target enemy
     let enemy = sim.enemy;
     if (targetKey === 'enemy2') {
         enemy = sim.enemy2;
     } else if (targetKey === 'enemy1') {
         enemy = sim.enemy;
-    } else if (sim.enemy2 && sim.enemy2.hp > 0) {
-        if (sim.enemy.hp <= 0) {
-            enemy = sim.enemy2;
+    } else {
+        if (canHit1 && !canHit2) enemy = sim.enemy;
+        else if (!canHit1 && canHit2) enemy = sim.enemy2;
+        else if (canHit1 && canHit2) {
+            enemy = dist1 <= dist2 ? sim.enemy : sim.enemy2;
         } else {
-            const dist1 = Math.abs(hero.pos.r - sim.enemy.pos.r) + Math.abs(hero.pos.c - sim.enemy.pos.c);
-            const dist2 = Math.abs(hero.pos.r - sim.enemy2.pos.r) + Math.abs(hero.pos.c - sim.enemy2.pos.c);
-            if (dist2 < dist1) {
-                enemy = sim.enemy2;
-            }
+            sim.log.unshift("Kein Gegner in Nahkampfreichweite!");
+            render();
+            return;
         }
     }
     
-    const activeWeapon = hero.weapons[0];
     if (!activeWeapon) return;
     
     const is2H = activeWeapon.type.toLowerCase().includes('zweihand') || activeWeapon.type.toLowerCase().includes('2h');
