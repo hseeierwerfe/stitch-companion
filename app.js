@@ -5137,11 +5137,11 @@ const templates = {
                 }
                 
                 if (isHero) {
-                    cellContent = '<span class="material-symbols-outlined text-primary scale-125">person</span>';
-                    cellClass += ' bg-primary/20';
+                    cellContent = '<img src="bilder_karten/hero_model.png" class="pointer-events-none" style="width: 200%; min-width: 40px; height: auto; position: absolute; bottom: 0px; z-index: 20; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 5px rgba(233,193,118,0.5));">';
+                    cellClass += ' bg-primary/20 hero-cell';
                 } else if (isHero2) {
-                    cellContent = '<span class="material-symbols-outlined text-secondary scale-125">person</span>';
-                    cellClass += ' bg-secondary/20';
+                    cellContent = '<img src="bilder_karten/hero_model.png" class="pointer-events-none" style="width: 200%; min-width: 40px; height: auto; position: absolute; bottom: 0px; z-index: 20; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 5px rgba(200,200,200,0.5));">';
+                    cellClass += ' bg-secondary/20 hero-cell';
                 } else if (isEnemy) {
                     const _enemyImg = getEnemyImage(sim.enemy.name);
                     if (_enemyImg) {
@@ -5180,8 +5180,8 @@ const templates = {
 
         return `
             <style>
-                .grid-battlefield { display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); width: 100%; max-width: 390px; aspect-ratio: 1 / 1; border: 2px solid #e9c176; background-color: #0e0e0e; position: relative; margin: 0 auto; }
-                .grid-cell { border: 1px solid rgba(233, 193, 118, 0.1); display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', serif; font-weight: 800; color: #e9c176; font-size: 0.8rem; cursor: pointer; width: 100%; height: 100%; overflow: visible; }
+                .grid-battlefield { display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); width: 100%; max-width: 390px; aspect-ratio: 1 / 1; border: 2px solid #e9c176; background-color: #0e0e0e; background-image: url('bilder_karten/battlefield_bg.png'); background-size: cover; background-position: center; position: relative; margin: 0 auto; }
+                .grid-cell { border: 1px solid rgba(233, 193, 118, 0.1); display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', serif; font-weight: 800; color: #e9c176; font-size: 0.8rem; cursor: pointer; width: 100%; height: 100%; overflow: visible; position: relative; }
                 .grid-cell.highlight { background-color: rgba(233, 193, 118, 0.2); }
                 .bento-action-button { transition: all 0.2s ease-out; border: 1px solid rgba(233, 193, 118, 0.15); }
                 .bento-action-button:disabled { opacity: 0.3; cursor: not-allowed; background-color: #1a1a1a; }
@@ -5191,6 +5191,7 @@ const templates = {
                 .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b463c; }
 
                 /* ── 3D Enemy Miniature Mount ──────────────────────────── */
+                .hero-cell { overflow: visible !important; position: relative; z-index: 10; }
                 .enemy-cell { overflow: visible !important; position: relative; z-index: 5; }
                 .enemy-3d-mount {
                     position: absolute;

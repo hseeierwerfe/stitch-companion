@@ -1,0 +1,771 @@
+﻿Kommen wir zu den quests. Zunächst werden im folgenden questgegenstände definiert. Diese werden ausschließlich im rahmen von quests verteilt und sollen weder gefunden werden können, noch gekauft werden können! Im Inventar soll es für diese Gegenstände eineeigene Abteilung geben, die sich Questgegenstände nennt. Hinter der Beschreibung der gegenstände folgt immer ein pfad zu einem bild, mit dem die gegenstände bitte verknüpft werden sollen. Hier ist die Liste:
+Gefälschter Siegelring: Typ: Artefakt, Wert: 50,zu verknüpfendes Bild: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\gefälscher siegelring.jpg"
+Schartige Buddlerzucht:Wert 30, Klasse 3, Stil: Nahkampf, Art: Einhandwaffe, benötigte Stärke 2, Schaden 3, Typ: Klingenwaffe, Fähigkeit: Keine: zu verknüpfendes Bild:"C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\schartige buddlerzucht.jpg"
+
+
+Schläferbrosche: Wert: 50, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\schläferbrosche.jpg"
+Ration Traumruf: Wert: 100,Art: Konsum, Effekt: du erhältst10 zusätzliches maximales Mana, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\rationtraumruf.jpg"
+Reste Ration Traumruf: Wert: 60, Art: Konsum, Effekt: Du erhältst 6 zusätzliches maximales Mana, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\angebrochene Ration.png"
+Minecrwalerzangen: Wert 10, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\crawlerzangen.jpg"
+Ring der Präsenz: Wert 50, Typ: Artefakt, Effekt: +Aura: Du spürst eine Präsenz und wenn der Held, der diesen Ring anlegt, Ludwig der Präsente ist, der Effekt überwältigende Präsenz! Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\ring der Präsenz.jpg"
+Pachos Finger: Wert: 0, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\pachosfinger.jpg"
+Diegos Paket: Wert: 300 Erz, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\diegospaket.jpg"
+Nyras Spruchrolle: Wert 20,Art Spruchrolle, Ladung: 1, Stil: Sofort, Eigenschaft: Schläfer; benötigtes Mana: 5, Schaden: 0, Effekt: Schlaf 3, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\BilderKarten\Questkarten\nyras spruchrolle.jpg"
+Nyras Karte: Wert: 50, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\nyraskarte.jpg"
+Nyras Bild: Wert: 200, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\nyras bild.jpg"
+Jorus Rock: Wert: 10, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\jorus rock.jpg"
+Jorus Traumruf:Wert: 20, Art: Konsum, Effekt: Du erhältst 3 zusätzliches maximales Mana, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\jorus traumruf.jpg"
+Jorus Zettel: Wert: 200, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\jorus zettel.jpg"
+Schläferpilz: Wert: 20, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\schläferpilz.jpg"
+Amulett des freien Rückens:Wert 100, Art: Artefakt, Effekt: Aura +1 Rüstung, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\amulettdes PASSAUFDEINENRÜCKENAUF.jpg"
+
+
+Siegelring der Wassermagier: Wert: 100, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\siegelring.jpg"
+Lares Filzläuse: Wert: 1, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\laresfilzläuse.jpg"
+Gomez Truhe: Wert:0, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\gomez truhe.jpg"
+Prunkvoller Helm: Wert: 200,Art: Artefakt, Effekt: Aura +2 Rüstung, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\prunkvoller helm.jpg"
+Teleport Tempelplatz: Wert: 30, Art Spruchrolle, Ladung: 1, Stil: Sofort, Eigenschaft: Schläfer; benötigtes Mana: 5, Schaden: 0, Effekt: Du gelangst sofort zum Tempelvorplatz,Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\telesumpf.jpg"
+Verwandlung Fleischwanze: Wert: 30, Art Spruchrolle, Ladung: 1, Stil: Sofort, Eigenschaft: Verwandlung; benötigtes Mana: 5, Schaden: 0, Effekt: Du verwandelst dich in eine Fleischwanze, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\verwandlung fleischwanze.jpg"
+Extrakt reiner Magie:Wert: 100,Art: Konsum, Effekt: du erhältst5 zusätzliches maximales Mana, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\Extrakt reiner Magie.jpg"
+Scavengerkopf: Wert: 10, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\scavengerkopf.jpg"
+Scavengerhelm: Wert: 50,Art: Artefakt, Effekt: Aura +1 Rüstung, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\scavengerhelm.jpg"
+Xardas Botschaft: Wert: 0, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\Xardas Botschaft.jpg"
+Drax Bogen: Wert 40, Klasse 2, Stil: Fernkampf, Art: Bogen, benötigtes Geschick 2, Schaden 3, Fähigkeit: + 1 Schaden gegen Allesfresser, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\drax bogen.jpg"
+Troll beschwören: Wert: 50, Art Spruchrolle, Ladung: 1, Stil: Sofort, Eigenschaft: Beschwörung; benötigtes Mana: 10, Schaden: 0, Effekt: Ein Troll erscheint, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\trollbeschwören.jpg"
+Oruns Keule: Wert 10, Klasse 3, Stil: Nahkampf, Art: Einhandwaffe, benötigte Stärke 1, Schaden 3, Typ: stumpfe Waffe, Fähigkeit: betäubt Blutfliegen bei 2 oder weniger Leben, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\orunskeule.jpg"
+Lukors Brief: Wert: 2, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\lukorsbrief.jpg"
+Magische Reinigung: Wert: 1, Art Spruchrolle, Ladung: 1, Stil: Sofort, Eigenschaft: Schläfer; benötigtes Mana: 5, Schaden:0, Effekt: ???, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\magische reinigung.jpg"
+Miltens Zettel: Wert: 50, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\miltens zettel.jpg"
+Trank des puren Lebens:Wert: 50,Art: Konsum, Effekt: du erhältst1 zusätzliches maximales Leben, Bild zu verknüpfen: "C:\Users\InFaHF\Desktop\Div\Lennard\Bilder Karten\Questkarten\Trank des puren Lebens.jpg"
+
+
+Zu jedem charakter, der vorher mit demschlagwort quest markiert wurde, folgen nun text datein. Diese textadatein sind mittendrin und am ende immer mit den worten: bedingungen zu erfüllen. Immer wenn man eine quest im questlog fenster anklickt, soll der text in einem popupfenster soweit eingebeblendet, dass der erste dialog des questegebers abgeschlossen ist ( wenn seine erste wörtliche rede endet). In diesem popupfenster soll es denn 3 buttons geben, die heißen sollen: Quest annehmen, quest vergeben und quest ablehnen. Klickt man den quest vergeben button, soll diese quest deaktiviert werden, ohne dass sie im eigenen questlog angezeigt wird. Handelt e sich bei dem questgeber dieser quest um eine person, die nur die rolle questgeber hat, soll diese direkt aus dem pool entfernt werden und durch eine neue person aus dem pool ersetzt werden. Klickt man den button quest ablehnen, soll das popupfenster einfach wieder geschlossen werden. Klick man den button quest annehmen, soll die quest in die aktiven quests übernommen werden, der erste dialogteil soll dabei angezeigt werden und dazu ein bild des questgebers. Die überschriften der quests werden hier vor den quests mit dem wort überschrift gekennzeichnet. Bei den aktiven quests soll dann unten fett gedruckt die bedingung stehen, diie für den fortschrittder quest erfüllt sein muss. Dieses sind wie vorher beschrieben markiert uns sollen auch nochmal abgefragt werden, wenn man im questlog auf den button bedingungen erfüllt klickt. Ist eine quest mit den worten quest erfolgreich markiert, soll diese aus denaktiven quests entfernt werden und zu den abgeschlossenen quests geordnet werden. Es gibt in manchen quests mehrere optionen, unter denen man auswählen kann, wie diie quest weitergehen soll. Ist dies der Fall, wird an einer stelle im text die stelle mitoption x markiert. Sollte dies der fall sein, soll der dialog so weit eingeblendet werden, bis es verschiedene optionen gibt. Anschließend gibt es in [ ] klammern eingeklammerte teile, welche als buttons im popupfenster mit der überschrift option x dargestellt sind. Wird einer der textbuttons angeklickt, soll die quest mit dem textteil weitegeführt werden, bis die worte option x Ende eigeschrieben sind. Ist dies der fall, gilt die quest ebenfalls als erfolgreich beendet und soll aus den aktiven quests in die abgeschlossenen quests verschoben werden. Ist die quest als fehlgeschlagen markiert, soll sie unten bei abgeschlossenen quests rot durchgestrichen stehen mit der überschrift fehlgeschlagen und dem bild des Questgeberes. Es gibt in jeder quests belohnungen und questgegenstände die du erhälst. Ist dies der Fall, steht in dem text außerhalb der wörtlichen Rede folgendes: Du erhälst: ….. Steht das in einer quest, erhalte die angegebene erfahrung, füge die gegenstände deinem inventar hinzu und erhalte das angegebene erz. Erhält man auf diese art einen Anschlusspunkt, so soll dieser auf der seite Questlog permanent über den abgeschlossenen Quests angezeigt werden. Hat eine Person nur die rolle Questgeber, soll diese nach angenommener quest vollständig aus dempersonenpool des jeweiligen lagers verschwinden. Personen, die lehrer oder händler sind, sollen im personenpool verbleiben, nur der quest button soll deaktiviert werden. Es folgen die textdateien:
+
+Quest von Thorus
+Überschrift: Gefälschte Siegelringe!
+Thorus: „Seit neustem treibt sich ein Händler in der Nähe des Lagers rum. Sein Name ist Cavalorn. Ich glaube, dass er mit den Spinnern des neuen Lagers unter einer Decke steckt. Hier tauchen immer mehr Leute mit gefälschten Siegelringen der Wassermagier auf und wollen in die Stadt. Ich möchte, dass du rausfindest, was dahinter steckt. Und ich will, dass dieser Scheiß mit den Siegelringen ein Ende hat.“  
+Bedingungen zu erfüllen: Gehe zu Feld 37.
+Cavalorn: „Hallo Fremder! Kann ich dir was von meinen Waren anbieten, oder suchst du etwas anderes. Ich habe die besten Bögen des alten Lagers.“ 
+Sträfling: „Ich will eigentlich nur in die Burg. Man sagte mir du kannst dabei behilflich sein.“ 
+Cavalorn: „Von wem hast du das gehört? ...Naja das spielt ja erstmal keine Rolle. Was hätte ich davon dir zu helfen?“ 
+
+Option 1:  [Sträfling: „Thorus ist dir auf die Schliche gekommen. Ich könnte für dich die Siegelringe an den Mann bringen. Ich würde ihm einfach sagen, es sei ein Hehlerring aus dem Neuen Lager, der die Ringe den Leuten unterjubelt und dass er dich zu Unrecht verdächtige.“ ]
+Cavalorn: „Scheiße ich hab schon befürchtet, dass es soweit kommt… Na schön. Aber ich werde keine neuen Ringe mehr anfertigen. Das Risiko ist zu groß. Du kannst die Ringe haben und verticken dieich noch habe… Danke, dass du mich gewarnt hast.“ Du erhältst 4 gefälschte Siegelringe!  
+Bedingungen zu erfüllen: Gehe zurück ins alte Lager! 
+Thorus: „Was hast du herausgefunden?“ 
+Sträfling: „Ich hab aus Cavalorn keine Information herausbekommen. Auf dem Rückweg zum alten Lager hat mich ein Bandit angesprochen, ob ich nicht Interesse an einem Siegelring hätte. Ich habe einen gekauft und dann den Banditen heimlich zu einem Hehlerversteck verfolgt, wo sie die Dinger fälschen. Du scheinst Cavalorn zu Unrecht verdächtigt zu haben.“ 
+Thorus: „Ach du Scheiße! Dann ist das ja ne größere Nummer als ich dachte. Gut, dass ich Bloodwyn nicht auf den Penner gehetzt habe. Hier für deine Mühen.“ Du erhälst 20 Erz und 30*Kapitel Erfahrung . Option 1 Ende
+Option 2:  [Sträfling: „Ich hab gehört in der Burg gibt`s was zu holen. Wir könnten Halbe-Halbe machen, wenn du mir hilfst in die Burg zu kommen.“] 
+Cavalorn: „Hmmm…. Scheint so als könnte ich nicht ablehnen, da du das Risiko trägst. Hier nimm diesen Siegelring. Die Wachen werden glauben du seist ein Bote der Wassermagier.“   Du erhältst einen gefälschten Siegelring
+Bedingungen zu erfüllen: Gehe zurück ins alte Lager. 
+Sträfling: „Ich habe ihn überlistet und er hat mir tatsächlich einen Ring geschenkt, damit ich für ihnin der Burg klaue. Hier ist der Ring!“ Du verlierst einen gefälschten Siegelring
+Thorus: „WAS! Dieser Mistkerl! Wenn er sich hier noch einmal blicken lässt, hacke ihm persönlich alle Finger ab, dann kann er mal sehen, wo er sich seine Ringe hinsteckt! Ehrliche Leute wie dich können wir hier im Lager brauchen. Pass auf dich auf! Hier für deine Mühen.“ Du erhälst eine zufällige Waffe und 60*Kapitel Erfahrung Option 2 Ende 
+
+Quest von Scar:
+Überschrift: Schmieriger Erzbaron
+Scar: „Ich habe die Frauen im Lagermittlerweile satt. Wir haben schon seit Tagen kein Frischfleisch mehr gekriegt, wenn du verstehst was ich meine. Erst letztens haben wir `ne neue gekriegt, die hab ich direkt markiert für mich, aber Gomez dieser Penner hat sie ans Sektenlager für die letzte Fuhre Kraut verscherbelt. Ich will sie wieder haben! Wenn du es schaffst sie denen abzuluchsen, wartet eine fette Belohnung auf dich. Und du darfst auch mal ran. Natürlich als zweiter…“ 
+Stäfling: „Alles klar, ich werde sehen was ich tun kann.“
+Bedingungen zu erfüllen: Gehe ins Sektenlager! 
+Du gehst zu Y`Berion. Die Templer lassen dich durch, weil du behauptest dich der Sekte anschließen zu wollen.  
+Y`Berion: „Erwache! Der Schläfer hat mir mitgeteilt, dass du kommen würdest dich uns anzuschließen.Immer sind wir auf der Suche nach neuen Seelen, also trage nun dein Anliegen vor!“ 
+
+Option 1: [ Sträfling: „Der Schläfer hat mich in einer Vision zu euch entsandt. Er sprach von einem Opfer. Ein Menschenopfer! Er braucht eine Jungfrau! Er zeigte mir eineFrau, die ihr erst kürzlich von den Schuften des alten Lagers befreien konntet. Sie ist noch jungfräulichen Blutes.“ ]
+Y`Berion: „…Jungfrau… Nun… Ja… Die Jungfrau sie ist dahinten in meinem Gemach. Ich werde gleich nach ihr schicken lassen. Opfert ihr reines Blut. Der Schläfer wird mehr als zufrieden mit ihrer … Unbeflecktheit…. Sein! Sie wird sich wohlmöglich dem Opfer entziehen wollen und lügen über mich verbreiten. Hier nehmt diese Spruchrolle und beruhigt sie im Namen unseres Erlösers.“ Du erhältst 1xSpruchrolle Schlaf und 30*Kapitel Erfahrung  
+Bedingungen zu erfüllen: Gehe ins alte Lager. Die Frau wird nicht mit dir kämpfen!
+Du bringst Scar die Frau und er freut sich sichtlich sie wiederzusehen. Für deine Mühen dankt er dir. Du bringst mit Scar die Sache zu Ende…. Natürlich als Zweiter.  Setze eine Runde aus! Du fühlst dich erleichtert. Du erhältst 50 Erz und 10*Kapitel Erfahrung. Dein Leben und dein Mana sind vollständig regeneriert. Option 1 Ende
+Option 2 [Sträfling: „Meister Y`Berion! Der Erzbaron Scar schickt mich mit dem Auftrag die kürzlich angekommene Frau zu ihm zurück zu bringen, doch bevor ihr mich abstechen lasst, so hört mich an! Scar ist ein hohes Tier im alten Lager. Er hält zusammen mit Gomez Rat und hat sicherlich nützliche Informationen.Daher wäre mein Vorschlag zum Wohl der Sekte ihm die Frau zu bringen. Ihr aber einen Teleportzauber zu geben, sodass sie etwas spionieren kann und sobald es eng wird, zu euch unbeschadet zurückkehren kann. Scar wird niemals einer Frau der Spionage verdächtigen!“] 
+Y`Berion: „Du sprichst weise Worte. Tatsächlich sorgen wir uns lange vor einem Überfall des alten Lagers auf unsere Plantagen. Sie können nicht begreifen wie unerträglich es für den Schläfer ist, dass wir seine Lehre nicht in der gesamten Welt verbreiten können! Hier nimm sie mit! Ich hoffe für dich sie kehrt heile zurück!“  
+Bedingungen zu erfüllen: Gehe ins alte Lager. Die Frau wird nicht mit dir kämpfen!
+Du bringst Scar die Frau und er freut sich sichtlich sie wiederzusehen. Für deine Mühen dankt er dir. Er bietet dir an nach ihm sich zu erleichtern. Du lehnst dankend ab. Du erhältst 50 Erz.
+Bedingung erfüllen: Lege Aktionskarten ab, um das Lager zu verlassen.
+Du willst gerade das alte Lager verlassen, da stürmt ein halbnackter Scar auf dich zu… 
+Scar: „Diese Schlampe! Kaum war ich fertig mit ihr da schnappt sie sich mein Zeug und verschwindet wie von Geisterhand! In meiner Rüstung waren wichtige Pergamente! Du bist doch daran schuld! Du wusstest doch davon!“ 
+Sträfling: „Was ist passiert?! ….Ich?... Nein… Was hätte ich denn davon außer Probleme mit dem alten Lager. Das kann mir wohl absolut nicht leisten.“ 
+Scar: „Da hast du recht! …von einer Frau gedemütigt… Wenn du irgendetwas davon erzähtlst bring ich dich um. Ist das klar!?“ 
+Sträfling: „Klar!“ Du erhältst 20 * Kapitel Erfahrung. 
+Bedingungen zu erfüllen: Gehe ins Sektenlager.
+Y´Berion: „Vielen Dank, junger Schüler. Deine Hilfe kam gerade noch rechtzeitig. Tatsächlich hat das alte Lager vorgehabt, über einen versteckten Pfad im Wasser unsere Plantagen zu überfallen. Dieser Pfad wird nun von unseren stärksten Brüdern bewacht. Hier als Zeichen unserer Dankbarkeit!“ Du erhältst 2 Schlaf-Spruchrollen und 40*Kapitel Erfahrung. Option 2 Ende 
+Option 3 [Sträfling: „Meister Y`berion! Gomez schickt mich. Er will die Frau zurück, die er versehentlich gegen eine Fuhre Sumpfkraut eintauschte. Er bietet euch 500 Erz auf das er sie zurück erhält.“ ]
+Y`Berion: „Das sieht Gomez ähnlich! Einen ungewaschenen Schergen hier anlaufen zu lassen und einem Erz zu bieten. Sein stinkendes Erz kann er behalten. Unsere Interessen gelten allein dem Ruhm des Schläfers! Und jetzt verschwinde! Richte Gomez aus, dass die Frau nun mir dient!“ 
+Bedingungen zu erfüllen: Gehe ins alte Lager.
+Du kehrst ohne Frau zu Scar zurück. Ohnedich eines Wortes zu würdigen, ruft er zwei Wachen heran, die dich aus dem Lager „begleiten“. Du kommst auf Feld 11 wieder zu dir. Quest fehlgeschlagen!
+
+
+Dexters Quest:
+Überschrift: Hinterlistige Goblins 
+Dexter: „Hei du, ich sehe du bist neu hier. Ich habe hier eine Kleinigkeit für dich. Nimm diese Waffe. Dafür musst du nur eine Kleinigkeit für mich tun. Ich habe unglücklicherweise an der Brücke hinter dem Lager meinen Beutel Erz verloren. So ein dreckiger Goblin hat mich nachts erwischt. Ich habe mich fast eingeschissen, dass kannst du mir glauben. Jetzt trau ich mich aber nicht mehr zurück. Wenn du mir den Beutel bringst, kannst du die Waffe behalten. Und ich gebe dir einen Teil meines Erzes ab.“ 
+Du erhältst die Waffe schartige Buddlerzucht! 
+Bedingungen zu erfüllen: Gehe zu Feld 97!
+Es erscheinen 2 Goblins. Ein kampf beginnt! 
+Option 1: [Du gewinnst den Kampf! Das Erz sieht zu verlockend aus und du steckst es ein!] Du erhältst 60 Erz.
+Wenn du einen Anschlusspunkt im alten Lager hast, verlierst dudiesen. Zusätzlich ist von nun an jede Interaktion mit Dexter im Lager unmöglich! Option 1 Ende
+Option 2: [Du gewinnst den Kampf! Du entschließt dich, Dexter den Beutel zurückzubringen.]Du erhältst60 Erz!
+Bedingungen zu erfüllen: Gehe ins Alte Lager.
+Sträfling: „Hei, ich konnte deinen Kram tatsächlich zurückkriegen. Hier ist er!“Du verlierst60 Erz!
+Dexter: „Danke man auf dich ist Verlass. Ich werde ein gutes Wort bei Diego für dich einlegen. Und jetzt gib mir meine Waffe wieder!“ 
+Sträfling: „Aber du hast gesagt ich kann sie behalten!“ 
+Dexter: „Ja du hast sie lange genug behalten. Oder willst du, dass ich Diego sage, dass du mein Schwert gestohlen hast?“ Du verlierst eine schartige Buddlerzucht. Du erhältst 1Anschlusspunkt im Alten Lager, 30 Erz und 30*Kapitel Erfahrung. Ende Option 2
+Option 3: [Du verlierst den Kampf!]  
+Du kommst auf Feld 96 wieder zu dir, ohne Erz und Nahrung. Die Quest kann erst fortgesetzt werden, wenn die Goblins besiegt sind!  
+Bedingungen zu erfüllen: Gewinne den Kampf!
+Option 3a: [Du gewinnst den Kampf! Das Erz sieht zu verlockend aus und du steckst es ein!] Du erhältst 60 Erz.
+Wenn du einen Anschlusspunkt im alten Lager hast, verlierst du diesen. Zusätzlich ist von nun an jede Interaktion mit Dexter im Lager unmöglich! Option 3aEnde
+Option 3b: [Du gewinnst den Kampf! Du entschließt dich, Dexter den Beutel zurückzubringen.]Du erhältst 60 Erz!
+Bedingungen zu erfüllen: Gehe ins Alte Lager.
+Sträfling: „Hei, ich konnte deinen Kram tatsächlich zurückkriegen. Hier ist er!“Duverlierst
+60 Erz!
+Dexter: „Danke man auf dich ist Verlass. Ich werde ein gutes Wort bei Diego für dich einlegen. Und jetzt gib mir meine Waffe wieder!“ 
+Sträfling: „Aber du hast gesagt ich kann sie behalten!“ 
+Dexter: „Ja du hast sie lange genug behalten.Oder willst du, dass ich Diego sage, dass du mein Schwert gestohlen hast?“ Du verlierst eine schartige Buddlerzucht. Du erhältst 1Anschlusspunkt im Alten Lager, 30 Erz und 30*Kapitel Erfahrung. Ende Option 3b
+
+Cor Angars Quest
+Überschrift: Das Artefakt der Erleuchtung
+
+Cor Angar: „Sag nichts junger Wanderer. Wie wir alle bist du auf der Suche nach einer Erleuchtung und Hoffnung. Wir von der Bruderschaft können dir vielleicht helfen. Ich kann dir etwas beibringen, doch du musst mir zeigen, dass du bereit bist, ein Opfer für die Bruderschaft zu bringen. Wir suchen einen magischen Gegenstand. Es ist eine Brosche mit dem Heiligen Symbol des Schläfers. Sie soll besonders erleuchteten Brüdern nahezu unbegrenzte Macht schenken, sodass sie die Barriere durchdringenkönnen. Sie soll sich an einem alten Schiffswrack befinden, welches nördlich von hier liegt. Wenn du sie mir besorgst, werde ich dich unterrichten. Und selbstverständlich sollst du auch einen Lohn erhalten.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 148!  
+Vor dem Schiffswrack steht ein Novize. Er spricht dich an. 
+Novize: „Du kommst zu spät! Der Schläfer hat mich auserwählt seine Brosche zu finden. Er möchte, dass ich den Weg in die Freiheit als Erster nehme. DU musst mein Zeuge sein und den Leutenversichern, dass ich durch die Macht des Schläfers die Barriere verlassen habe.“ 
+Wie besessen stürzt sich der Novize auf die Barriere hinter ihm zu. Du staunst, weil du glaubst, dass er es tatsächlich geschafft hat, doch dann plötzlich KRACH!!!!!!! Ein Blitz fährt auf den Novizen hernieder und schleudert ihn zurück an den Strand. Ohne eine Miene zu verziehen, nimmst du ihm die Brosche ab und drehst dich um. Du erhältst eine Schläferbrosche!
+Bedingungen zu erfüllen: Gehe zurück ins Sektenlager! 
+Du kommst im Lager an und triffst auf Cor Angar.  
+Cor Angar: „Wie ich sehe, seid Ihr von eurer Mission zurückgekehrt. Habt ihr die Brosche finden können?“ 
+Sträfling: „Ja das war nicht besonders schwierig.“ 
+Cor Angar: „Nun, denn können wir endlich die Barriere verlassen. Mit der Hilfe des Schläfers und seiner unermesslichen Macht, wird es uns gelingen, den Zauber der Barriere zu brechen.“ 
+Sträfling: „Nun was das betrifft…. Der Novize, der die Brosche vor mir gefunden hat, liegt jetzt verkohlt am Strand.“ 
+Cor Angar: „Nein! Die alten Schriften Schläfers, die wir aus dem Orkfriedhof geborgen haben, haben uns doch verraten, dass die Brosche funktioniert… Ich kann es nicht glauben. Ich… Danke. Leider waren deine Mühen umsonst. Doch sollst du nicht unbelohnt bleiben. Hier hast du etwas Erz für deine Mühen. Möge der Schläfer dich behüten.“ 
+Du erältst 30*Kapitel Erfahrung, 20 Erz und du darfst die Brosche behalten. Quest erfolgreich
+
+ Diegos Quest:
+Überschrift: Das Paket des Vertrauens
+Diego: „Hei Neuer. Du siehst aus, alssuchst du etwas. Einen Ort an dem du gut aufgehoben bist. Das alte Lager wäre sicher ein solcher Ort. Wir suchen immer Leute wie dich. Wenn du mir einen Gefallen tust, werde ich ein gutes Wort für dich bei den Erzbaronen einlegen. Was sagst du? Du musst nur etwas für mich holen. Ein Freund von mir aus dem Sumpflager namens Lester hat ein Paket für mich. Der Inhalt spielt keine Rolle für dich. Wenn du es für mich holst, werde ich dich angemessen belohnen.“ 
+Bedingungen zu erfüllen: Gehe in das Sumpflager, während Lester aufgedeckt ist! 
+Lester: „Erwache! Was führt dich zu der erwählten Bruderschaft. Hier ein Willkommensgeschenk!Du bist sicher hier um dich uns anzuschließen.“ Du erhältst einen grünen Novizen. 
+Sträfling: „Eigentlich… hat Diego mich geschickt.Ich soll irgendein Paket abholen.“ 
+ Lester: „So, Diego hat dich also geschickt. Das kann ja jeder behaupten. Ich hätte eine aufgabe für dich. Wenn du sie erfüllst, werde ich dir Diegos Paket geben! Einer meiner Brüder hat Schulden bei mir! Schrat der Penner, er gammelt irgendwo im Sumpf herum. Hol mir meine Rationen zurück, die ich ihm die letzten zwei Tage geliehen hatte. Es waren immerhin 5 Traumruf!“ 
+Bedingungen zu erfüllen: Gehe zu Feld 135!  
+Schrat: „Wooooow, bist du echt? Hier im Sumpf kann man sich nie so sicher sein.“ Schrat berührt dein Gesicht. „Deine Haut ist mit einem wirklich weichen Flaum bedeckt.“ 
+Sträfling: „(flüstert: Oh man ist der Typ dicht...)Buuuh!... Ich bin ein Geist und du hast mir fünf Stängel Traumruf gestohlen... und 30 Erz! Gib sie mir wieder oder ich werde dich auf ewig heimsuchen!“ 
+Schrat: „Beim Schläfer! Nicht schon wieder! Ich bin völlig fertig… Hier nobler Geist nehmt alles was ich hab, aber bitte lasst mich in Ruhe.“ 
+Du erhältst eine Ration Traumruf und 30 Erz! 
+Du gehst zurück zu Lester.
+Bedingungen zu erfüllen: Wirf all deine Aktionskarten ab! 
+Lester: „Du warst ja richtig schnell, hast du ihn gefunden?“ 
+
+Option 1: [ Sträfling: „Ja, ich habe ihn gefunden, hier ist dein Zeug.“] 
+Lester: „Schön man kann dir alsovertrauen! Wunderbar, und hier ist dein Paket und jetzt lauf schnell zu Diego!“ Du verlierst eine Ration Traumruf! Du erhältst 40*Kapitel Erfahrung und Diegos Paket. 
+Bedingungen zu erfüllen: Gehe zurück ins Alte Lager! 
+Diego: „Und hast du mein Paket?“ 
+Sträfling: „Ja hier ist es. Lester wollte…“ 
+Diego: „Das ist mir egal! Gib mir das Paket, ich möchte damit allein sein! DU hast dich damit auf jeden Fall nützlich für das Lager gemacht! Hier für deine Mühen!“ Du erhältst 20 Erz, 30* Kapitel Erfahrung und 1Anschlusspunkt im alten Lager. Option 1 Ende
+Option 2: [Sträfling: „Ja aber nur seine Überreste, irgendetwas Großes hat ihn zerpflückt.“]   
+Lester: „Soso, dabei weiß ich doch, dass er ein absoluter Feigling ist. Er rennt schneller als ein Snapper, wenn ernur eine Fleischwanze sieht. Ich glaube nicht, dass er erwischt wurde. Du willst mich doch übers Ohr hauen! Ich werde Diego das Paket bei nächster Gelegenheit selber bringen.“ Quest fehlgeschlagen
+
+Option 3 [Sträfling: „Ja ich habe ihn gefunden, er hatte aber nur noch zwei Stengel über. Er war ziemlich breit..“] 
+Lester: „Dieser Mistkerl hat sich schon wieder so viel reingezogen, naja immerhin hast du nun mein Vertrauen. Hier nimm das Paket! Wenn du ihn nochmal siehst, sag ihm, er soll sich erst wieder blicken lassen, wenn er meine Traumruf hat!“Du verlierst eine Ration Traumruf!  Du erhältst 20* Kapitel Erfahrung, eine Reste Ration Traumruf und Diegos Paket. 
+Bedingungen zu erfüllen: Gehe ins alte Lager! 
+Diego: „Und hast du mein Paket?“ 
+Sträfling: „Jahier ist es. Lester wollte…“ 
+Diego: „Das ist mir egal! Gib mir das Paket, ich möchte damit allein sein! DU hast dich damit auf jeden Fall nützlich für das Lager gemacht! Hier für deine Mühen!“ Du erhältst 20 Erz, 30 * Kapitel Erfahrung und 1Anschlusspunktim alten Lager. Option 3 Ende
+
+
+
+
+Quest Gorn:
+Überschrift: Snapperjagd 
+Gorn: „Hei Neuer. Dich habe ich hier noch nie gesehen. Du Siehst aus, als gehst du gerne jagen. Was sagst du, gehen wir zusammen ein wenig jagen? Wenn du dich gut anstellst, kannst duauch die ganze Beute behalten. Ich will eigentlich nur aus diesem verdammten Lager raus und trainieren, aber dieser Viecher sind gewiefter als man glaubt. Allein ist man ruckzuck umkreist. Zusammen machen wir sicher eine bessere Figur.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 35! 
+Gorn: „Ja hier lauern immer wieder welche rum.“ Drei Snapper erscheinen  
+Gorn: „Da ist wieder eins von diesen Mistviechern! Ich gehe vor, halt du mir einfach den Rücken frei!“ 
+Der Kampf beginnt! Du kannst nicht fliehen! 
+Option1: [Ihr gewinnt den Kampf!] 
+Gorn: „Guter Kampf! Danke für deine Hilfe! Ohne dich wären sie sicher mir in den Rücken gefallen!“ 
+Sträfling: „Wenn du meinst.“ 
+Gorn: „ Hier da ist der Gefahrenbonus schon inbegriffen.“ Du erhältst 20 Erfahrung, 30 Erz und 1Anschlusspunkt im neuen Lager! Option 1 Ende
+Option 2: [Ihr verliert den Kampf bzw. dein Leben geht auf 0!]  
+Du kommst im Neuen Lager vollständig regeneriert zu dir.  
+Gorn: „Schwache Leistung da draußen! Ein kleiner Windstoß und du wärst auch umgefallen.Dich nehm ich nicht nochmal mit auf die Jagd!“ 
+Quest fehlgeschlagen!
+
+Whistlers Quest
+Überschrift: Der Friseur
+  
+Whistler: „Hei, hör mal kleiner. Willst du dir ein bisschen Erz verdienen? Letzte Nacht als ich geschlafen habe, hat sich einer dieser feigen Buddler in meine Hütte geschlichen und mir „einfach aus Spaß“, den Kopf kahlgeschoren. Ich bin mir sicher, dass sich der Feigling draußen vorm Lager aufhält. Er hat sich sicher im Wald versteckt und wartet, bis Gras über die Sache gewachsen ist. Ich möchte, dass du diesem miesen Schwein die Fresse polierst. Wenn du das machst, springt auch ein ordentliches Sümmchen für dich raus. Ich kann das leider nicht machen. Wenn die Gardisten spitz kriegen, dass ich als Schatten einfach einen Buddler verdresche krieg ich selber Prügel. Bei dir ist das anders von dir erwartet man, dass du Streit mit Buddlern hast, Neuer.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 89! 
+Buddler: „Hey Mann das ist mein Wald. Verschwinde hier oder ICH RASIER DICH; DU PENNER!“ 
+Sträfling: „Immer mit der Ruhe ich bin erst neu hier! Ich sehe ich bin hier an der richtigen Adresse. Whistler sucht dich!“ 
+Buddler: „Was Whistler hat was über mich gesagt. Ich will kein Stress mit dem Typen… (stotternd) Ich… das war nurn Witz… Man… ich war vollkommenzu und dachte so sehe er besser aus.“ 
+Sträfling: „Du hast trotzdem jetzt Ärger. Whistler ist außer sich! Er will, dass ich dich umniete.“ 
+Buddler: „Scheiße man lass mich einfach in Ruhe. Hier ich schneid mir ein paar Haare ab. Behaupte bitte du hast michskalpiert!“ 
+Option 1: [Sträfling: „Was hätte ich davon, wenn ich dir helfe?“] 
+Buddler: „Man ich hab nichts da! Ich kann dir irgendwas beibringen. Ich kann dir beibringen wie man Schlösser knackt.“ Platziere auf Feld 89 den Whistler-Chip, um zu markieren, dass du dort einen Lehrer für Schlösser 1 ist, dies kostet dich 50 Erz.
+Sträfling: „In Ordnung ich werde Whistler deine Haare zeigen.“ 
+Buddler:  „Danke man“  
+Gehe zurück ins Alte Lager! 
+Sträfling: „Auge um Auge, Zahn um Zahn. Der Mistkerl hat gepennt.Da hab ich die Gelegenheit beim Schopfe gepackt. Hier sind seine Haare!“ 
+Whistler: „Du solltest ihm doch eine rein hauen und ihm nicht die Haare schneiden. Naja, eigentlich bin ich mit der Frisur mittlerweile zufrieden. Ich werde Diego sagen , dass du zugebrauchen bist. Hier, mach dass du wegkommst.“ Du erhältst 20 Erz und 10* Kapitel Erfahrung. Option 1 Ende
+Option 2: [Sträfling: „Ich glaube Whistler will dich einfach leiden sehen. Ich mach dich fertig.“] 
+Ein Kampf gegen „Der Friseur“ beginnt! 
+Wenn duden Kampf gewinnst gehe zu Whistler. Wenn du verlierst wachst du auf einem der nebenliegenden Felder wieder auf, ohne Erz und aktive Waffe. Die Quest kann erst fortgesetzt werden, wenn der Friseur besiegt ist. Betrittst du das Questfeld erneut, beginnt sofort der Kampf gegen den Questgegner, der wieder voll regeneriert ist! 
+Bedingungen zu erfüllen: Gewinne den Kampf! Gehe zurück ins alte Lager.
+Whistler: „Gut, dass ich dich treffe. Ich hoffe du hast den Buddler  noch nicht alle gemacht. Nun. Ich bin ganzzufrieden mit meiner neuen Frisur. Ich habe noch nie so viele Komplimente in meinem Leben bekommen.“ 
+Sträfling: „Nun, ja. Dann brauchst du jetzt wohl einen neuen Friseur!“ 
+Whistler: „Soll das heißen..“ 
+Sträfling: „Jetzt frisiert er Innos!“ 
+Whistler: „NEEEINNN! Naja, immerhin hast du getan was ich dir gesagt habe. Ich werde vor Diego für dich sprechen." Du erhältst 1 Anschlusspunkt im alten Lager und 10 Erz. Option 2 Ende
+Option 3: [Sträfling: „Man Whistler will dich sehen. Er fand das alleswitzig. Komm wieder ins Lager. Er will jetzt, dass du ihm jeden Monat die Haare scherst.“ ]
+Buddler: „Wirklich man, danke. Ich hatte schon Schiss vor den Lurkern da hinten am Fluss.“ 
+Bedingungen zu erfüllen: Gehe zurück ins Alte Lager! 
+Whistler: „Aaah dabist du ja… Danke… Man!...  Alle finden die Glatze steht mir richtig gut. Die Gardisten sagen die Frauen bei Gomez stehen auf Typen mit Glatzen. Ich schulde dir was! Eigentlich solltest du ihm ja die Fresse polieren, das war doch dein Auftrag, aber gut, dass du es nicht gemacht hast. Hier für deine Mühen.“ Du erhältst 20 Erz, 30* Kapitel  Erfahrung und 1Anschlusspunkt im alten Lager. Option 3 Ende
+
+
+
+Caines Quest:
+Überschrift: Das Übermächtige Käfer 
+ 
+Caine: „Na neu hier? Ich bin Caine. Ich versuche hierFuß zu fassen. Ich will bei Meister Kalom in die Lehre, aber er will mich nicht annehmen, wenn ich mich nicht als würdig erweise. Er will doch tatsächlich von mir Minecrawlerzangen haben. Diese Biester sind verdammt stark. Ich habe schon mal gegen einen gekämpft und ihm auch ganz schön zugesetzt. Aber dann kamen mehrere von diesen Biestern und haben mich fast umgebracht. Das verletzte Miestvieh hat mich aus der Mine verfolgt und läuft jetzt irgendwo im Wald vor dem Lager rum. Wenn du das Vieh zur Strecke bringst und mir seinen Klauen bringst, werde ich dir alles geben, was ich habe.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 140!
+Dort begegnet dir ein „Verwundeter Crawler“. Der Kampf beginnt! 
+Wenn du verlierst wachst du auf einem der nebenliegenden Felder wieder auf, ohne Erz und aktive Waffe. Die Quest kann erst fortgesetzt werden, wenn der verwundete Minecrawler besiegt ist! Betrittst du das Questfeld erneut, beginnt sofort der Kampf gegen den Questgegner, der wieder voll regeneriert ist!  
+Bedingungen zu erfüllen: Gewinne den Kampf
+Du erhältst Miecrwalerzangen!
+Bedingungen zu erfüllen: Gehe zurück ins Sektenlager! 
+Caine: „Erwache! Hast du sie? Ich brauche die Zangen dringend!“ 
+Sträfling: „Ja aber das Mistvieh hat mir ganz schön zugesetzt! Ich möchte keinengesunden Crawler treffen! Hier hast du deine Zange!“ Du verlierst Minecrwalerzangen!
+Caine: „Danke man, ich werde Meister Kalom mitteilen, dass du nützlich bist.“ Du erhältst 40 Erfahrung und 1 Anschlusspunkt im Sektenlager. Quest erfolgreich
+Homers Quest:
+
+Überschrift: Die Frau am Teich
+Homer: „Hei Neuer. Ich habe dich hier noch nie gesehen. Ich bin Homer. Das hier ist meine Taverne. Hmmm. Ich glaube du kannst mir helfen. Die Reisbauern besaufen sich hier gerne mal und erzählen sich so allerlei Scheiß. Aber eine Geschichte habe ich hier schon öfter gehört und ich fange langsam an selbst dran zu glauben. Vor dem Lager am alten Fischerteich soll sich eine hübsche junge Frau versteckt halten, die aus dem alten Lager geflohen sein soll. Einer meiner Freunde, der aufgebrochen ist, sie zu suchen kam einfach nicht wieder. Am nächsten Tag hat einer der Reisbauern behauptet gesehen zu haben, wie eine Frau am Fischerteich einen Mann ertränkt haben soll. Sieh du für mich nach was da dran ist. Ich habe gehört es soll dort irgendwo eine versteckte Höhle geben wo sie sich aufhält.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 158!  
+Am See angekommen, siehst du dich erstmal um. Du gehst in die Fischerhütte, dort findest du nichts. Als du aus dem Fenster blickst siehst du eine Höhle an der Felswand. Du gehst zur Höhle. Aus der Höhle erklingt eine weibliche Stimme. Du lugst vorsichtig um die Ecke. 
+Frau: „Nur nicht so schüchtern! Komm herein, leiste mir Gesellschaft!“ 
+Sträfling: „Wer bist du? Was machst du hier… Ich habe hier nochnie eine Frau gesehen…“ 
+Frau: „Ja die meisten hat Gomez auch in seinen Gemächern eingesperrt, aber ich konnte fliehen. Jetzt vertreib ich mir die Zeit hier am See, da kann ich immerhin nen paar Fische rausholen. Ins Neue Lager traue ich mich nicht. Die Vergewaltiger kann ich bis hier hin riechen!“ 
+Sträfling: „Du scheinst aber den Leuten aufgefallen zu sein. Es gibt Gerüchte du hättest einen Mann im See ertränkt.“ 
+Frau: „Wie kannst du es wagen mich des Mordes zu bezichtigen. Ich versuche doch nur hier zuüberleben! Hier draußen ist es so kalt und ich bin so einsam. Ich sehne mich nach einem starken Mann an meiner Seite, der mir diese ganzen Suffköpfe vom Leib hält.“  
+Sie rückt dir auf die Pelle. Erregt und verwirrt zugleich beginnst du zu stammeln. 
+Sträfling: „Ähm…Ähm… Im Neuen Lager gibt es auch viele starke Söldner … die scheinen nicht so ….“ 
+Plötzlich hörst du wie sie hinter ihrem Rücken ein Messer aus der Scheide zieht. Du weichst erschrocken zurück. Sie springt wahnsinnig mit dem Messer auf dich zu!  
+Frau: „Ich gehöre Niemandem!!“ 
+Kampf gegen „Die Frau am See“ beginnt! 
+Wenn du verlierst wachst du auf einem der nebenliegenden Felder wieder auf, ohne Erz und aktive Waffe. Die Quest kann erst fortgesetzt werden, wenn die Frau am See besiegt ist! Betrittst du das Questfeld erneut, beginnt sofort der Kampf gegen den Questgegner, der wieder voll regeneriert ist!   
+Bedingungen zu erfüllen: Gewinne den Kampf!
+Es war nicht einfach die Frau kampfunfähig zu machen. Du wartest bis sie wieder zu sich kommt.  
+Sträfling: „Hier trink erstmal etwas! Ich hatte nicht vor dich zu töten, was anscheinend nicht auf Gegenseitigkeit beruht.“ 
+Frau: „ Naja was würdest du tun, wenn irgendein verranzter Penner wie du hier hereinmaschiert und meint mir was erzählen zu müssen?“ 
+Sträfling: „Wie und wenn ich nicht verranzt wäre, wärst du mir in die arme gefallen und hättest mich nicht attackiert?“  
+Frau: „Zu einem Ritter in schimmernder Rüstung kann doch keine holde Maid Nein sagen. Aber darum geht es jetzt nicht. Warum hast du mich nicht umgebracht? Ich habe eigentlich gehofft hier zu sterben. Kurz und schmerzlos!“ 
+Sträfling: „In der Kolonie sterben ständig genug Leute, aber Frauen wie dich, die hier an uns Ganoven verkauft werden, sollten nicht auch noch hier enden müssen. Ich verspreche dir, dass ich einen Weg hier rausfinde.“ 
+Frau: „Und was mach ich dann in der Zwischenzeit, ach du strahlender Held?“ 
+Sträfling: „Du solltest nicht hier in der Wildnis dein Dasein fristen! Ich könnte dich zu Y´berion bringen. Er ist wahrscheinlich nicht so wie Gomez…“ 
+Frau: „Ja, ist wahrscheinlich besser. Die Sektenspinner kriegen bei dem ganzen Gekiffe bestimmt eh keinen mehr hoch um mich zu vergewaltigen. Da bin ich sicherlich besser aufgehoben. Ich bin übrigens Natalia.“ 
+Sie schließt sich dir an. Sie ist wieder vollständig regeneriert. 
+Bedingungen zu erfüllen: Bringe sie lebend ins Sektenlager! Sie kämpft mit dir!
+
+Im Sektenlager wird die Frau direkt von den Sektenleuten begafft. Aber du führst sie schnurstracks zu Y´Berions Tempel.  
+Wache: „Was willst du? Niemandem ist es einfach so gestattet zu dem Meister vorzudringen.“ 
+Sträfling: „Nun ja, sagen wir mal, ich will ihm ein Angebot machen, dass er nicht ausschlagen kann.“ Natalia erscheint neben dir, sodass der Templer sie sehen kann. 
+Wache: „AHHH! Der Meister wird hocherfreut sein. Kommt herein!“ 
+Sträfling: „Meister Y´Berion, ich bringe dir etwas Besonderes!“ 
+ 
+Y´Berion: (heftiges schniefen)„Na wunderbar. Der Schläfer wird sich an dieser Schönheit erfreuen. Sie wird ihm gute Diensteverrichten. Wo du sie her hast, will ich gar nicht wissen. Nimm einfach diese Belohnung!“ Du erhältst 100 Erz, 50* Kapitel Erfahrung einen Ring der Präsenz. Nachdem der button neue Runde gedrückt wird, soll ein popupfenster aufegehen welches sagt: Du spürst eine Präsenz. Dies soll immer nach 3 mal klicken auf den Button neue runde passieren!
+Bedingungen zu erfüllen: Gehe zurück ins Neue Lager! 
+Du sprichst mit Homer. 
+Homer: „Und, lebt an dem See wirklich eine schöne Frau?“ 
+Sträfling: „Nein!“ 
+Homer: „Schade, naja immerhin weiß ich jetzt, dass der Bauer nen Suffkopp und notgeil ist. Danke.“ Du erhältst 20 Erz und 30*Kapitel Erfahrung.  Quest erfolgreich
+ 
+
+Fletchers Quest:
+Überschrift: Ablösung gesucht!
+Fletcher: „Hei du. Komm mal her. Ich habe gehört, dassdu hier Arbeiten willst. Ich hätte da eine Kleinigkeit für dich zu tun. Draußen vor dem Lager Richtung Süden hält sich ein Typ namens Pacho auf. Der pennt den ganzen Tag unter so ‘nem schimmligen Baum. Der faule Schweinehund soll zu seinem Dienst antreten. Und tauch hier bloß nicht wieder auf, bis sich der Kerl hier blicken lässt.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 78! 
+Pacho: „Kleiner! Pass auf, wo du lang gehst, folgst du dem Pfad hier, kommst du ins Orkgebiet. Mit den Viechern willst du dich nichtanlegen!“ 
+Sträfling: „Will ich auch nicht! Ich suche eigentlich dich! Fletcher will dich beim Dienst sehen. Er hat kein Bock mehr den Ersatzmann für eure Viertel zu spielen.“ 
+Pacho: „Neee, Mann! Ich zieh lieber noch einen durch…(er raucht einen Stengel Traumruf und schläft ein)  
+Sträfling: „Ahh, Mist! Gut dass ich für solche Fälle immer einen Plan habe…“  
+Du hackst ihm 2 Finger ab, Pacho wacht wieder auf, ist aber immer noch sehr drauf. Du packst dir die abgehackten Finger und rennst zurück ins Lager. Du erhälts Pachos Finger.
+Bedingungen zu erfüllen:  Wirf alle deine Aktionskarten ab. 
+Du bist wieder im Alten Lager und begegnest Fletcher. 
+
+Sträfling: „Ey, hör mal! Ich glaube Pacho gibt es nicht mehr. Ich habe unter dem Baum nur zwei Finger gefunden!“ 
+Fletcher: „Nicht schon wieder so ein Versager. Dann muss ich wohl Nek suchen gehen. Irgendwer muss hier diese Scheiße übernehmen. Hier für deine Mühen!“ Du erhältst 10 Erz und 20 * Kapitel Erfahrung.  
+Für dich bleibt Feld 78 gesperrt, es sei denn, man will mit Pacho kämpfen. Platziere hierfür den Fletcher-Chip auf Feld 78!  Quest erfolgreich
+
+
+
+Mordrags Quest:
+Überschrift: Ein Glücksgriff?!
+Mordrag: „Psst. Komm mal rüber hier. Ich habe gesehen wie du dich hier umsiehst. Du scheinst etwas vorzuhaben. Ich kann dich nur warnen. Wenn du hier was stehlen willst, bist du an der falschen Adresse. Die Typen hier stehlen dir deine Hose ohne, dass du es merkst. Sogar noch bevor du nur daran denken kannst sie auszurauben. Ganz anders als die Schwachmaten im Sektenlager. Denen etwas zu stehlen ist einfacher als es nicht zu machen. Ich hätte da einen Auftrag für dich. Wenn du eine Sache für mich besorgst, kriegst du eine Schöne Waffe von mir was sagst du? Einer der Sektenspinner soll irgendwie in den Besitz eines besonders seltenen Schriftstückes gekommen sein. Der Kerl heißt Nyras. Wenn du mir das Ding bringst, kriegst du auch ´ne Waffe von mir.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 136! 
+Nyras: „Hey was machst du hier im Sumpf? Du willst uns doch wohl nicht dasSumpfkraut wegnehmen?!“  
+Sträfling: „Ich bin im Sumpf!? Ich wollte hier nicht hin... ich hab mich verlaufen.  Hast du zufällig ne Karte für mich?“ 
+Nyras wühlt in seiner Tasche rum. Er zerrt drei Pergamentrollen heraus. 
+Nyras: „(murmelnd) Eine von den muss doch die Karte sein.“ 
+Du greifst so schnell wie möglich nach den Zetteln. Du erhältst so viele wie du Geschick hast. Falls du weniger als drei Geschick hast. 
+Option 1: [Du hast ein Geschick.]
+Du erhältst eine von 3 zufälligen schriftstücken (es soll zufällig eins augegeben werden, wobei zur auswahl stehen: Nyras Bild, Nyras Karte, Nyras Spruchrolle)
+Du rennst so schnell wie möglich weg.
+Bedingungen zu erfüllen: Lege deine Aktionskarten ab.
+Du rennst aus dem Sumpflager und findest dich auf Feld 131 wieder. 
+Nyras: „Bleib stehen, du Lump!“ 
+ Du kannst bei Nyras keine Quests mehr annehmen. 
+Bedingungen zu erfüllen: Gehe zurück ins Neue Lager! 
+Je nachdem, welchen Gegenstand du erhalten hast, geschieht folgendes:
+Nyras Spruchrolle: 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissen als er es aus seiner Tasche holte.“  
+Mordrag: „Ja mit den Sektenspinnern kann man wirklich alles machen. Die sind so dumm! Dann seh ich mir das mal genauer an. Das ist ja eine magische Spruchrolle. Die ist verdammt teuer! Danke man, hier deine Waffe.“ Du erhälst einen Schmiedehammer, 30*Kapitel Erfahrung und 1Anschlusspunkt im neuen Lager. Option 1 Ende
+Nyras Bild: 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissen als er es aus seiner Tasche holte.“  
+Mordrag: „AAAhh, genau das was ich wollte!“ Er zeigt dir eine laienhafte Zeichnung einer nackten Frau mit riesigen Brüsten. „Ich wusste es doch, der Penner hat die Cipher mal abgekauft. Das ist mir mehr wert als nur ne Waffe!“ Du erhälst einen Schmiedehammer, 30* Kapite Erfahrung, 20 Erz und 1 Anschlusspunkt im neuen Lager. Option 1 Ende
+Nyras Karte 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissenals er es aus seiner Tasche holte.“ 
+Mordrag: „Und was soll ich jetzt damit… Naja immerhin hast du es versucht. Ich muss Cipher in Arsch treten, er hat behauptet Nyras hätte ein Bild von ner nackten Frau für 50 Erz gekauft. Er hat ihn wahrscheinlich mit jemandem verwechselt. Leute mit Glatze sehen alle gleich aus.“  Du erhältst einen Schmiedehammer und 10*Kapitel  Erfahrung. Option 1 Ende
+Option 2: [Du hast 2 Geschick.]
+Du erhältst 2 von 3 zufälligen schriftstücken (es soll zufällig eins augegeben werden,wobei zur auswahl stehen: Nyras Bild, Nyras Karte, Nyras Spruchrolle)
+Du rennst so schnell wie möglich weg.
+Bedingungen zu erfüllen: Lege deine Aktionskarten ab.
+Du rennst aus dem Sumpflager und findest dich auf Feld 131 wieder. 
+Nyras: „Bleib stehen, duLump!“ 
+ Du kannst bei Nyras keine Quests mehr annehmen. 
+Bedingungen zu erfüllen: Gehe zurück ins Neue Lager! 
+Du kannst dir den Gegenstand aussuchen, den du Mrodrag geben willst. Je nachdem, welchen Gegenstand du erhalten hast, geschieht folgendes:
+NyrasSpruchrolle: 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissen als er es aus seiner Tasche holte.“  
+Mordrag: „Ja mit den Sektenspinnern kann man wirklich alles machen. Die sind so dumm! Dann seh ich mir dasmal genauer an. Das ist ja eine magische Spruchrolle. Die ist verdammt teuer! Danke man, hier deine Waffe.“ Du erhälst einen Schmiedehammer, 30*Kapitel Erfahrung und 1Anschlusspunkt im neuen Lager. Option 2 Ende
+Nyras Bild: 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissen als er es aus seiner Tasche holte.“  
+Mordrag: „AAAhh, genau das was ich wollte!“ Er zeigt dir eine laienhafte Zeichnung einer nackten Frau mit riesigen Brüsten. „Ich wusste es doch, der Penner hat die Cipher mal abgekauft. Das ist mir mehr wert als nur ne Waffe!“ Du erhälst einen Schmiedehammer, 30* Kapite Erfahrung, 20 Erz und 1 Anschlusspunkt im neuen Lager. Option 2 Ende
+Nyras Karte 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissen als er es aus seiner Tasche holte.“ 
+Mordrag: „Und was soll ich jetzt damit… Naja immerhin hast du es versucht. Ich muss Cipher in Arsch treten, er hat behauptet Nyras hätte ein Bild von ner nackten Frau für 50 Erz gekauft. Er hat ihn wahrscheinlich mit jemandem verwechselt. Leute mit Glatze sehen alle gleich aus.“  Du erhältst einen Schmiedehammer und 10*Kapitel  Erfahrung. Option 2 Ende
+ Option 3: [Du hast 3 oder mehr Geschick.]
+Du erhältst 3 von 3 zufälligen schriftstücken (es soll zufällig eins augegeben werden, wobei zur auswahl stehen: Nyras Bild, Nyras Karte, Nyras Spruchrolle)
+Du rennst so schnell wie möglich weg.
+Bedingungen zu erfüllen: Lege deine Aktionskarten ab.
+Du rennst aus dem Sumpflager und findest dich auf Feld 131 wieder. 
+Nyras: „Bleib stehen, du Lump!“ 
+ Du kannst bei Nyras keine Quests mehr annehmen. 
+Bedingungen zu erfüllen: Gehe zurück ins Neue Lager! 
+Du kannst dir den Gegenstand aussuchen, den du Mrodrag geben willst. Je nachdem, welchen Gegenstand du erhalten hast, geschieht folgendes:
+Nyras Spruchrolle: 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissen als er es aus seiner Tasche holte.“  
+Mordrag: „Ja mit den Sektenspinnern kann man wirklich alles machen. Die sind so dumm! Dann seh ich mir das mal genauer an. Das ist ja eine magische Spruchrolle. Die ist verdammt teuer! Danke man, hier deine Waffe.“ Du erhälst einen Schmiedehammer, 30*Kapitel Erfahrung und 1Anschlusspunkt im neuen Lager. Option 3Ende
+Nyras Bild: 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissen als er es aus seiner Tasche holte.“  
+Mordrag: „AAAhh, genau das was ich wollte!“ Er zeigt dir eine laienhafte Zeichnung einer nackten Frau mit riesigen Brüsten. „Ich wusste es doch, der Penner hat die Cipher mal abgekauft. Das ist mir mehr wert als nur ne Waffe!“ Du erhälst einen Schmiedehammer, 30* Kapite Erfahrung, 20 Erz und 1 Anschlusspunkt im neuen Lager. Option 3 Ende
+Nyras Karte 
+Sträfling: „Hier ich hab dir was feines mitgebracht. Ich habs ihm einfach aus der Hand gerissen als er es aus seiner Tasche holte.“ 
+Mordrag: „Und was soll ich jetzt damit… Naja immerhin hast du es versucht. Ich muss Cipher in Arsch treten, er hat behauptet Nyras hätte ein Bild von ner nackten Frau für 50 Erz gekauft. Er hat ihn wahrscheinlich mit jemandem verwechselt. Leute mit Glatze sehen alle gleich aus.“  Du erhältst einen Schmiedehammer und 10*Kapitel  Erfahrung. Option 3 Ende
+ 
+ 
+
+Slys Quest
+Überschrift: Der Vielfraß
+Sly: „Hei du, Siehst aus als könntest du Arbeit gebrauchen. Ich habe schon seit Ewigkeiten nichts ordentliches mehr zwischen die Zähne gekriegt. Wenn du mir eine ordentliche Mahlzeit bringst, werde ich dich belohnen.“ 
+Sträfling: „Möchtest du was bestimmtes?“ 
+Sly: „Nein ich hab son Kohldampf! Ich hau mir alles rein!“ 
+Bedingungen zu erfüllen: Bringe Sly Nahrung im Wert von 10 Heilung!
+Sly: „Das ist genau, was ich brauchte. Danke man! Falls Diego mich fragt werde ich ein gutes Wort bei ihmeinlegen.“Du erhältst 30* Kapitel Erfahrung und 1 Anschlusspunkt im alten Lager.  Quest erfolgreich.
+ 
+
+
+Jorus Quest
+Überschrift: Der Höhlen...Gänger
+Joru: „Na Kleiner, hast du die Scheiße hier auch satt? Ich muss hier raus. Ich habe schon ewig keine Fraumehr gehabt. Alles was hier gibt sind Kerle. Und Sumpfkraut. Und Viecher. Vor allem Molerats hasse ich am meisten. Da wollte ich mir mal außerhalb des Lagers etwas Spaß allein gönnen, und dann tauchen da diese Mistviecher auf.  Ich habe meinen Scheiß Novizenrock in der Höhle zurückgelassen und bin vor Schreck nackt zurück ins Lager gerannt. Ich habe zwar von Bruder Lester einen Ersatzrock gekriegt, nur liegt mein ganzes Zeug jetzt in dieser Höhle. Wenn du mir meine Sachen zurückholst, kriegst du auch eineBelohnung von mir.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 133!
+Dort erscheinen zwei junge Molerat! Kampf beginnt! 
+Wenn du verlierst wachst du auf einem der nebenliegenden Felder wieder auf, ohne Erz und aktive Waffe. Die Quest kann erst fortgesetztwerden, wenn die Molerat besiegt sind! Betrittst du das Questfeld erneut, beginnt sofort der Kampf gegen den Questgegner, der wieder voll regeneriert ist!   
+Bedingungen zu erfüllen: Gewinne den Kampf!
+Du erhältst Jorus Rock, Jorus Traumruf und einen JorusZettel!
+Bedingungen zu erfüllen: Gehe ins Sektenlager.
+Option 1: [Sträfling: „Hei man, ich hab deinen Kram gefunden... Bitte...schön...“]
+Joru: „Hey da bist du ja wieder. Hast du mein Zeug gefunden?“ 
+Sträfling: „Ja hier, ich geh mich jetzt erstmal waschen, gib mir aber wenigstens meine Belohnung!“ 
+Joru: „Ja natürlich. Vielen Dank. Möge der Schläfer dir Kraft verleihen!“ Du erhältst einen Ring der Schläferfaust, 15 Erz und 40* Kapitel Erfahrung! Option 1 Ende 
+Option 2: [Du siehst den ganzen Kram genaueran und entscheidest, dass er bei dir besser aufgehoben ist!]
+Du kannst nicht mehr mit Joru interagieren. Quest fehlgeschlagen.
+
+
+
+Neks Quest:
+Überschrift: Der lebende Gardist!
+Nek (paranoid): „Hei du, hilf mir. Ich glaube ich werde verfolgt. Ständig, wennich mich umsehe ist da ein Schatten. Ich glaube irgendwer ist hinter mir her. Du musst mir helfen. Ganz in der Nähe des Lagers soll es eine Höhle geben. Da will ich mich verstecken. Vielleicht zeigt sich ja irgendwann dort mein Verfolger. Gehst du mit mirzur Höhle und hältst mir den Rücken frei?“ 
+Bedingungen zu erfüllen: Gehe zu Feld 86! 
+Nek: „Hier sollte es sein. Hier wird mich keiner finden....“ (Ein Quieken erklingt aus der Höhle!) 
+Nek: „Geh mal rein und guck was da los ist!“ 
+Sträfling: „Du bist hier der Gardist. Geh du vor!“ 
+Nek: „Deswegen gebe ich hier die Befehle und ich gehe nach dir in die Höhle.“ 
+Zögernd betritt man die Höhle. In der Ecke quiecken 6 Babymolerats ängstlich vor sich rum.  
+Sträfling: „Die Höhle ist leider von einer Moleratfamilie belegt!" 
+Nek: „Die Biester geben einfach nicht auf!“ 
+Nek stürmt wie ein wahnsinniger in die Höhle! Du beobachtest ihn, wie er die Babies brutal abschlachtet.  
+Du flüsterst vor der Höhle vor dich hin: „Was für ein brutaler Kerl.“ 
+Nach einiger Zeit kommt Nek aus der Höhle... blutverschmiert...  
+Nek: „Ich habs immer noch drauf!“ 
+Sträfling: „Wenn du meinst!“ 
+Nek: „So, jetzt wär hier alles sauber und hier wird mich auch keiner finden. Ich bleibe erstmal hier. Danke für deine Hilfe! Hier ist etwas Erz.“ Du erhältst 10 Erz und 40* Kapitel Erfahrung. Quest erfolgreich.
+
+
+
+Nyras Quest:
+Überschrift: In die Pilze gehen
+
+Nyras: „Hei Neuer. Meister Lukor und ich suchen etwas. Etwas ganz Bestimmtes. Einen Pilz, der einen so high macht, dass man mit den GeisternSprechen kann. Wir wollen wissen, ob es Geister in der Barriere gibt, die uns einen Weg heraus weisen können. Der Pilz soll hier ganz in der Nähe wachsen, beim alten Orkfriedhof. Wenn du mir diesen Pilz bringst, kriegst du von mir ein seltenes Artefakt.“ 
+Bedingungen zu erfüllen: Gehe zu Feld 105! 
+Am Eingang des Orkfriedhofes findest du einen seltsamen Pilz und steckst ihn in deine Tasche. Du erhältst einen Schläferpilz.
+Bedingungen zu erfüllen: Gehe ins Sektenlager!
+Wenn du zurück im Sumpflager bist,spricht dich Nyras an. 
+Nyras: „Hey man, ich hatte schon Muffe, dass du dir den Pilz alleine reingezogen hast. Aber jetzt gib schon her. Ich muss den Baal´Lukor bringen. Er sagt, wenn man sich damit ein Omelett macht, dann komme man dem Schläfer besondersnahe. Hier man, nimm auch noch dieses Erz!“Du erhältst ein Amulett der Weisheit, 10 Erz und 30*Kapitel Erfahrung. Quest erfolgreich. 
+
+
+
+Jarvis Quest:
+Überschrift: Pass auf deinen Rücken auf!
+Jarvis: „Hei du. Neu hier was? Siehst aus als könntest du einenFreund gebrauchen. Zufälligerweise bin ich auf der Suche nach einem Waffenkumpanen. Ganz in der Nähe des Lagers soll es ein Stonehenge geben, in dem es eine Menge zu holen geben soll. Ich würde mir das Stonehenge mal genauer angucken, nur allein möchte ichda nicht hingehen. Wenn du mir den Rücken freihältst kann ich mich dort ungestört umsehen. Was sagst du? Ich hätte auch eine besondere Belohnung für dich. Eine Information, die dir sehr nützlich sein kann.“  
+Bedingungen zu erfüllen: Gehe zu Feld 50! 
+Jarvis: „Ja hier muss es sein. Ich gehe vor! Pass auf meinen Rücken auf!“ 
+Vor dem Stonehenge stürmen 2 „Skelette aus dem Stonehenge“ auf euch zu! Kampf beginnt! Aus diesem Kampf kannst du nicht fliehen! 
+ 
+ Option 1: [Ihr gewinnt den Kampf!]
+Jarvis: „Oh man,wer hätte gedacht, dass hier Untote rumfleuchen. Da sollten wir uns lieber von fernhalten. Naja immerhin hast du Mumm bewiesen und hast nicht einfach die Beine in die Hand genommen. Hier in der Nähe gibt es ne Höhle mit ner Truhe drin, da ist noch ein altes Artefakt drin, du kannst es haben ich brauche es nicht mehr! Hier nimm den Schlüssel!“  
+Bedingungen zu erfüllen: Gehe zu Feld 46!
+Du erhältst das Amulett des freien Rückens! Quest erfolgreich
+
+Option 2: [Ihr verliert oder nur dein Leben fällt auf 0!]  
+Du kommst im Neuen Lager ohne aktive Waffe und Erz auf einem Bett zu dir. In einem Bett neben dir liegt Jarvis. 
+Jarvis: „ Das nennst du Rücken freihalten? Ich nenne das peinlich! Deine Belohnung kannst du knicken!“ Quest fehlgeschlagen.
+
+
+Torlorfs Quest
+Überschrift: Das Trinkfest!
+
+Torlorf: „Hei Neuer. Hast du Durst? Siehst aus als könntest du ganz schön was vertragen. Wie wäre es, wenn wir zusammen was trinken gehen. Wenn du mich unter den Tisch trinken kannst, geht nicht nur die Zeche auf mich, ich kanndir außerdem noch beibringen, wie man mehr aus abgeschlachteten Viechern rausholen kann.“ 
+Bedingungen zu erfüllen: Gehe in die Taverne! Du hast den Wetteinsatz von 20 Erz. 
+(Es gibt ein Würfelduell wobei immer ein W6 geworfen werden soll. Der Held trittdabei gegen Torlorf an. Wer zuerst 3 mal das höhere Ergebnis hat gewinnt. Stelle die Würfelwürfe und Ergebnisse in einem popupfenster dar!)
+Option 1: [Du verlierst und wirst bewusstlos!]
+Torlof: „Du musst dich wohl mehr anstrengen. Auf hoher See nennt mansolche Leute wie dich Landlurker, Minjung!“
+Du musst eine Runde aussetzen.
+Danach erscheint ein Popupfenster, wenn du noch 20 Erz hast, das dich fragen soll, ob du es noch einmal versuchen möchtest. Bestätigst du, wiederhole das Würfelduell. Wenn du wiederverlierst, passiert das gleiche nochmal bis du entweder gewinnst oder kein Erz mehr hast.
+Hat du nicht mehr genug Erz, um zu Wetten ist die Quest fehlgeschlagen!
+Bedingungen zu erfüllen: Du gewinnst das Würfelduell!
+Du erhälst 1 maximales Leben permanenthinzu und 10* Kapitel Erfahrung. Im nächsten Kampf hast du +1S, -1G, -1 Bewegungspunkte.
+Torlof: „Man … kann… das … hier…. Sss ss…. Nur.. VERSTEHST DU!.....Mnmnmsdf…. wo issen der korn?..... wenn … sman… amn sööööft.“ 
+Torlof zählt für dich nun als Lehrerfür die Jagd, für 30 Erz kannst du bei ihm lernen, wie man Viecher ausnimmt. Wenn du das machst, erhältst du immer einen extra Schinken, wenn du einen Allesfresser besiegst! Quest erfolgreich.
+
+
+Lesters Quest:
+Überschrift: Eine Waffe auf Umwegen
+Lester: „Hallo Bruder. Ich bin Lester. Du bist neu hier oder? Ich habe eine Bitte an dich. Ich habe mit sonem Typen mit nem Zopf gemeinsam in der alten Bergfestung Nachforschungen zur Entstehung magischer Wesen angestellt, als uns plötzlich eine Horde riesiger Vogelartiger Kreaturen angriff. Wir waren nicht darauf gefasst und sind geflohen. Leider habe ich auf der Flucht meine Waffe verloren. Wenn du mit mir gemeinsam hingehst, kann ich sie mir sicher zurückholen. Was sagst du, hilfst du mir meine Waffe zurückzuholen?“ 
+Bedingungen zu erfüllen: Gehe zu Feld 112! 
+Du findest dort Nichts! 
+Bedingungen zu erfüllen: Gehe zum Sektenlager!
+Sträfling: „Da war nichts Lester! Willst du mich verarschen?“ 
+Lester: „ Ja grade als du los bist, ist mir eingefallen, dass ich das nurgeträumt habe.“ 
+Sträfling: „Warum hast du mich nicht aufgehalten?“ 
+Lester: „Naja… Du warst schon so weit weg, und ich dachte erstmal noch einen durchziehen, kann nicht schaden, und dann wollte ich dir direkt hinterher, aber du bist so flink man. Aber duscheinst ja wirklich deine Aufträge ernst zu nehmen, hier ist wie vereinbart meine Waffe, bring sie zur Bergfestung!“ 
+Sträfling: „Ja sicher! Du kannst mich mal!“ Du erhältst 50* Kapitel Erfahrung und 1 Anschlusspunkt im Sektenlager.
+
+
+Lares Quest:
+Überschrift. Es juckt an Gomez Finger 
+Lares: „Hei kleiner. Wie ich sehe bist du keiner von Gomez Schergen, zumindest noch nicht. Das ist gut. Bevor du auf dumme Ideen kommst, hör mir kurz zu. Ich bin Lares. Ich bin hier sozusagen der 2. Chef. Wir im Neuen Lagerkönnen Leute wie dich sehr gut gebrauchen. Was sagst du, willst du bei uns mitmachen? Dazu musst du uns allerdings deine Loyalität beweisen. Und ich weiß auch schon genau wie. Gomez scharrt ständig Frauen um sich herum. Was nur Wenige wissen ist, dass ersie, sobald er sich vergnügt hat, im Keller einsperrt. Scheinbar hält er es nicht für nötig, diesen Keller zu bewachen, da eine Frau in der Barriere ohne Schutz nicht überleben wird, wenn sie abhaut. Auch eine Entführung scheint ausgeschlossen, da man an Gomez Schergen vorbeikommen müsste. Deine Aufgabe ist jedoch eine andere. Ich gebe dir meinen Siegelring und du schleichst dich in den Keller der Burg. Dort wirst du eine der Frauen verführen und heimlich hiermit infizieren. (Er hält dir ein kleines Fläschchen hin). Da sind Filzläuse drin. Ich will, dass sie an Gomez gehen, wenn du verstehst was ich meine, sozusagen ein Geschenk des Neuen Lagers. Wenn du das für mich tust, werde ich dich belohnen und dir so einige Tricks beibringen. Hier mit diesem Ring lässt dich Thorus in die Burg!“ 
+Du erhältst einen Siegelring der Wassermagier und Lares Filzläuse! 
+Bedingungen zu erfüllen:Gehe ins Alte Lager! 
+Thorus hält dich am Burgtor auf. 
+Thorus: „Na, wo wollen wir denn hin Kleiner?“ 
+Sträfling: „Na da rein! Hier,ich bin im Auftrag der Wassermagier hier!“ 
+Thorus: „Ist ja schon gut!“ 
+Bedingungen zu erfüllen: Warte eine Runde bis es nachts ist!  
+Du beobachtest einen Wachpostenwechsel. Während sich die Wachen unterhalten, gelingt es dir dich an ihnen vorbei zu schleichen.
+Bedingungen zu erfüllen:  Wirf einen W6!
+Option 1: [Wenn W6 +G>=3]
+Du knackst das schloss der Kerkertür und schlüpfst hindurch.
+Bedingungen zu erfüllen:Wirf erneut einen W6!
+Option 1a: [Wenn W6+ G>=4]
+Du kannst dich gerade noch vor einer Wache verstecken, die gerade eine der Frauen hoch in Gomez Gemächer bringen möchte.  
+Du wartest, bis der Gardist und die Frau verschwunden sind. In einer der Zellen schläft eine Frau in einer Art Bett. Du schleichst dich an sie heran und überschüttest sie mit dem Inhalt des Glases von Lares. Leise schleichst du zurück zur Kerkertür und stellst fest, dass sie verschlossen ist. 
+Bedingungen zu erfüllen:Wirf einen W6!
+Option 1a a :[Versuche 3 Runden das Schloss zu knacken! Wenn W6+G>=6]
+Die Tür öffnet sich! 
+Bedingungen zu erfüllen: Werfe alle deine Aktionskarten ab.
+Du sprintest unauffällig aus dem Kerkerbereich und verlässt ohne aufsehen zu erregen die Burg! Du rennst bis zur Brücke auf Feld 36 und bleibst dort stehen, um zu verschnaufen! 
+
+Bedingungen zu erfüllen: Gehe ins Neue Lager! 
+Sträfling: „Hei, das war überhaupt kein Zuckerschlecken, die hätten mich um ein Haar kalt gemacht! Aber siehe da, hier bin ich!“ 
+Lares: „Ich hab eigentlich nicht erwartet dich nochmal zu sehen, aber wo du schonmal da bist, kannst du mir ja berichten wie es gelaufen ist.“ 
+Sträfling: „Danke! Ich bin halt rein in Kerker geschlichen und hab die Alte die da schlief mit deinen Läusen überschüttet. Gomez wird sich sicher freuen.“ 
+Lares: „Das gibst es doch nicht! Du bist ein richtigerSchweinehund! Solche Leute können wir brauchen! Hier! “Du erhältst 80* Kapitel Erfahrung, 50 Erz und 1Anschlusspunkt im neuen Lager!  
+Option 1 a b: [Versuche 3 Runden das Schloss zu knacken! Wenn drei mal W6+G<6]
+Es gelingt die nicht, die Kerkertür zu knacken. Plötzlich kommt ein Gardist in den Kerker und bemerkt dich! Du landest auf Feld 11 ohne aktive Waffe, Erz und mit 1 HP! Quest fehlgeschlagen!
+Option 1b: [Wenn W6 + G <=4!]
+Du wirst erwischt und landest auf Feld 11 ohne aktive Waffe, Erz und mit 1 HP! Quest fehlgeschlagen!
+Option 2 : [Wenn der erste W 6 + G<=3!]
+Du wirst erwischt und landest auf Feld 11 ohne aktive Waffe, Erz und mit 1 HP! Quest fehlgeschlagen!
+
+ 
+
+Y`Berions Quest:
+Überschrift: Ein schicker Hut!
+Y´Berion: „Der Schläfer… Er ist mit dir.Ich kann es sehen. Er hat dich auserwählt. Auserwählt mir zu helfen. Mir zu helfen, meiner Bestimmung nachzukommen. Du wurdest für eine ganz besondere Aufgabe ausgewählt. Der Schläfer hat mir dein Gesicht gezeigt und mir gesagt, was du für unsere Bruderschaft tun wirst. Nimm diese Spruchrolle von mir! Du sollst dich bei den Erzbaronen in die Schatzkammer schleichen und mir etwas besorgen. Etwas, das den Kontakt zum Schläfer stärken soll. Es ist ein Helm mit merkwürdigen Ornamenten. Wenn du ihn hast verwende diese Spruchrolle, um zu mir zurückzukehren! Und pass auf, dass dich niemand bemerkt! “ Du erhältst einen Teleport Tempelplatz und eine Verwandlung Fleischwanze!
+Bedingungen zu erfüllen: Gehe in Alte Lager! Verwende erfolgreich die Verwandlung Fleischwanze.
+Du verlierst eine Verwandlung Fleischwanze. Du krabbelst, ohne aufgehalten zu werden in die Burg und durch ein kleines Loch neben der Tür der Schatzkammer in eben diese.  Darin befindet sich neben einer Truhe, die auf der Questkarte: „Gomez Truhe“ zu sehen ist, ein prunkvoller Helm. Du erhältst einen prunkvollen Helm. In der Kammer verharrst du eine Runde.  (Blende im Abschnitt Questlog bei aktiven quests unter dem Text das Bild zu Gomez truhe ein!)
+Bedingungen zu erfüllen: Drücke den neue Runde Button!
+Option 1: [Verwende erfolgreich in dieser Runde den Teleport Tempelplatz!]
+Du verlierst einen Teleport Tempelplatz. Du verwendest den Teleportzauber und erscheinst einen Moment später auf dem Tempelplatz des Sektenlagers. Du schreitest schnurstracks in den Tempel auf Y´Berion zu. 
+Sträfling: „Hier Meister Y´Berion! Ich biete dir den Helm im Namen des Schläfers dar!“  Du verlierst einen prunkvollen Helm!
+Y´berion: „Er sieht aus wie in der Vision. Eine Schande, dass Gomez ihn für eine Zeit besaß. Gut, dass er wieder dem Schläfer von Nutzen sein kann, uns seine Gedanken mitzuteilen! Danke mein junger Bruder. Deine Belohnung soll besonders sein. Wähle weise!“ 
+Option 1a: [1x Schlafspruchrolle ] 
+Y´berion: „Ich sehe du bist ein bescheidener Schüler des Schläfers. Es ehrt dich als besonders demütig.“ Du erählst eine Schlafspruchrolle, 1 Anschlusspunkt im Sektenlager und 30*Kapitel Erfahrung. Option 1a Ende  
+ 
+Option 1b:[100 Erz]  
+Y´berion: „Du bist gierig, gewiss einer von Gomez Schergen und mit dem Diebstahl hast du sie verraten, ich kann so einem doch nicht vertrauen und zum Mitglied unserer Bruderschaft machen. Aber nimm ruhig, wenn es dich glücklich macht.“ Du erhältst 100 Erz und 20 *Kapitel Erfahrung. Option 1b Ende
+ 
+Option 1c: [Extrakt reiner Magie] 
+Y´berion: „Eine weise Wahl! Der Schläfer wird sich dir gewiss bald offenbaren und in unsere Fittiche leiten.“ Du erhältst ein Extrakt reiner Magie und 30* Kapitel Erfahrung. Option 1c Ende 
+
+Option 2: [Du kannst in der nächsten Runde nicht genug Mana für den Teleport Tempelplatz aufbringen oder kannst diesen nicht kanalisieren!]
+Dich erwischen 2 Gardisten! Du verlierst deine gesamte Ausrüstung außer deine Rüstung und, wenn du hast, einen Anschlusspunkt im alten Lager! Du kommst auf Feld 11 mit nur 1HP wieder zudir. Quest fehlgeschlagen!
+
+
+
+Wolfs Quest:
+Überschrift: Der Rüstungsbastler
+Wolf: „Hei Neuling. Willst du was kaufen? Oder bist du auf der Suche nach Arbeit. Ja, ich sehe doch, dass du was Besonderes suchst. Und ich glaube, dass ich genau das richtige fürdich habe. Ich forsche gerade an einer neuen Art Rüstung. Einen Helm aus Scavenger Schädeln. Ich schätze ich benötige 3 Stück für einen soliden Helm. Wenn du sie mir besorgst, mache ich dir einen Prototypen daraus. Du musst halt mit dem Gestank klarkommen. Dagegen habe ich noch kein Mittel gefunden.“ 
+Bedingungen zu erfüllen: Kämpfe gegen 3 Scavenger und gewinne. Finde diese entweder zufällig oder begib dich zum Feld 21. Dort erscheinen dann 3 Scavenger auf einmal!
+Für jeden besiegten Scavenger erhältst dueinen Scavengerkopf, solange diese Quest aktiv ist (Maximal 3 Stück). Hast du 3 Stück gesammelt, begib dich zum neuen Lager!
+Bedingung zu erfüllen: Gehe zum neuen Lager!
+Wolf: „ Hervorragend! Warte noch einen Tag, dann ist der Helm fertig.“ Du verlierst 3Scavengerköpfe! Du erhältst 30* Kapitel Erfahrung. 
+Bedingung zu erfüllen: Raste einmal im neuen Lager!
+Wolf: „ Hier ist er, ich hoffe er passt.“ Du erhältst einen Scavengerhelm.
+
+
+Saturas Quest:
+Überschrift: Xardas Brief
+ 
+Saturas: „Magie zu Ehren. Was führt dich zu mir, junger Suchender? Du siehst rastlos aus. Es scheint als wärst du verloren, auf der Suche nach einem Ausweg. So wie wir alle. Wir, die Wassermagier, sind ebenfalls auf der Suche nach einem Ausbruchsplan. Kurz bevor die Wassermagier und dieFeuermagier sich zerstritten haben hatte ich einen alten Freund namens Xardas. Er war nicht so verblendet von Gomez Luxus wie die anderen Feuermagier. Er muss unbedingt diese Nachricht erhalten. Bring sie so schnell wie möglich zu ihm. Du wirst auch reichbelohnt werden.“ Du erhältst Xardas Botschaft!
+Bedingung zu erfüllen: Gehe in Alte Lager!  
+Vor der Burg triffst du Thorus 
+Sträfling: „ Ich soll eine Nachricht für den Magier Xardas überbringen! Lass mich in die Burg!“ 
+Thorus: „Nein, das werde ich nicht. Ich würde, aber es ist nutzlos. Xardas ist schon lange nicht mehr im Lager gesehen worden. Niemand weiß wo er sich aufhält. Wahrscheinlich hat er sich irgendeinen abgelegenen Ort gesucht und betreibt da seine Experimente. An deiner Stelle würde ich ihn nicht suchen, selbst die anderen Feuermagier fürchten ihn.“ 
+Bedingung zu erfüllen: Gehe ins Neue Lager. 
+Sträfling: „Der Magier … ist mittlerweile weg. Er wurde schon lange nicht mehr im Alten Lager gesehen.“ 
+Saturas: „Nun… Das ist schlecht… Er wird schonwieder auftauchen. Xardas war immer auf der Suche nach hohem Wissen. Für das Alte Lager sehe ich jedoch schwarz. Xardas war doch der einzig vernünftige in der Bande.  Nun will ich mal nicht so sein. Die Information könnte dennoch nützlich gewesen sein. Falls du ihn dennoch mal finden solltest, erstatte mir Bericht! Hier nimm erstmal dieses Erz!“ Du verlierst Xardas Botschaft! Du erhältst 40 Erz und 30* Kapitel Erfahrung. Quest erfolgreich.
+
+
+
+Baal Tyons Quest
+Überschrift: Seelenwanderung  
+ 
+BaalTyon (bekifft): „Höre mir zu junger Reisender. Der Schläfer sucht Leute wie dich. Die Gurus in diesem Lager haben dich beobachtet und festgestellt, dass du nicht bist wie die anderen hier. Du scheinst etwas zu wissen, was du selbst noch nicht weißt. Nur der Schäfer weiß es. Er will sich dir offenbaren. Hier nimm etwas davon „( Du rauchst einen grünen Baal).“ Und jetzt geh und finde die Antwort!“ 
+Bedingung zu erfüllen:Gehe zu Feld 101! (Solange du diese Quest aktiv hast, bist du völlig bekifft und kannstnur die Hälfte deiner Bewegungspunkte der Aktionskarten (min. 1) gehen! Kreaturen nehmen dich nicht als Bedrohung wahr und kämpfen nicht gegen dich!)  
+Das Geräusch des Wasserfalls wird durch die Wirkung des Grünen Baals intensiviert. Du nimmst deine Umgebung mit allen Wahr. Plötzlich erscheint ein durchsichtiger Wolf in der Höhle. 
+Bedingung zu erfüllen:Wirf einen W6 
+Option 1: [W6= 1 oder 2] 
+Du streichelst den Wolfschemen… Ein vorbeikommender Buddler sieht wie du einen Stein streichelst. Er fragt dich, ob du Erz für ihn hast. Du legst bis zu 20 Erz auf den Stein, je nachdem ob du 20 Erz oder weniger hast. Der Buddler nimmt sie mit. 
+Bedingungen zu erfüllen: Gehe in Sektenlager, dein Bewegung ist wieder normla und Gegner nehmen dich wieder als Bedrohung wahr!
+Sträfling: „Meister ich glaube der Schläfer hat zu mir gesprochen! Er Kam zu mir in Form eines Geisterwolfes und verlangte ein Erzopfer! Ich habe ihm natürlich so viel gegeben wie ich konnte.“ 
+Baal´Tyon: „Nicht wenigen ist es vergönnt die heilige Präsenz des Schläfers so nah zu erfahren. Ich bin schon fast etwas neidisch. Aber jemandem, dem der Schläfer sich so früh zeigt, kann ich nicht böse sein. Erzähl wie war seine Gegenwart!“ 
+Sträfling: „Ich habe mich noch nie so frei gefühlt. Ich konnte schon ahnen wie wir dieses Gefängnis mit seiner Hilfe verlassen können. Es war als würde ich bald lernen zu fliegen.“ 
+Baal´Tyon: „Das hab ich mir doch gleich gedacht. Durch seine unermessliche Macht werden wir bald in der Lage sein, diese Ödnis hier zu verlassenund uns in der Anwesenheit unseres Erlösers an seiner Glückseligkeit erfreuen! Hier nimm reichlich junger Schüler!“ Du erhältst 1 Anschlusspunkt im Sektenlager, 50 Erz und 30*Kapitel Erfahrung. Option 1 Ende 
+
+Option 2: [W6 =3 oder 4]
+Du wirfst dem Wolf  2 Nahrung oder einen Köder hin. Er ist sichtlich erfreut und verschlingt gierig sein Futter. Hast du keine Nahrung oder einen Köder, wirfst du ihn einen Stock zu, mit dem er schwanzwedelnd zu spielen beginnt.
+Bedingungen zu erfüllen: Gehe in Sektenlager, dein Bewegung ist wieder normla und Gegner nehmen dich wieder als Bedrohung wahr!
+Sträfling: „Meister Tyon… Mir ist ein Wolf erschienen. Ich weiß nicht ….ich konnte nicht …einfach… ich musste ihm einfach was zu Futtern /ein Stöckchen hinwerfen. Er hat sich darüber gefreut und es vertilgt / damit gespielt. Dann verschwand er.“ 
+Baal´Tyon: „MMMMMhhhh… Das mein junger Schüler kann nur der Schläfer gewesen sein. Du solltest dich als glücklich erachten, dass er sich dir offenbart hat. Aber anscheinend hat dein Verstand nicht ausgereicht, um ihn zu erkennen. Also hat er sich von dir abgewandt… Welch eine Schande. Du hättest ihn so vieles fragen müssen. Seine Präsenz ist wertvoller als alle irdischen Güter! Du musst erst noch begreifen lernen wie überaus wertvoll diese Erfahrung war. Immerhin habe ich wohl nun herausgefunden, wie viel Kraut es benötigt, damit man mit ihm Kontakt herstellen kann und wie es zubereitet werden muss.“ Du erhältst 1 Anschlusspunkt, 30 Erz und 20* Kapitel Erfahrung. Option 2 Ende 
+
+
+Option3: [W6= 5 oder 6] 
+Du erschrickst und schlägst nach ihm… Der Schemen verschwindet und hinter dir steht ein richtiger Wolf, der dich angreift. Du kommst ganz plötzlich wieder klar! Kämpfe gegen den Wolf! Wenn du verlierst, gilt die Quest als fehlgeschlagen.
+Bedingungen zu erfüllen: Gehe ins Sektenlager, dein Bewegung ist wieder normla und Gegner nehmen dich wieder als Bedrohung wahr!
+Sträfling: „Ich war in einer Höhle und sah erst einen Geisterwolf, dann plötzlich einen echten, der mich unvermittelt attackierte. Nur mit Mühe und Not hab ich es in einem Stück da wieder raus geschafft.“ 
+Baal´Tyon: „Sowas hab ich mir schon gedacht du Narr. Du hast sie nicht erkannt… nicht erkannt. Es war eine Vergenz des Schläfers du hast sie nicht gewürdigt und er hat sich dirnicht offenbart und dir aus Rache einen Wolf auf den Hals gehetzt. Das ist ein böses Omen! Wir müssen auf der Stelle den Schläfer wieder besänftigen. Ich werde sofort weitere grüne Baals herstellen und versuchen den Schläfer von deinem Frevel zu besänftigen.“  
+Sträfling: „Das wars? Ich kriege nichts?“ 
+Baal´Tyon: „Naja eigentlich hast du nichts verdient, aber du bist um eine Erfahrung reicher geworden: Übernatürliche Begegnungen mit dem Schläfer nicht außer Acht zu lassen!“Du erhältst 30*Kapitel Erfahrung. Option 3 Ende
+
+
+
+
+Cor Kaloms Quest:
+Überschrift: Der störende Faktor!
+Cor Kalom: „Hei du. Ja du. Ich bin mir sicher, dass du mir helfen kannst. Ich bin Cor Kalom. Ich forsche an neuen Methoden Kontakt zum Schläfer aufzubauen. Er ist unser Weg aus derBarriere. Leider habe ich in letzter Zeit immer weniger Visionen vom Schläfer erhalten. Irgendetwas scheint den Kontakt zu stören. Mir ist aufgefallen, dass die Visionen nachgelassen haben, seitdem Baal Isidro im Lager zum Guru aufgestiegen ist. Hilf mir ihn loszuwerden und ich werde dich belohnen.“ 
+Sträfling: „Wo finde ich Baal Isidro?“ 
+Cor Kalom: „ Er seine Hütte da unten neben dem Tempelplatz!“ 
+Du gehst zu Baal Isidros Hütte. 
+Baal Isidro: „Erwache! Was führt dich zu mir? Ich bin noch nicht lange Baal. Du kannst mich gerne ansprechen.“ 
+Option 1: [Sträfling: „Hey, ich soll dir von Cor Kalom ausrichten, dass du im Neuen Lager gebraucht wirst. Die Nachfrage für gutes Zeug ist da ganz schön gestiegen und er will da einen Mann haben auf den Verlass ist.“] 
+Baal Isidro: „Meister Kalom hat mich ausgewählt und ich dachte schon er mag mich nicht. Ich will sofort los. Aber ich kenne den Weg dorthin nicht.“ 
+Sträfling: „Dein Ernst? Kauf dir ne Karte!“ 
+Baal Isidro: „Nein es gibt viele Viecher auf dem Weg, ich hätte gerne jemanden an meiner Seite. Ich könnte dann auch ein gutes Wort bei Kalom für dich einlegen.“  
+Sträfling: „Belassen wir es einfach dabei, ich komm schon mit!“ 
+Bedingung zu erfüllen: Bringe Baal Isidro zum Neuen Lager! Er kämpft mir dir!
+Baal Isidro: „Danke Mann, hast was gut bei mir hier nimm erstmal diesen Stängel Sumpfkraut!“ Du erhältst 1 grünen Novizen und 40* Kapitel Erfahrung. 
+Bedingung zu erfüllen: Gehe zurück zum Sektenlager! 
+Cor Kalom: „MMmmh… Baal Isidros unheilige Präsenz scheint fortzu sein. Ich spüre schon wie der die Macht des Schläfers mich wieder durchdringt. Mir wäre es dennoch lieber, du hättest diesen Frevler umgelegt. Naja, Danke.“ Du erhältst 50* Kapitel Erfahrung und 40 Erz. Option 1 Ende
+Option 2:[ Sträfling: „Kalom möchtedich aus dem Weg haben. Er hat Angst, dass du ihm hier Konkurrenz machst. Er soll irgendeinen Templer beauftragt haben dich zu töten. Du solltest erstmal aus dem Lager verschwinden. Ich kenn da ein ruhiges Plätzchen.“ ]
+Baal Isidro: „Was ?! Das kann ich gar nicht glauben! Aber Kalom ist undurchschaubar. Ich komm lieber mal mit.“  
+Bedingung zu erfüllen: Gehe mit Baal Isidro zu Feld 98! Er kämpft mit dir!
+Am Waldrand angekommen. 
+Sträfling: „Warte kurz hier!“ 
+Du rennst in den Wald hinein und weckst einen Schattenläufer auf. Du rennst sofort zurück, während der Schattenläufer dich verfolgt. Baal Isidro steht gemütlich am Flussufer, als du ihn erreichst , holt auch der Schattenläufer euch ein. Kampf beginnt! Hinweis: Du kannst aus diesem Kampf fliehen, sobaldBaal Isidro tot ist!
+Wenn du ebenfalls besiegt wirst, erwachst du in einer Höhle wieder, und beobachtest, wie der Schattenläufer gerade dabei ist, Baal Isidro zu verzehren. Stocksteif bleibst du liegen. Als der Schattenläufer das letzte Stück Fleisch von Baal Isidros Knochen genagt hat, legt er sich hin und schläft kurz danach ein. Verletzt (1 HP übrig), aber von Adrenalin getrieben schleichst du dich aus der Höhle und rennst orientierungslos davon, bis du keine Kraft mehr hast. Wirf  alle dein Aktionskarten und deine aktiven Waffen und Zauber ab. Du befindest dich nun auf Feld 111!  
+Bedingung zu erfüllen: Gehe zurück zum Sektenlager: 
+Cor Kalom: „Ausgezeichnet… Ich spüre seine verunreinigte Aura nicht mehr. Er muss tot sein. Danke mein lieber Schüler. DerSchläfer ist wieder mit uns ich kann es spüren. Hier nimm diesen Ring!“ Du erhältst 1Anschluss im Sektenlager, Ring des Schlafes und 50*Kapitel Erfahrung. Option 2 Ende
+
+
+
+Gor Na Draks Quest:
+Überschrift: Die Spirituelle Reinigung! 
+Gor Na Drak: „DerSchläfer sei mit dir junger Reisender. Ich spüre, dass du seinen heiligen Schutz mehr brauchst als jeder andere hier im Lager. Etwas scheint dich zu bedrücken. Ich kenne einen Weg, wie du diese Last abwerfen kannst. Gleich hier in der Nähe gibt ein altes Kastell. Es dient den Templern schon länger als ein Ort spiritueller Reinigung. Nimm diese Spruchrolle hier und lies sie am höchsten Punkt des Kastells laut vor, um deinen Geist zu befreien. Dies soll ein Geschenk der Bruderschaft sein! Vielleicht sehen wiruns irgendwann wieder als neue Menschen. Möge der Schläfer dich behüten!“ Du erhältst eine magische Reinigung!
+
+Bedingung zu erfüllen: Gehe zum Kastell!  
+Oben auf den Resten der Kastellmauer liest du die Spruchrolle vor: „Krushakshaknoshaknoragat“ Du verlierst eine magische Reinigung!
+Bedingung zu erfüllen: Wirf einen W6! 
+Option 1: [W6=1]
+Du fällst auf Feld 77 und verlierst dein halbes Leben! Zusätzlich wird das Zufallsereignis aktiviert! Option 1 Ende 
+Option 2: [W6 = 2 oder 3]
+Du heilst dich voll und erhältst  30 *Kapitel Erfahrung. Option 2 Ende  
+Option 3: [W6 = 4 oder 5]
+Du hörst Stimmen aus dem Nichts. Sie reden auf dich ein und du beginnst in dir eine wachsende Macht zu fühlen! Du erhältst 1 zusätzlichen Stärkepunkt! Option 3 Ende 
+Option 4: [W6 =6]
+Ein Artefakt erscheint in deinen Händen! Du erhältst ein zufälliges Amulett oder einen zufälligen Ring!(zu diesem zweck füge ein zufälliges verfügbares Artefakt dem Inventar des Helden hinzu!) Option 4 Ende
+
+
+
+
+Drax Quest:
+Überschrift: Ein fähiger Jäger
+Drax:  „Neu hier, was kleiner? Ich bin Drax. Ich jage gerne, hauptsächlich Scavenger wegen ihres Fleisches. Ich sehe du gehörst noch keinem Lager an. Ich kann dir nur sagen, dass das neue Lager ein guter Ort für dich ist. Ich habe hier viel gelernt. Wir können erfahrene Leute gut gebrauchen. Ich sag dir was, wenn du mir zeigst, dass du willig bist etwas zu lernen, leg ich ein gutes Wort für dich bei Lares ein. Außerdem kann ich dir selbst ein paar Tricks beibringen. Ich schenke dir diesen Bogen. Wenn du lernst damit umzugehen, komm wieder und ich werde dir helfen.“ 
+Du erhältst Drax Bogen.
+Bedingung zu erfüllen: Lerne genügend Geschick, um den Bogen anzulegen. 
+Drax: „Ja mit dem Bogen über der Schulter siehst du schon ganz schön gefährlich aus. Ich kann dir beibringen wie man mehr aus toten Viechern herausbekommt. Für nur 30 Erz.“ Du erhältst 30* Kapitel Erfahrung. 
+Drax zählt für dich nun als Lehrer für die Jagd, für 30 Erz kannst du bei ihm lernen, wie man Viecher ausnimmt. Wenn du das machst, erhältst duimmer einen extra Schinken, wenn du einen Allesfresser besiegst! Quest erfolgreich!
+
+
+
+
+
+
+
+Shrikes Quest
+Überschrift: Das ist der Hammer!
+
+
+Shrike: „Hei neu hier, was? Ich kenne das. Mein Name ist Shrike und ich bin auch erst vor ein paar Monaten gekommen.Ich hab’s geschafft im Lager aufgenommen zu werden. Jetzt wollte ich mir grad eine Hütte bauen und hab mir schon alles gekauft was ich brauch. Aber als ich anfangen wollte habe ich gemerkt, dass mir einer der Scherzkekse hier meinen Hammer geklaut hat. Jetzt tut hier jeder so als würde es im gesamten Lager nicht einen Hammer geben. Kannst du mir einen Gefallen tun? Besorge mir einen vernünftigen Hammer. Der letzte den ich losgeschickt habe, hat mir einen Hammer mit morschem Griff gegeben. Als ich loshämmern wollte ist mir der Griff abgebrochen und der Scheiß Hammerkopf voll gegen den Kopf geflogen. Der Scherzkeks fand das auch noch witzig. Bitte hilf mir und besorge mir einen richtigen Hammer.“ 
+Bedingung zu erfüllen: Finde einen Schmiedehammer und gib ihmShrike!
+Sträfling: „Hier ist dein Hammer.“ 
+Shrike: „Jetzt kann ich den ganzen Tag hämmern! Das werde ich dir nie vergessen!” Du verlierst einen Schmiedehammer. Du erhältst 20 Erz, und 40*Kapitel Erfahrung. 
+Bedingung zu erfüllen: Betrete das neue Lager innerhalb der nächsten 4 Züge erneut!
+Blade: „Man, wenn ich herausfinde, wer dem Penner den Hammer wiedergegeben hat, mach ich Orik fertig!“ 
+Sträfling: „Warum Orik?“ 
+Blade: „Keine Ahnung! Ich weiß nicht mehr was ich rede… Ich habe ewig kein Auge mehr zukriegt.“ Du erhältst 10* Kapitel Erfahrung. Quest erfolgreich!
+
+
+
+Baal Tonrals Quest:
+Überschrift:   
+Baal Tondral: „Ein neues Gesicht. Ich bin Baal Tondral. Erst vor kurzem hat mich der Schläfer auserwählt ihm als Guru zu dienen. Als neuster Guru ist es meine Aufgabe, neue Novizen für das Lager zu finden. Ich sehe in dir den Willen uns beizutreten. Nur scheint der Schläfer einen Beweis für deine Loyalität zu fordern. Jeder Anwärter erhält eine Aufgabe, die er erfüllen muss, um die Zustimmung der Gurus zu erhalten. Einen Moment…. Der Schläfer…. Er spricht zu mir…. Er sagt… Bald wird er kommen…. Er wird großes Unheil bringen…. Er muss aufgehalten werden…. Wie war das?... Ja Meister… Ich verstehe…Der Schläfer hat mir eine Aufgabe mitgeteilt. Schon bald soll ein sehr gefährlicher Mann in die Kolonie geschickt werden. Einer, der unser ganzes Schicksal zerstören wird. Und du hast die Aufgabe, ihn aufzuhalten. Er wird etwas brauchen. Und du sollst ihn daran hindern es zu bekommen. Nimm diese mächtige Spruchrolle und setze sie in der Schlucht im Norden ein. Wenn dies erledigt ist, kehre zu mir zurück und du erhältst eine großzügige Belohnung.“ Du erhältst Troll beschwören!
+Bedingung zu erfüllen: Gehe auf Feld 20! Wirke erfolgreich den Zauberspruch Troll beschwören!  
+Duverlierst einen Troll beschwören! Polternd erscheint ein Troll. Der Lärm macht 3 Snapper auf dich aufmerksam! Sie rennen auf dich zu doch hinter dir steht der Troll und du kannst nicht entkommen! Bereits mit dem Tod abgefunden sprichst du ein letztes Gebet an den seeligen Schläfer, als plötzlich die riesige Trollfaust über deinem Kopf hinwegfliegt und die drei Snapper mit einem Schalg in den Erdboden stampft. Völlig verängstigt siehst du den Troll an, welcher jedoch beginnt, sich zum Schlafen einzurollen. 
+Du erhältst 200 Erfahrung. 
+Bedingung zu erfüllen: Gehe zurück ins Sektenlager! 
+Sträfling: „Ich habe diese Bestie beschworen!“ 
+Baal Tondral: „Ja Gut! So wie der Schläfer es wollte! Seine Feinde werden dort nicht vorbeikönnen! Hier nimm dieses Erz und ich werde Kalom ausrichten, dass wir einen wahren Gläubigen unter uns haben.“ Du erhältst 1 Anschlusspunkt im Sektenlager und 30 Erz. Quest erfolgreich!
+ 
+
+Baal Oruns Quest:
+Überschrift:
+
+Baal Orun: „Der Schläfer möge dich behüten unerfahrener Reisender. Aufallen Wegen soll er dir zur Seite stehen, stehen dir doch schwere Zeiten bevor. Warum fragst du? Nun diese Antwort hat einzig und allein der Schläfer für dich. Um mit ihm sprechen zu können, muss er dich auserwählen. Oder…. Ach vergiss es…. Nun gut. Es gibt noch eine andere Möglichkeit, wie du Kontakt zum Schläfer aufbauen kannst. Nimm diese Nagelkeule. Die Nägel dieser Keule sind mit einem Gift getränkt. Es ist speziell für die Blutfliegen im Sumpf gemacht. Wenn du sie damit schwer genug verwundest, werden sie willenlos und folgen dir. Die Blutfliegen im Sumpf ernähren sich hauptsächlich von Sumpfhaikadavern. Diese enthalten durch den ständigen Kontakt mit dem Sumpfkraut ein spezielles Serum. Wenn du mir eine lebendige Blutfliege bringst, kann ich ihr spezielles Gift entnehmen. Mit einer geringen Dosis dieses Giftes, kann ich möglicherweise einen Trank herstellen, mit dem man Kontakt zum Schläfer herstellen kann.“ Du erhältst Oruns Keule. 
+Bedingungen zu erfüllen: Gehe auf Feld 136!   
+Dort erscheint eine Blutfliege. Die Blutfliege wird betäubt, wenn sie 2 oder weniger Leben hat. Wenn sie stirbt, muss eine andere gesucht werden. Der Kampf endet, sobald sie betäubt ist. 
+Bedingungen zu erfüllen: Betäube erfolgreich eine Blutfliege und bringe sie zu Baal Orun!
+Baal Orun: „Ausgezeichnet, über diesen neuen Weg wird Meister Kalom hocherfreut sein. Man kann nie genug Möglichkeiten haben mit dem Schläfer Kontakt aufzunehmen. Und nun geh deines Weges!“ Du erhältst 40* Kapitel Erfahrung, 1 Anschlusspunkt im Sektenlager und 30 Erz. Quest erfolgreich!
+ 
+
+
+Baal Parvez Quest:
+Überschrift: Mit einem Guru stimmt sicher was nicht!
+
+Baal Parvez: „Neu hier was kleiner? Ich bin Baal Parvez aus dem Lager am Sumpf. Ich bin hier, um Handel mit den Leuten aus dem alten Lager zutreiben. Um ehrlich zu sein ist es auch mal ganz schön neue Gesichter zu sehen. Versteh mich nicht falsch, die Brüder aus dem Sumpf sind wie eine Familie für mich. Außer …. Naja, das interessiert dich sicher nicht. Oder? …. Nun, wenn das so ist. Es gibt einen unter uns, der kürzlich zum Guru aufgestiegen ist. Sein Name ist Baal Lukor. Irgendetwas stimmt mit ihm nicht. Ich muss nur rausfinden was. Hilfst du mir? In seiner Hütte muss es irgendwelche Hinweise geben. Bitte sieh nach, ob du irgendetwas finden kannst und bring es mir. Ich werde dich auch bezahlen.“ 
+Bedingungen zu erfüllen: Gehe auf das Feld 136.  
+Dort steht Baal Lukors Hütte. Du begibst dich in das Haus von Baal Lukor im Sumpf. Es scheint leer zu sein. Du betrittst den Raum und stellst an einerStelle fest, dass sich der Boden hohl anhört. Unter einem Teppich findest du eine abgeschlossene Falltür! 
+Bedingung zu erfüllen: Wirf einen W6 und versuche das Schloss zu knacken.
+Option 1: [Innerhalb der nächsten 3 Runden ist dein W6+G>5!]
+Das hörte sichgut an! Du knackst das Schloss der Falltür und findest auf einem Alchemietisch einen Brief von einem gewissen Lares, der von Baal Lukor verlangt, dass dieser mehr Sumpfkrautsamen zur Haus beim Fischerteich vor dem Neuen Lager bringt. Du schnappst den Brief und rennst in Sektenlager. Du erhältst Lukors Brief!
+Bedingungen zu erfüllen: Gehe zurück zum Alten Lager!
+Du triffst Baal Parvez. 
+Sträfling: „Hei, du. Ich habe mich mal in Baal Lukors Hütte umgesehen. Er hatte einen geheimen Keller und treibt zwielichtige Machenschaften mit dem Neuen Lager und untergräbt das Krautmonopol der Sekte.“
+Baal Parvez: „Hey Neuer! Ich habe ne Aufgabe für dich. Ich suche was Belastendes für Baal Lukor aus dem Sumpflager.“ 
+Sträfling: „Was redest du da? Bist du noch klar im Kopf?“ 
+Baal´Parvez: „Der Schläfer verschafft mir immer Klarheit. Jetzt geh und finde etwas Belastendes. Baal´Lukor hat mittlerweile zu viel Einfluss in der Bruderschaft. Ich habe das Gefühl er will das Krautmonopol der Bruderschaft untergraben und sich dabeieine erzerne Nase verdienen.“ 
+Sträfling: „Ich habe hier so einen Brief bei mir.“  Du verlierst Lukors Brief!
+Baal´Parvez: „woooow wie schnell du bist. Hier man pack den Brief wieder zurück! Nimm dieses Erz als Zeichen meiner Dankbarkeit.“ Du erhältst 30Erz und 30*Kapitel Erfahrung. 
+Sträfling: „Was auch immer!“  Option 1 Ende
+Option 2:[Innerhalb der nächsten 3 Runden ist dein W6+G<6!]
+Du hörst Baal Lukor hinter dem Haus mit einem Novizen reden. Du verlässt das so Haus so heimlich es geht und beobachtestihn. Er scheint gemerkt zu haben, dass jemand da war und betritt den geheimen Keller. Kurz danach kommt er wieder hinaus und steckt gerade einen Zettel ein. Quest fehlgeschlagen! 
+
+
+
+
+
+
+
+Busters Quest:
+Überschrift:
+
+Buster: „Hallo. Ich bin Buster. Ich arbeite für Lares. Und wenn ich du wäre, würde ich mich ebenfalls Lares Leuten anschließen. Wenn du das nicht machst, läufst du sonst nämlich ganz schnell Gefahr, um dein Erz schneller erleichtert zu werden als du gucken kannst. Wir haben gelernt uns zu nehmen, was wir wollen, wenn du verstehst was ich meine. Du scheinst mir ein sehr ordentlicher Kämpfer zu sein. Du fehlst uns noch in unseren Reihen. Ich schätze Lares würde dich aufnehmen, wenn du dich als nützlich erweist. Was meinst du? Alles klar. Ich hätteauch schon gleich eine Aufgabe für dich. Besorge mir etwas außergewöhnliches, ein Artefakt oder eine besondere Waffe. Irgendetwas, wo man nicht so leicht herankommt. Wenn du mich beeindrucken kannst, lege ich bei Lares ein gutes Wort für dich ein. Und biete dir einen guten Preis für deine Rarität.“ 
+Bedingungen zu erfüllen: Bringe Buster ein Artefakt oder einen Gegenstand mit einem Wert von über 49 Erz! 
+Sträfling: „Ich hab hier etwas für dich!“ (zeige eine liste von Bildern aller Artefakte oder gegenstände mit einem wert von über 49 Erz aus dem gesamten Inventar des Spielers als buttons an. Der spieler soll eines auswählen und anklicken.)
+Buster: „So was hab ich wirklich noch nie gesehen!!! Ich will gar nicht wissen, wie du da herangekommen bist! Ich gebedir 30 Erz dafür!“ 
+Sträfling: „Für 25 kannst du es haben, aber denk daran Lares meine Grüße auszurichten!“ 
+Buster: „Jaja und jetzt gib schon her!“ Du erhältst 25 Erz, 30 Erfahrung und einen Anschlusspunkt im neuen Lager. Quest erfolgreich! 
+
+
+
+Miltens Quest:
+Überschrift: Gefährliches Schicksal
+
+Milten: „Hei du, Reisender. Du trägst etwas Besonderes an dir. Nein, nicht deine Kleidung. Innos wacht über dich. Ich kann es spüren. Er hat einen Plan. Etwas Großes. Ich glaube, du bist derjenige, der hierfür auserwählt wurde (Schriftstücke erhalten). Ich fand diese Schriftstücke ganz in der Nähe in einer Schlucht. Ich habe sie mitgenommen und wollte ihre Herkunft erfahren, doch irgendetwas war seltsam. Ich zeigte diese Stücke Meister Corristo und als er sie las,eilte er erstaunt aus dem Raum. Als er kurze Zeit später wiederkam, hielt er weitere Schriftstücke in der Hand, die identisch waren. Er fand sie westlich der alten Mine. Als er sie einsammelte hörte er ein lautes Brüllen und entdeckte in der Entfernung einen Troll. Er floh doch als er sich später die Schriftstücke genauer ansah, stellte er fest, dass sie ihm geholfen hätten den Troll zu vernichten. Innos sprach dann eines nachts zu ihm und offenbarte ihm, dass er die Schriftstücke wieder dahin bringen sollte, wo er sie herhatte. Innos sprach von einem höheren Zweck und dem Schicksal der Kolonie. Ich hatte letzte Nacht ebenfalls so eine Vision. Also bitte, nimm die Schriftstücke und bringe sie dahin zurück, wo sie herkamen. Du sollst auch einen entsprechendenLohn erhalten.“  Du erhältst Miltens Schriftstücke! 
+Bedingungen zu erfüllen: Gehe zu Feld 18.
+Du legst 2 von den 4 Schriftstücken ab!
+Bedingungen zu erfüllen: Gehe zu Feld 29! 
+Dich packt die Neugier und du möchtest wissen, was du für Milten in der Landschaft verteilen sollst. Du liest die Schriftstücke durch. Das erste ist eine Spruchrolle um Monster zu schrumpfen. Das andere ist ein Tagebucheintrag von einem Abenteurer, der sich vorgenommen hat einen Troll zu töten… 
+Plötzlich bewegt sich etwas auf derFelswand direkt neben dir! Ein Troll springt auf dich herab! Ein Kampf beginnt! Du erinnerst dich daran, was in dem Tagebucheintrag stand. Panisch wirfst du diesen zur Seite und verwendest all deine magische Kraft, um die Spruchrolle Monster schrumpfen zuverwenden! Du verlierst Miltens Schriftstücke und dein Mana sinkt auf 0!
+Es beginnt der Kampf gegen den geschrumpften Troll!
+Bedingungen zu erfüllen: Gewinne den Kampf gegen den geschrumpften Troll! Kehre danach zurück ins alte Lager!
+Milten: „Wie ich sehe führst du die Schriften nicht mehr bei dir. Das ist gut, dann kann ich dir ja die Belohnung geben….“ 
+Sträfling: „Nun ja, ich musste oben neben der alten Mine schon Gebrauch machen von der einen Schriftrolle. Ein Troll hat mich unvermittelt angegriffen.Die Dinger sind ziemlich groß. Ich hab mich fast eingeschissen. Was für ein Glück, dass du mir diese Spruchrolle und diesen Zettel mitgegeben hast.“ 
+Milten: „Das ist unglaublich... Das kann kein Zufall gewesen sein! Innos war wahrlich mit dir. Er scheinteinen Plan mit dir zu haben. Du warst immerhin geistig nicht völlig abwesend und hast den Zauber benutzt. Dann wissen wir schonmal, dass er funktioniert. Ich bin froh über deine Leistung. Hier mögest du damit sicher sein!“ Du erhältst 50 Erfahrung, 30 Erzund einen Trank des Lebens. Quest erfolgreich!
+
+
+Bloodwyns Quest:
+Überschrift:
+
+Bloodwyn: „Hey Neuer. Es ist ganz schön gefährlich hier allein herum zu laufen. Du hast nicht zufällig etwas Erz übrig. Ich könnte dich dafür ja dann beschützen, falls dir weran den Kragen will. Sagen wir einfach, ich bräuchte nur 10 Erz.“ 
+Sträfling: „10 Erz sind ne verdammte Menge..“ 
+Bloodwyn: „Naja aber sieh es mal positiv. Du kriegst doch auch was von mir und wenn du nicht zahlst kriegst du ne Extraportion von mir… Wir verstehen uns!“ 
+Option 1: [Sträfling: „Ja, dann nimm doch die 10 Erz.“]
+Du verlierst 10 Erz!
+Bloodwyn: „Gute Entscheidung! Du könntest auch gleich noch was für mich erledigen. Da ist son Buddler gerade aus der Mine gekommen, der trieft vor Erz, aber er drückt sich davor herum ins Lager zu kommen. Er will wohl seine Erzsteuer nicht entrichten, dabei ist er doch einer meiner Kunden. Gehe zu ihm und richte ihm schöne Grüße aus, wenn du verstehst, was ich meine!“ 
+Bedingungen zu erfüllen: Gehe zu Feld 81. 
+Buddler: „Hey Mann, auch hier. Ich entspann mich hier erstmal von dem Stress im Lager.“ 
+Sträfling: „Bloodwyn schickt mich.“ 
+Buddler: „Wie bitte was… Bloodwyn?“ 
+Sträfling: „Ich soll dir schöne Grüße von Bloodwyn bestellen!“ 
+Ein Kampf gegen den„schwächlichen Buddler“ beginnt!
+Wenn du verlierst, kommst du auf Feld 82 mit einem Leben, ohne Ausrüstung, Waffen und Erz wieder zu dir! Du kannst die Quest fortsetzen und deine Gegenstände zurückerhalten, indem du den schwächlichen Buddler besiegst. EinKampf gegen ihn beginnt für dich automatisch, wenn du Feld 81 betrittst.
+Bedingungen zu erfüllen: Gewinne den Kampf! Gehe danach zurück zu Bloodwyn! 
+Bloodwyn: „Na? Haste ihm gezeigt, wer das Sagen im Lager hat?“ 
+Sträfling: „Er schien nicht erfreut zu sein von dir zu hören.“ 
+Bloodwyn: „Ja, das hab ich mir gedacht und wo ist mein Erz?“ 
+Sträfling: „Hier ist es! Wir machen wohl Halbe-Halbe!“ 
+Bloodwyn: „Halbe-Halbe mit einem Penner wie dir. Ich nehme mir das restliche Erz von dir als Vorkasse für Morgen, dabist du ja auch wieder fällig!“    Du verlierst 20 Erz oder alles was du hast, je nachdem was weniger ist. Du erhältst 40 Erfahrung. Option 1 Ende 
+Option 2: [Sträfling: “Nein, Danke, aber sehr freundlich von dir!”]
+Bloodwyn: „Du wirst schon sehen, was dudavon hast!“ 
+Wenn 3 mal der neue Runde Button angeklickt wurde, soll folgendes Fenster aufpoppen:
+Ein Dialog, der sagt:
+Buddler: „Ich soll dir schöne Grüße von Bloodwyn bestellen!“ 
+Darunter steht: Du kämpfst jetzt gegen 3 von “Bloodwyns Schlägern”Wenn du fliehen solltest, platziere auf dem Feld, auf dem der Kampf begonnen hat den Bloodwyn-Chip! Dieses Feld kannst du nun nur noch passieren, wenn du die Schläger besiegt hast, oder von ihnen besiegt wurdest. Quest fehlgeschlagen! 
+
