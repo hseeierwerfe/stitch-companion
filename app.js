@@ -1120,14 +1120,14 @@ const enemyData = {
 
 // ─── Enemy Image Mapping ─────────────────────────────────────────────────────
 const ENEMY_IMAGES = {
-    'J Scavenger':      'bilder_karten/monster/junger_scavenger_karte.jpg',
-    'J Molerat':        'bilder_karten/monster/jungemolerat_karte.jpg',
-    'J Goblin':         'bilder_karten/monster/junger_goblin_karte.jpg',
-    'Scavenger':        'bilder_karten/monster/scavenger_karte.jpg',
-    'Molerat':          'bilder_karten/monster/molerat_karte.jpg',
-    'Blutfliege':       'bilder_karten/monster/blutfliege_karte.jpg',
-    'Wolf':             'bilder_karten/monster/junger_wolf_karte.jpg',
-    'Goblin':           'bilder_karten/monster/goblin_karte.jpg',
+    'J Scavenger':      'bilder_karten/monster/junger_scavenger_karte.png',
+    'J Molerat':        'bilder_karten/monster/jungemolerat_karte.png',
+    'J Goblin':         'bilder_karten/monster/junger_goblin_karte.png',
+    'Scavenger':        'bilder_karten/monster/scavenger_karte.png',
+    'Molerat':          'bilder_karten/monster/molerat_karte.png',
+    'Blutfliege':       'bilder_karten/monster/blutfliege_karte.png',
+    'Wolf':             'bilder_karten/monster/junger_wolf_karte.png',
+    'Goblin':           'bilder_karten/monster/goblin_karte.png',
     'Gr. Wolf':         'bilder_karten/monster/grosser_wolf.png',
     'Waran':            'bilder_karten/monster/waran.png',
     'Ork-Hund':         'bilder_karten/monster/orkhund.png',
