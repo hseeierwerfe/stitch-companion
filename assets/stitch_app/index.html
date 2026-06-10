@@ -606,6 +606,10 @@
             <button onclick="window.BGM?.toggleMute(); this.querySelector('.material-symbols-outlined').innerText = window.BGM?.isMuted ? 'volume_off' : 'volume_up';" class="text-secondary hover:text-primary transition-all p-2 rounded bg-surface-container-high border border-outline-variant/30 flex items-center justify-center shadow-md" title="Musik an/aus">
                 <span class="material-symbols-outlined text-lg">volume_up</span>
             </button>
+            <!-- Sync Status Button -->
+            <button onclick="window.openSyncModal()" class="text-secondary hover:text-primary transition-all p-2 rounded bg-surface-container-high border border-outline-variant/30 flex items-center justify-center shadow-md" id="btn-sync" title="Partie-Synchronisation">
+                <span class="material-symbols-outlined text-lg text-red-500" id="sync-icon">sync_disabled</span>
+            </button>
             <div class="flex items-center gap-2 px-4 py-1 bg-surface-container-high rounded-sm border border-outline-variant/30">
                 <span id="top-ore-display" class="font-bold text-secondary">1.450 Erz</span>
             </div>
@@ -641,6 +645,125 @@
         </button>
     </nav>
 
+    <!-- Sync Management Modal -->
+    <div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" id="sync-modal">
+        <div class="modal-overlay absolute inset-0" onclick="window.closeSyncModal()"></div>
+        <div class="wood-card w-full max-w-md p-8 relative shadow-[0_20px_50px_rgba(0,0,0,0.8)] border-2 border-secondary/30 text-on-surface">
+            
+            <!-- SCREEN 1: MAIN MENU -->
+            <div id="sync-screen-main" class="flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4 flex justify-between items-center">
+                    <div>
+                        <h4 class="font-headline text-2xl parchment-accent">Spiel-Synchronisation</h4>
+                        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1" id="sync-status-text">Keine aktive Verbindung</p>
+                    </div>
+                    <button class="text-secondary hover:text-primary flex items-center justify-center" onclick="window.closeSyncModal()">
+                        <span class="material-symbols-outlined text-xl">close</span>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-3 py-4">
+                    <button class="w-full bg-secondary text-on-secondary font-bold py-3 rounded-sm hover:brightness-110 active:scale-95 transition-all shadow-md text-sm" onclick="window.SyncManager.showNewPartyScreen()">
+                        NEUE PARTIE STARTEN
+                    </button>
+                    <button class="w-full bg-surface-container-high text-on-surface border border-outline-variant/30 font-bold py-3 rounded-sm hover:bg-surface-container-highest active:scale-95 transition-all text-sm" onclick="window.SyncManager.showJoinScreen()">
+                        PARTIE BEITRETEN
+                    </button>
+                    <button class="w-full bg-surface-container-high text-on-surface border border-outline-variant/30 font-bold py-3 rounded-sm hover:bg-surface-container-highest active:scale-95 transition-all text-sm" onclick="window.SyncManager.showResumeScreen()">
+                        PARTIE FORTSETZEN
+                    </button>
+                    <button class="w-full bg-surface-container-high text-on-surface border border-outline-variant/30 font-bold py-3 rounded-sm hover:bg-surface-container-highest active:scale-95 transition-all text-sm" id="btn-sync-save" onclick="window.SyncManager.saveParty()">
+                        PARTIE SPEICHERN
+                    </button>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.closeSyncModal()">
+                        SCHLIESSEN
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 2: NEW PARTY FORM -->
+            <div id="sync-screen-new" class="hidden flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4">
+                    <h4 class="font-headline text-2xl parchment-accent">Neue Partie starten</h4>
+                    <p class="text-[10px] text-secondary uppercase tracking-widest mt-1">Geben Sie Ihrer Gruppe einen Namen</p>
+                </div>
+                <div class="py-4">
+                    <label class="block text-xs uppercase tracking-wider text-on-surface-variant mb-2">Partie-Name (z.B. Abenteuer1)</label>
+                    <input type="text" id="new-party-name-input" class="w-full bg-surface-container-high border border-outline-variant/30 rounded-sm px-3 py-2 text-on-surface focus:outline-none focus:border-secondary transition-all" placeholder="Name eingeben..."/>
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.SyncManager.showMainScreen()">
+                        ABBRECHEN
+                    </button>
+                    <button class="flex-1 bg-secondary text-on-secondary font-bold py-3 rounded-sm hover:brightness-110 shadow-lg active:scale-95 transition-all" onclick="window.SyncManager.startNewParty(document.getElementById('new-party-name-input').value)">
+                        PARTIE STARTEN
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 3: JOIN PARTY SCANNER -->
+            <div id="sync-screen-join" class="hidden flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4">
+                    <h4 class="font-headline text-2xl parchment-accent">Partie beitreten</h4>
+                    <p class="text-[10px] text-secondary uppercase tracking-widest mt-1">Offene Spiele im Netzwerk</p>
+                </div>
+                <div class="py-4 max-h-60 overflow-y-auto pr-1" id="discovered-parties-list">
+                    <!-- Dynamic party list loaded here -->
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.SyncManager.showMainScreen()">
+                        ZURÜCK
+                    </button>
+                    <button class="bg-secondary text-on-secondary p-3 rounded-sm hover:brightness-110 flex items-center justify-center" onclick="window.SyncManager.startDiscovery()" title="Aktualisieren">
+                        <span class="material-symbols-outlined text-lg">refresh</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 4: RESUME SAVED PARTIES -->
+            <div id="sync-screen-resume" class="hidden flex flex-col gap-4">
+                <div class="border-b border-outline-variant/30 pb-4">
+                    <h4 class="font-headline text-2xl parchment-accent">Partie fortsetzen</h4>
+                    <p class="text-[10px] text-secondary uppercase tracking-widest mt-1">Gespeicherte Gruppenstände laden</p>
+                </div>
+                <div class="py-4 max-h-60 overflow-y-auto pr-1" id="saved-parties-list">
+                    <!-- Dynamic saved party list loaded here -->
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.SyncManager.showMainScreen()">
+                        ZURÜCK
+                    </button>
+                </div>
+            </div>
+
+            <!-- SCREEN 5: LOBBY & PLAYER LIST -->
+            <div id="sync-screen-lobby" class="hidden flex flex-col gap-4 text-on-surface">
+                <div class="border-b border-outline-variant/30 pb-4 flex justify-between items-center">
+                    <div>
+                        <h4 class="font-headline text-2xl parchment-accent" id="lobby-party-title">Partie-Lobby</h4>
+                        <p class="text-[10px] text-secondary uppercase tracking-widest mt-1">Teilnehmende Spieler</p>
+                    </div>
+                    <button class="text-red-400 hover:text-red-300 flex items-center justify-center p-1 bg-red-950/20 border border-red-900/30 rounded-sm" onclick="window.SyncManager.leaveParty()" title="Lobby verlassen">
+                        <span class="material-symbols-outlined text-lg">logout</span>
+                    </button>
+                </div>
+                <div class="py-2 max-h-[28rem] overflow-y-auto pr-1 custom-scrollbar" id="lobby-players-list">
+                    <!-- Players listed here with rich cards -->
+                </div>
+                <div class="flex gap-4 mt-4">
+                    <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="window.closeSyncModal()">
+                        SCHLIESSEN
+                    </button>
+                    <button class="flex-1 bg-secondary text-on-secondary font-bold py-3 rounded-sm hover:brightness-110 shadow-lg active:scale-95 transition-all hidden" id="btn-lobby-start" onclick="window.SyncManager.startGame()">
+                        STARTEN
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <!-- Talent Upgrade Modal -->
     <div class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" id="talent-modal">
         <div class="modal-overlay absolute inset-0" id="talent-modal-overlay"></div>
@@ -653,7 +776,7 @@
                 <div class="py-4">
                     <p class="text-on-surface leading-relaxed italic" id="modal-talent-explanation">
                         Regeltext wird hier geladen...
-                    </p>
+                     </p>
                 </div>
                 <div class="flex gap-4 mt-4">
                     <button class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 rounded-sm hover:bg-surface-container-highest transition-all" onclick="closeTalentModal()">
@@ -674,9 +797,11 @@
             return false;
         };
     </script>
-    <script src="items.js" charset="utf-8"></script>
-    <script src="quests_data.js" charset="utf-8"></script>
-    <script src="enemy3d.js" charset="utf-8"></script>
-    <script src="app.js" charset="utf-8"></script>
+    <script src="items.js?v=3" charset="utf-8"></script>
+    <script src="quests_data.js?v=3" charset="utf-8"></script>
+    <script src="enemy3d.js?v=3" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    <script src="sync.js?v=3" charset="utf-8"></script>
+    <script src="app.js?v=3" charset="utf-8"></script>
 </body>
 </html>
