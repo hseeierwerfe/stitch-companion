@@ -5186,6 +5186,22 @@ const templates = {
                     if (dist > 0 && dist <= activeHero.remainingMov && !isOccupied) {
                         cellClass += ' highlight';
                     }
+                    
+                    let enemyCanReach = false;
+                    const e1Dist = Math.abs(r - sim.enemy.pos.r) + Math.abs(c - sim.enemy.pos.c);
+                    if (e1Dist > 0 && e1Dist <= (sim.enemy.mov || 4)) {
+                        enemyCanReach = true;
+                    }
+                    if (sim.enemy2) {
+                        const e2Dist = Math.abs(r - sim.enemy2.pos.r) + Math.abs(c - sim.enemy2.pos.c);
+                        if (e2Dist > 0 && e2Dist <= (sim.enemy2.mov || 4)) {
+                            enemyCanReach = true;
+                        }
+                    }
+                    
+                    if (enemyCanReach && !isOccupied) {
+                        cellClass += ' highlight-enemy-move';
+                    }
                 }
                 
                 cellsHtml += `
@@ -5201,6 +5217,8 @@ const templates = {
                 .grid-battlefield { display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); width: 100%; max-width: 390px; aspect-ratio: 1 / 1; border: 2px solid #e9c176; background-color: #0e0e0e; background-image: url('bilder_karten/battlefield_bg.png'); background-size: cover; background-position: center; position: relative; margin: 0 auto; }
                 .grid-cell { border: 1px solid rgba(233, 193, 118, 0.1); display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', serif; font-weight: 800; color: #e9c176; font-size: 0.8rem; cursor: pointer; width: 100%; height: 100%; overflow: visible; position: relative; }
                 .grid-cell.highlight { background-color: rgba(233, 193, 118, 0.2); }
+                .grid-cell.highlight-enemy-move { background-color: rgba(220, 38, 38, 0.2); }
+                .grid-cell.highlight.highlight-enemy-move { background: repeating-linear-gradient(45deg, rgba(233, 193, 118, 0.2), rgba(233, 193, 118, 0.2) 10px, rgba(220, 38, 38, 0.2) 10px, rgba(220, 38, 38, 0.2) 20px); }
                 .bento-action-button { transition: all 0.2s ease-out; border: 1px solid rgba(233, 193, 118, 0.15); }
                 .bento-action-button:disabled { opacity: 0.3; cursor: not-allowed; background-color: #1a1a1a; }
                 .flash-red-overlay { pointer-events: none; position: absolute; inset: 0; z-index: 50; }
