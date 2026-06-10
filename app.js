@@ -5137,10 +5137,28 @@ const templates = {
                 }
                 
                 if (isHero) {
-                    cellContent = '<img src="bilder_karten/hero_model.png" class="pointer-events-none" style="width: 200%; min-width: 40px; height: auto; position: absolute; bottom: 0px; z-index: 20; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 5px rgba(233,193,118,0.5));">';
+                    cellContent = `
+                        <div class="e3d-wrap" style="animation-delay: -0.5s;">
+                            <div class="e3d-fighold">
+                                <img src="bilder_karten/hero_model.png" class="e3d-fig-png" style="width: 200%; min-width: 40px; height: auto; max-height: none; max-width: none;">
+                            </div>
+                            <div class="e3d-base h3d-base">
+                                <div class="e3d-rim h3d-rim"></div>
+                            </div>
+                        </div>
+                    `;
                     cellClass += ' bg-primary/20 hero-cell';
                 } else if (isHero2) {
-                    cellContent = '<img src="bilder_karten/hero_model.png" class="pointer-events-none" style="width: 200%; min-width: 40px; height: auto; position: absolute; bottom: 0px; z-index: 20; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 5px rgba(200,200,200,0.5));">';
+                    cellContent = `
+                        <div class="e3d-wrap" style="animation-delay: -1.2s;">
+                            <div class="e3d-fighold">
+                                <img src="bilder_karten/hero_model.png" class="e3d-fig-png" style="width: 200%; min-width: 40px; height: auto; max-height: none; max-width: none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 5px rgba(200,200,200,0.5)) saturate(1.2);">
+                            </div>
+                            <div class="e3d-base h3d-base-2">
+                                <div class="e3d-rim h3d-rim-2"></div>
+                            </div>
+                        </div>
+                    `;
                     cellClass += ' bg-secondary/20 hero-cell';
                 } else if (isEnemy) {
                     const _enemyImg = getEnemyImage(sim.enemy.name);
@@ -5198,6 +5216,30 @@ const templates = {
                     inset: 0;
                     overflow: visible;
                     pointer-events: none;
+                }
+                @keyframes h3d-pulse {
+                    0%,100% { box-shadow: 0 0 7px 2px rgba(20,80,200,0.6), 0 5px 14px rgba(0,0,0,0.95); }
+                    50%     { box-shadow: 0 0 14px 5px rgba(50,130,230,1),   0 5px 14px rgba(0,0,0,0.95); }
+                }
+                .h3d-base {
+                    background: radial-gradient(ellipse at 35% 35%, #0e1e3a 0%, #04080d 100%) !important;
+                    border: 2px solid #1e5ccc !important;
+                    animation: h3d-pulse 2.2s ease-in-out infinite !important;
+                }
+                .h3d-rim {
+                    border: 1px solid rgba(90,150,255,0.55) !important;
+                }
+                @keyframes h3d-pulse-2 {
+                    0%,100% { box-shadow: 0 0 7px 2px rgba(150,150,150,0.6), 0 5px 14px rgba(0,0,0,0.95); }
+                    50%     { box-shadow: 0 0 14px 5px rgba(200,200,200,1),   0 5px 14px rgba(0,0,0,0.95); }
+                }
+                .h3d-base-2 {
+                    background: radial-gradient(ellipse at 35% 35%, #222 0%, #080808 100%) !important;
+                    border: 2px solid #aaa !important;
+                    animation: h3d-pulse-2 2.2s ease-in-out infinite !important;
+                }
+                .h3d-rim-2 {
+                    border: 1px solid rgba(255,255,255,0.55) !important;
                 }
                 /* ─────────────────────────────────────────────────────── */
             </style>
