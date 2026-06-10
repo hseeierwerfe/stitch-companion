@@ -32,7 +32,7 @@ jobs:
       - name: Upload app folder as Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './assets/stitch_app'
+          path: '.'
 
       - name: Deploy to GitHub Pages
         id: deployment
