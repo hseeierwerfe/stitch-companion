@@ -1,4 +1,4 @@
-const itemPoolBasePath = "assets/stitch_app/bilder_karten";
+const itemPoolBasePath = "bilder_karten";
 
 const itemPools = {
     nahrung: [
