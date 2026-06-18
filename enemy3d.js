@@ -141,7 +141,9 @@
         wrap.appendChild(base);
 
         mountEl.style.overflow = 'visible';
-        mountEl.style.position = 'relative';
+        if (window.getComputedStyle(mountEl).position === 'static') {
+            mountEl.style.position = 'relative';
+        }
         mountEl.appendChild(wrap);
         ACTIVE.push(wrap);
     }

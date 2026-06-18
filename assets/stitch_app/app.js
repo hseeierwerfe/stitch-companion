@@ -81,7 +81,7 @@ const DEFAULT_STATE = {
         equipment: {
             melee: null,
             ranged: null,
-            armor: { id: 1, name: "Sträflingsklamotten", value: 0, chapter: 0, effect: "Aura +3 Rüstung", category: "Rüstung", icon: "shield", image: "Bilder Karten/Rüstungen/Kapitel 1 & 2/Sträflingsklamotten.png" },
+            armor: { id: 1, name: "Sträflingsklamotten", value: 0, chapter: 0, effect: "Aura +3 Rüstung", category: "Rüstung", icon: "shield", image: "assets/stitch_app/bilder_karten/ruestungen/kapitel_1_und_2/straeflingsklamotten.png" },
             artifacts: { amulet: null, ring1: null, ring2: null }
         },
         runes: [],
@@ -126,7 +126,7 @@ const DEFAULT_STATE = {
               ]}
         ],
         inventory: [
-            { id: 1, name: "Sträflingsklamotten", value: 0, chapter: 0, effect: "Aura +3 Rüstung", category: "Rüstung", icon: "shield", image: "Bilder Karten/Rüstungen/Kapitel 1 & 2/Sträflingsklamotten.png" }
+            { id: 1, name: "Sträflingsklamotten", value: 0, chapter: 0, effect: "Aura +3 Rüstung", category: "Rüstung", icon: "shield", image: "assets/stitch_app/bilder_karten/ruestungen/kapitel_1_und_2/straeflingsklamotten.png" }
         ],
         quests: [],
         chronik: [],
@@ -233,7 +233,20 @@ const HEROES = [
 ];
 
 HEROES.forEach(h => {
-    if (h.image) h.image = h.image.replace("../../", "");
+    if (h.image) {
+        let path = h.image.replace("../../", "").replace("Bilder Karten", "assets/stitch_app/bilder_karten");
+        const parts = path.split('/');
+        let filename = parts.pop();
+        filename = filename.toLowerCase()
+                           .replace(/ä/g, 'ae')
+                           .replace(/ö/g, 'oe')
+                           .replace(/ü/g, 'ue')
+                           .replace(/ß/g, 'ss')
+                           .replace(/[\s\-,]+/g, '_')
+                           .replace(/[^a-z0-9._]/g, '');
+        parts.push(filename);
+        h.image = parts.join('/');
+    }
 });
 
 // --- Questgegenstände Registry ---
@@ -244,7 +257,7 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Artefakt",
         effect: "Keiner",
-        image: "bilder_karten/questkarten/gefaelscher_siegelring.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/gefaelscher_siegelring.jpg",
         icon: "key"
     },
     "Schartige Buddlerzucht": {
@@ -258,14 +271,14 @@ const QUEST_ITEMS_DB = {
         damage: 3,
         type: "Klingenwaffe",
         ability: "Keine",
-        image: "bilder_karten/questkarten/schartige_buddlerzucht.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/schartige_buddlerzucht.jpg",
         icon: "swords"
     },
     "Schläferbrosche": {
         name: "Schläferbrosche",
         value: 50,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/schlaeferbrosche.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/schlaeferbrosche.jpg",
         icon: "key"
     },
     "Ration Traumruf": {
@@ -274,7 +287,7 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Konsum",
         effect: "+10 maximales Mana",
-        image: "bilder_karten/questkarten/rationtraumruf.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/rationtraumruf.jpg",
         icon: "restaurant"
     },
     "Reste Ration Traumruf": {
@@ -283,14 +296,14 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Konsum",
         effect: "+6 maximales Mana",
-        image: "bilder_karten/questkarten/angebrochene_ration.png",
+        image: "assets/stitch_app/bilder_karten/questkarten/angebrochene_ration.png",
         icon: "restaurant"
     },
     "Minecrawlerzangen": {
         name: "Minecrawlerzangen",
         value: 10,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/crawlerzangen.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/crawlerzangen.jpg",
         icon: "key"
     },
     "Ring der Präsenz": {
@@ -299,21 +312,21 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Artefakt",
         effect: "Aura: Spüre eine Präsenz. Wenn getragen von Ludwig der Präsente, erhalte den Effekt Überwältigende Präsenz",
-        image: "bilder_karten/questkarten/ring_der_praesenz.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/ring_der_praesenz.jpg",
         icon: "trip_origin"
     },
     "Pachos Finger": {
         name: "Pachos Finger",
         value: 0,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/pachosfinger.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/pachosfinger.jpg",
         icon: "key"
     },
     "Diegos Paket": {
         name: "Diegos Paket",
         value: 300,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/diegospaket.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/diegospaket.jpg",
         icon: "key"
     },
     "Nyras Spruchrolle": {
@@ -327,28 +340,28 @@ const QUEST_ITEMS_DB = {
         reqMana: 5,
         damage: 0,
         effect: "Schlaf 3",
-        image: "bilder_karten/questkarten/nyras_spruchrolle.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/nyras_spruchrolle.jpg",
         icon: "auto_stories"
     },
     "Nyras Karte": {
         name: "Nyras Karte",
         value: 50,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/nyraskarte.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/nyraskarte.jpg",
         icon: "key"
     },
     "Nyras Bild": {
         name: "Nyras Bild",
         value: 200,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/nyras_bild.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/nyras_bild.jpg",
         icon: "key"
     },
     "Jorus Rock": {
         name: "Jorus Rock",
         value: 10,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/jorus_rock.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/jorus_rock.jpg",
         icon: "key"
     },
     "Jorus Traumruf": {
@@ -357,21 +370,21 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Konsum",
         effect: "+3 maximales Mana",
-        image: "bilder_karten/questkarten/jorus_traumruf.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/jorus_traumruf.jpg",
         icon: "restaurant"
     },
     "Jorus Zettel": {
         name: "Jorus Zettel",
         value: 200,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/jorus_zettel.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/jorus_zettel.jpg",
         icon: "key"
     },
     "Schläferpilz": {
         name: "Schläferpilz",
         value: 20,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/schlaeferpilz.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/schlaeferpilz.jpg",
         icon: "key"
     },
     "Amulett des freien Rückens": {
@@ -380,28 +393,28 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Artefakt",
         effect: "Aura +1 Rüstung",
-        image: "bilder_karten/questkarten/amulettdes_passaufdeinenrueckenauf.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/amulettdes_passaufdeinenrueckenauf.jpg",
         icon: "trip_origin"
     },
     "Siegelring der Wassermagier": {
         name: "Siegelring der Wassermagier",
         value: 100,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/siegelring.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/siegelring.jpg",
         icon: "key"
     },
     "Lares Filzläuse": {
         name: "Lares Filzläuse",
         value: 1,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/laresfilzlaeuse.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/laresfilzlaeuse.jpg",
         icon: "key"
     },
     "Gomez Truhe": {
         name: "Gomez Truhe",
         value: 0,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/gomez_truhe.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/gomez_truhe.jpg",
         icon: "key"
     },
     "Prunkvoller Helm": {
@@ -410,7 +423,7 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Artefakt",
         effect: "Aura +2 Rüstung",
-        image: "bilder_karten/questkarten/prunkvoller_helm.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/prunkvoller_helm.jpg",
         icon: "shield"
     },
     "Teleport Tempelplatz": {
@@ -424,7 +437,7 @@ const QUEST_ITEMS_DB = {
         reqMana: 5,
         damage: 0,
         effect: "Teleport zum Tempelvorplatz",
-        image: "bilder_karten/questkarten/telesumpf.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/telesumpf.jpg",
         icon: "auto_stories"
     },
     "Verwandlung Fleischwanze": {
@@ -438,7 +451,7 @@ const QUEST_ITEMS_DB = {
         reqMana: 5,
         damage: 0,
         effect: "Verwandlung in eine Fleischwanze",
-        image: "bilder_karten/questkarten/verwandlung_fleischwanze.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/verwandlung_fleischwanze.jpg",
         icon: "auto_stories"
     },
     "Extrakt reiner Magie": {
@@ -447,14 +460,14 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Konsum",
         effect: "+5 maximales Mana",
-        image: "bilder_karten/questkarten/extrakt_reiner_magie.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/extrakt_reiner_magie.jpg",
         icon: "restaurant"
     },
     "Scavengerkopf": {
         name: "Scavengerkopf",
         value: 10,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/scavengerkopf.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/scavengerkopf.jpg",
         icon: "key"
     },
     "Scavengerhelm": {
@@ -463,14 +476,14 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Artefakt",
         effect: "Aura +1 Rüstung",
-        image: "bilder_karten/questkarten/scavengerhelm.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/scavengerhelm.jpg",
         icon: "shield"
     },
     "Xardas Botschaft": {
         name: "Xardas Botschaft",
         value: 0,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/xardas_botschaft.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/xardas_botschaft.jpg",
         icon: "key"
     },
     "Drax Bogen": {
@@ -483,7 +496,7 @@ const QUEST_ITEMS_DB = {
         req: "2 DEX",
         damage: 3,
         ability: "+1 Schaden gegen Allesfresser",
-        image: "bilder_karten/questkarten/drax_bogen.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/drax_bogen.jpg",
         icon: "precision_manufacturing"
     },
     "Troll beschwören": {
@@ -497,7 +510,7 @@ const QUEST_ITEMS_DB = {
         reqMana: 10,
         damage: 0,
         effect: "Ein Troll erscheint",
-        image: "bilder_karten/questkarten/trollbeschwoeren.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/trollbeschwoeren.jpg",
         icon: "auto_stories"
     },
     "Oruns Keule": {
@@ -511,14 +524,14 @@ const QUEST_ITEMS_DB = {
         damage: 3,
         type: "Stumpfe Waffe",
         ability: "Betäubt Blutfliegen bei 2 oder weniger HP",
-        image: "bilder_karten/questkarten/orunskeule.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/orunskeule.jpg",
         icon: "swords"
     },
     "Lukors Brief": {
         name: "Lukors Brief",
         value: 2,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/lukorsbrief.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/lukorsbrief.jpg",
         icon: "key"
     },
     "Magische Reinigung": {
@@ -532,14 +545,14 @@ const QUEST_ITEMS_DB = {
         reqMana: 5,
         damage: 0,
         effect: "Spirituelle Reinigung",
-        image: "bilder_karten/questkarten/magische_reinigung.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/magische_reinigung.jpg",
         icon: "auto_stories"
     },
     "Miltens Zettel": {
         name: "Miltens Zettel",
         value: 50,
         category: "Questgegenstände",
-        image: "bilder_karten/questkarten/miltens_zettel.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/miltens_zettel.jpg",
         icon: "key"
     },
     "Trank des puren Lebens": {
@@ -548,7 +561,7 @@ const QUEST_ITEMS_DB = {
         category: "Questgegenstände",
         art: "Konsum",
         effect: "+1 maximales Leben",
-        image: "bilder_karten/questkarten/trank_des_puren_lebens.jpg",
+        image: "assets/stitch_app/bilder_karten/questkarten/trank_des_puren_lebens.jpg",
         icon: "restaurant"
     },
     "Eisenamulett": {
@@ -710,6 +723,31 @@ const CAMP_DATA = {
         ]
     }
 };
+
+// Preprocess CAMP_DATA images to match correct server paths
+Object.values(CAMP_DATA).forEach(camp => {
+    camp.npcs.forEach(npc => {
+        if (npc.img) {
+            let path = npc.img.replace("Bilder Karten", "assets/stitch_app/bilder_karten");
+            // Normalize directory names to lowercase
+            path = path.replace("/Personen/Händler/", "/personen/haendler/")
+                       .replace("/Personen/Lehrer/", "/personen/lehrer/")
+                       .replace("/Personen/Quest/", "/personen/quest/");
+            
+            const parts = path.split('/');
+            let filename = parts.pop();
+            filename = filename.toLowerCase()
+                               .replace(/ä/g, 'ae')
+                               .replace(/ö/g, 'oe')
+                               .replace(/ü/g, 'ue')
+                               .replace(/ß/g, 'ss')
+                               .replace(/[\s\-,]+/g, '_')
+                               .replace(/[^a-z0-9._]/g, '');
+            parts.push(filename);
+            npc.img = parts.join('/');
+        }
+    });
+});
 
 const TEACHER_DATA = {
     "Fingers": ["Geschick", "Schlösser öffnen"],
@@ -1140,17 +1178,43 @@ const ENEMY_IMAGES = {
 function getEnemyImage(enemyName) {
     if (!enemyName) return null;
     // Exact match
-    if (ENEMY_IMAGES[enemyName]) return ENEMY_IMAGES[enemyName];
-    // Fuzzy match (case-insensitive partial)
-    const lower = enemyName.toLowerCase();
-    for (const [key, val] of Object.entries(ENEMY_IMAGES)) {
-        if (lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) return val;
+    let img = null;
+    if (ENEMY_IMAGES[enemyName]) img = ENEMY_IMAGES[enemyName];
+    else {
+        // Fuzzy match (case-insensitive partial)
+        const lower = enemyName.toLowerCase();
+        for (const [key, val] of Object.entries(ENEMY_IMAGES)) {
+            if (lower.includes(key.toLowerCase()) || key.toLowerCase().includes(lower)) {
+                img = val;
+                break;
+            }
+        }
+    }
+    if (img) {
+        if (!img.startsWith('assets/')) {
+            img = 'assets/stitch_app/' + img;
+        }
+        return img;
     }
     return null;
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
+function isPraesenzActive() {
+    if (!state || !state.hero) return false;
+    const heroName = state.hero.name;
+    if (heroName !== "Ludwig der Präsente") return false;
+    const eq = state.hero.equipment;
+    if (!eq || !eq.artifacts) return false;
+    const hasRing = (eq.artifacts.ring1 && eq.artifacts.ring1.name === "Ring der Präsenz") ||
+                    (eq.artifacts.ring2 && eq.artifacts.ring2.name === "Ring der Präsenz");
+    return !!hasRing;
+}
+
 function getTalentLevel(id) {
+    if (id === 'praesenz') {
+        return isPraesenzActive() ? 1 : 0;
+    }
     if (!state.hero.talents) return 0;
     const t = state.hero.talents.find(item => item.id === id);
     return t ? t.level || 0 : 0;
@@ -3876,7 +3940,8 @@ const templates = {
                         <div class="wood-card p-6">
                              <h3 class="text-secondary uppercase tracking-widest font-bold text-sm mb-4">Talente & Kampftechniken</h3>
                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                ${hero.talents.map(t => {
+                                ${hero.talents.filter(t => t.id !== 'praesenz' || isPraesenzActive()).map(t => {
+                                    const currentLevel = t.id === 'praesenz' ? 1 : t.level;
                                     let nextLp = 0;
                                     let nextOre = 0;
                                     if (t.id === 'magie') {
@@ -3903,19 +3968,19 @@ const templates = {
                                             </button>
                                         </div>
                                          <div class="flex gap-1 h-1.5 mt-1">
-                                             ${Array.from({length: t.max}).map((_, i) => `<div class="flex-1 ${i < t.level ? "bg-secondary" : "bg-surface-container"}"></div>`).join("")}
+                                             ${Array.from({length: t.max}).map((_, i) => `<div class="flex-1 ${i < currentLevel ? "bg-secondary" : "bg-surface-container"}"></div>`).join("")}
                                          </div>
                                          <div class="flex justify-between items-center mt-2 gap-2">
-                                             <span class="text-[9px] text-on-surface-variant uppercase font-bold">Stufe ${t.level} / ${t.max}</span>
+                                             <span class="text-[9px] text-on-surface-variant uppercase font-bold">Stufe ${currentLevel} / ${t.max}</span>
                                              <div class="flex gap-2">
-                                                 ${t.level > 0 ? '<button onclick="window.confirmResetTalent(\'' + t.id + '\')" class="bg-error/15 hover:bg-error/30 text-error px-2 py-1 rounded-sm text-[9px] font-bold transition-all border border-error/20">ZURUECKSETZEN</button>' : ''}
-                                                 ${t.level < t.max ? `
+                                                 ${t.id !== 'praesenz' && t.level > 0 ? '<button onclick="window.confirmResetTalent(\'' + t.id + '\')" class="bg-error/15 hover:bg-error/30 text-error px-2 py-1 rounded-sm text-[9px] font-bold transition-all border border-error/20">ZURUECKSETZEN</button>' : ''}
+                                                 ${t.id !== 'praesenz' && t.level < t.max ? `
                                                      <button onclick="upgradeTalent('${t.id}')" 
                                                              ${!canAfford ? "disabled" : ""}
                                                              class="bg-secondary-container text-secondary px-2 py-1 rounded-sm text-[9px] font-bold hover:brightness-125 disabled:opacity-30">
                                                          ${t.id === "magie" ? `KREIS ${t.level+1}` : t.level === 0 ? "LERNEN" : "MEISTERN"} (${nextLp} LP / ${nextOre} E)
                                                      </button>
-                                                 ` : '<span class="text-[10px] text-secondary font-bold self-center">MEISTER</span>'}
+                                                 ` : '<span class="text-[10px] text-secondary font-bold self-center">' + (t.id === 'praesenz' ? 'AKTIV (RING)' : 'MEISTER') + '</span>'}
                                              </div>
                                          </div>
                                      </div>
@@ -5188,7 +5253,7 @@ const templates = {
                     cellContent = `
                         <div class="e3d-wrap" style="animation-delay: -0.5s;">
                             <div class="e3d-fighold">
-                                <img src="bilder_karten/hero_model.png" class="e3d-fig-png" style="width: 200%; min-width: 40px; height: auto; max-height: none; max-width: none;">
+                                <img src="assets/stitch_app/bilder_karten/hero_model.png" class="e3d-fig-png" style="width: 200%; min-width: 40px; height: auto; max-height: none; max-width: none;">
                             </div>
                             <div class="e3d-base h3d-base">
                                 <div class="e3d-rim h3d-rim"></div>
@@ -5200,7 +5265,7 @@ const templates = {
                     cellContent = `
                         <div class="e3d-wrap" style="animation-delay: -1.2s;">
                             <div class="e3d-fighold">
-                                <img src="bilder_karten/hero_model.png" class="e3d-fig-png" style="width: 200%; min-width: 40px; height: auto; max-height: none; max-width: none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 5px rgba(200,200,200,0.5)) saturate(1.2);">
+                                <img src="assets/stitch_app/bilder_karten/hero_model.png" class="e3d-fig-png" style="width: 200%; min-width: 40px; height: auto; max-height: none; max-width: none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.95)) drop-shadow(0 0 5px rgba(200,200,200,0.5)) saturate(1.2);">
                             </div>
                             <div class="e3d-base h3d-base-2">
                                 <div class="e3d-rim h3d-rim-2"></div>
@@ -5262,7 +5327,7 @@ const templates = {
 
         return `
             <style>
-                .grid-battlefield { display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); width: 100%; max-width: 390px; aspect-ratio: 1 / 1; border: 2px solid #e9c176; background-color: #0e0e0e; background-image: url('bilder_karten/battlefield_bg.png'); background-size: cover; background-position: center; position: relative; margin: 0 auto; }
+                .grid-battlefield { display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(15, 1fr); width: 100%; max-width: 390px; aspect-ratio: 1 / 1; border: 2px solid #e9c176; background-color: #0e0e0e; background-image: url('assets/stitch_app/bilder_karten/battlefield_bg.png'); background-size: cover; background-position: center; position: relative; margin: 0 auto; }
                 .grid-cell { border: 1px solid rgba(233, 193, 118, 0.1); display: flex; align-items: center; justify-content: center; font-family: 'Newsreader', serif; font-weight: 800; color: #e9c176; font-size: 0.8rem; cursor: pointer; width: 100%; height: 100%; overflow: visible; position: relative; }
                 .grid-cell.highlight { background-color: rgba(233, 193, 118, 0.2); }
                 .grid-cell.highlight-enemy-move { background-color: rgba(220, 38, 38, 0.2); }
@@ -6884,6 +6949,7 @@ function closeTalentInfo() {
 }
 
 function upgradeTalent(id) {
+    if (id === 'praesenz') return;
     const hero = state.hero;
     const talent = hero.talents.find(t => t.id === id);
     if (!talent || talent.level >= talent.max) return;
@@ -8235,7 +8301,7 @@ window.playIntroVideo = function() {
 
 // ─── TUTORIAL SYSTEM ─────────────────────────────────────────────────────────
 (function() {
-    const IMG = 'bilder_karten/tutorial/';
+    const IMG = 'assets/stitch_app/bilder_karten/tutorial/';
 
     // Each slide: { title, image (optional), desc, highlights: [{x,y,w,h,label,color}] }
     const SLIDES = [
