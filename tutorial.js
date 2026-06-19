@@ -88,7 +88,8 @@ window.TutorialManager = (function() {
                 }, 50);
                 setTimeout(() => clearInterval(ival), 2000);
             },
-            findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Speichern')); }
+            findHighlight: function() { return document.getElementById('save-popup') ? document.getElementById('save-popup').querySelector('.wood-card') : null; },
+            findTarget: function() { return document.getElementById('save-popup') ? Array.from(document.getElementById('save-popup').querySelectorAll('button')).find(b => b.textContent.includes('Speichern')) : null; }
         },
         {
             text: "In diesem Bereich auf deiner Statusseite kannst du das Kapitel wechseln, in dem du dich befindest, die Musik ein und ausstellen, dein Erz einblicken, ins Hauptmenü zurückkehren und dich mit anderen Spielern im gleichen Netzwerk verbinden, um ihren aktuellen Status überblicken zu können oder gemeinsam mit ihnen kämpfen zu können. Um ein Kapitel zu wechseln, musst du zunächst auf das Kapitel 1: Die Ankunft klicken, das neue Kapitel auswählen und im Anschluss direkt mit dem Kapitel bestätigen Button speichern.",
@@ -638,19 +639,29 @@ window.TutorialManager = (function() {
         const step = steps[currentStepIndex];
         clicksNeeded = step.multipleClicks || 1;
         clicksDone = 0;
+
+        // Clear existing highlight immediately
+        const container = document.getElementById('tutorial-overlay-container');
+        if (container) container.innerHTML = '';
         
         setTimeout(() => {
             if (step.preAction) step.preAction();
             
-            setTimeout(() => {
+            let attempts = 0;
+            let checkInterval = setInterval(() => {
                 let targetEl = step.findTarget ? step.findTarget() : null;
                 let highlightEl = step.findHighlight ? step.findHighlight() : targetEl;
                 
                 if (Array.isArray(targetEl)) targetEl = targetEl[0];
                 if (Array.isArray(highlightEl)) highlightEl = highlightEl[0];
                 
-                drawOverlay(step, highlightEl);
-            }, 150);
+                attempts++;
+                
+                if (highlightEl || (!step.findHighlight && !step.findTarget) || attempts > 30) {
+                    clearInterval(checkInterval);
+                    drawOverlay(step, highlightEl);
+                }
+            }, 100);
         }, 50);
     }
 

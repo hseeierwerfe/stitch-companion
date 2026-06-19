@@ -2971,7 +2971,7 @@ window.resetCombatMove = function() {
 function renderSavePopup() {
     const slots = Object.keys(state.saveSlots || {});
     const popupHtml = `
-        <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div id="save-popup" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="state.savePopup.active = false; render();"></div>
             <div class="wood-card w-full max-w-md p-8 relative shadow-2xl border-2 border-secondary/30">
                 <h3 class="font-headline text-2xl text-primary mb-6">Spiel speichern unter...</h3>
@@ -3278,7 +3278,7 @@ window.renderQuestProgressPopup = function() {
     }
     
     const popupHtml = `
-        <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div id="quest-progress-popup" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeQuestProgressPopup()"></div>
             <div class="wood-card w-full max-w-lg p-8 relative shadow-2xl border-2 border-secondary/30 flex flex-col gap-6 max-h-[90vh] overflow-y-auto custom-scrollbar">
                 <div class="flex items-center gap-4 border-b border-outline-variant/30 pb-4">
@@ -4007,7 +4007,7 @@ const templates = {
                             else levelLabel = nextLevel === 0 ? 'Kämpfer' : 'Meister';
                             const alreadyMax = ti.level >= ti.max;
                             return `
-                        <div class="fixed inset-0 z-[160] flex items-center justify-center p-4">
+                        <div id="talent-info-popup" class="fixed inset-0 z-[160] flex items-center justify-center p-4">
                             <div class="modal-overlay absolute inset-0" onclick="closeTalentInfo()"></div>
                             <div class="wood-card w-full max-w-md p-8 relative shadow-2xl border-2 border-secondary/30 flex flex-col gap-4">
                                 <button onclick="closeTalentInfo()" class="absolute top-4 right-4 text-on-surface-variant hover:text-primary">
@@ -5111,7 +5111,7 @@ const templates = {
  
                 <!-- Quest Confirmation Modal -->
                 ${state.questConfirmationPopup.active ? `
-                    <div class="fixed inset-0 z-[150] flex items-center justify-center p-4">
+                    <div id="quest-confirmation-popup" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
                         <div class="modal-overlay absolute inset-0" onclick="closeQuestConfirmation()"></div>
                         <div class="wood-card w-full max-w-md p-8 relative shadow-2xl border-2 border-secondary/50 flex flex-col gap-6">
                             <h4 class="font-headline text-xl text-primary text-center leading-relaxed">
