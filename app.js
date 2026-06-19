@@ -1,4 +1,4 @@
-﻿console.log("Stitch RPG Companion - Version 4.4");
+console.log("Stitch RPG Companion - Version 4.4");
 const APP_VERSION = "4.4";
 
 // Background Music (BGM) Manager
@@ -3611,55 +3611,59 @@ const templates = {
                         </div>
                         <!-- HP, LP, XP, Learned Effects -->
                         <div class="flex flex-col gap-4 mt-6">
-                            <!-- HP -->
-                            <div class="wood-card p-4 border-l-4 border-l-primary flex flex-col gap-3">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Lebenspunkte</span>
-                                    <span class="material-symbols-outlined text-primary text-2xl opacity-50">favorite</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <button onclick="updateState(s => s.hero.hp.current = Math.max(0, s.hero.hp.current - 1))" class="w-10 h-10 bg-error/20 hover:bg-error text-error hover:text-on-error flex items-center justify-center rounded-sm transition-colors shadow-sm">
-                                        <span class="material-symbols-outlined">remove</span>
-                                    </button>
-                                    <span class="text-3xl font-headline text-primary">${hero.hp.current} <span class="text-xl text-on-surface-variant opacity-60">/ ${window.getTotalMaxHp()}</span></span>
-                                    <button onclick="updateState(s => s.hero.hp.current = Math.min(window.getTotalMaxHp(), s.hero.hp.current + 1))" class="w-10 h-10 bg-primary/20 hover:bg-primary text-primary hover:text-on-primary flex items-center justify-center rounded-sm transition-colors shadow-sm">
-                                        <span class="material-symbols-outlined">add</span>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- Rüstung -->
-                            <div class="wood-card p-4 border-l-4 border-l-outline-variant flex justify-between items-center bg-surface-container-low/40">
-                                <div class="flex flex-col">
-                                    <span class="text-[10px] text-on-surface-variant uppercase font-bold">Rüstung (Gesamt)</span>
-                                    <span class="text-2xl font-headline text-on-surface">${window.calculateTotalArmor()}</span>
-                                </div>
-                                <span class="material-symbols-outlined text-on-surface-variant/30 text-3xl">shield</span>
-                            </div>
-
-                            <div class="wood-card p-4 border-l-4 border-l-secondary">
-                                <div class="flex justify-between items-center">
-                                    <div class="flex flex-col">
-                                        <span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Lernpunkte (LP)</span>
-                                        <span class="text-2xl font-headline text-secondary">${hero.lp}</span>
+                            <div id="tutorial-hp-armor" class="flex flex-col gap-4">
+                                <!-- HP -->
+                                <div class="wood-card p-4 border-l-4 border-l-primary flex flex-col gap-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Lebenspunkte</span>
+                                        <span class="material-symbols-outlined text-primary text-2xl opacity-50">favorite</span>
                                     </div>
-                                    <span class="material-symbols-outlined text-secondary text-3xl opacity-50">school</span>
-                                </div>
-                            </div>
-
-                            <div class="wood-card p-4">
-                                <div class="flex justify-between text-[10px] uppercase text-on-surface-variant mb-1 font-bold">
-                                    <span>Erfahrungsfortschritt</span>
-                                    <div class="flex items-center gap-2">
-                                        <button onclick="toggleXpPause()" class="w-6 h-6 flex items-center justify-center rounded-full transition-all border ${hero.xpPaused ? 'bg-error/20 hover:bg-error text-error hover:text-on-error border-error/30' : 'bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white border-emerald-500/30'}" title="${hero.xpPaused ? 'Erfahrung pausiert (klicken zum Fortsetzen)' : 'Erfahrung aktiv (klicken zum Pausieren)'}">
-                                            <span class="material-symbols-outlined text-[14px]">${hero.xpPaused ? 'play_arrow' : 'pause'}</span>
+                                    <div class="flex items-center justify-between">
+                                        <button onclick="updateState(s => s.hero.hp.current = Math.max(0, s.hero.hp.current - 1))" class="w-10 h-10 bg-error/20 hover:bg-error text-error hover:text-on-error flex items-center justify-center rounded-sm transition-colors shadow-sm">
+                                            <span class="material-symbols-outlined">remove</span>
                                         </button>
-                                        <span class="text-secondary">${hero.xp.current.toLocaleString()} / ${hero.xp.next.toLocaleString()}</span>
-                                        <button onclick="openResourcePopup('xp_add')" class="w-5 h-5 bg-secondary/20 hover:bg-secondary text-secondary hover:text-on-secondary flex items-center justify-center rounded-full transition-colors shadow-sm"><span class="material-symbols-outlined text-[12px]">add</span></button>
+                                        <span class="text-3xl font-headline text-primary">${hero.hp.current} <span class="text-xl text-on-surface-variant opacity-60">/ ${window.getTotalMaxHp()}</span></span>
+                                        <button onclick="updateState(s => s.hero.hp.current = Math.min(window.getTotalMaxHp(), s.hero.hp.current + 1))" class="w-10 h-10 bg-primary/20 hover:bg-primary text-primary hover:text-on-primary flex items-center justify-center rounded-sm transition-colors shadow-sm">
+                                            <span class="material-symbols-outlined">add</span>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="h-2 w-full bg-surface-container-low border border-outline-variant/20 overflow-hidden mt-2 rounded-full">
-                                    <div class="h-full bg-secondary shadow-[0_0_8px_rgba(228,195,117,0.5)]" style="width: ${(hero.xp.current / hero.xp.next) * 100}%"></div>
+                                
+                                <!-- Rüstung -->
+                                <div class="wood-card p-4 border-l-4 border-l-outline-variant flex justify-between items-center bg-surface-container-low/40">
+                                    <div class="flex flex-col">
+                                        <span class="text-[10px] text-on-surface-variant uppercase font-bold">Rüstung (Gesamt)</span>
+                                        <span class="text-2xl font-headline text-on-surface">${window.calculateTotalArmor()}</span>
+                                    </div>
+                                    <span class="material-symbols-outlined text-on-surface-variant/30 text-3xl">shield</span>
+                                </div>
+                            </div>
+
+                            <div id="tutorial-lp-xp" class="flex flex-col gap-4">
+                                <div class="wood-card p-4 border-l-4 border-l-secondary">
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex flex-col">
+                                            <span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Lernpunkte (LP)</span>
+                                            <span class="text-2xl font-headline text-secondary">${hero.lp}</span>
+                                        </div>
+                                        <span class="material-symbols-outlined text-secondary text-3xl opacity-50">school</span>
+                                    </div>
+                                </div>
+
+                                <div class="wood-card p-4">
+                                    <div class="flex justify-between text-[10px] uppercase text-on-surface-variant mb-1 font-bold">
+                                        <span>Erfahrungsfortschritt</span>
+                                        <div class="flex items-center gap-2">
+                                            <button onclick="toggleXpPause()" class="w-6 h-6 flex items-center justify-center rounded-full transition-all border ${hero.xpPaused ? 'bg-error/20 hover:bg-error text-error hover:text-on-error border-error/30' : 'bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white border-emerald-500/30'}" title="${hero.xpPaused ? 'Erfahrung pausiert (klicken zum Fortsetzen)' : 'Erfahrung aktiv (klicken zum Pausieren)'}">
+                                                <span class="material-symbols-outlined text-[14px]">${hero.xpPaused ? 'play_arrow' : 'pause'}</span>
+                                            </button>
+                                            <span class="text-secondary">${hero.xp.current.toLocaleString()} / ${hero.xp.next.toLocaleString()}</span>
+                                            <button onclick="openResourcePopup('xp_add')" class="w-5 h-5 bg-secondary/20 hover:bg-secondary text-secondary hover:text-on-secondary flex items-center justify-center rounded-full transition-colors shadow-sm"><span class="material-symbols-outlined text-[12px]">add</span></button>
+                                        </div>
+                                    </div>
+                                    <div class="h-2 w-full bg-surface-container-low border border-outline-variant/20 overflow-hidden mt-2 rounded-full">
+                                        <div class="h-full bg-secondary shadow-[0_0_8px_rgba(228,195,117,0.5)]" style="width: ${(hero.xp.current / hero.xp.next) * 100}%"></div>
+                                    </div>
                                 </div>
                             </div>
 

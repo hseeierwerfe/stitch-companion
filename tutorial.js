@@ -31,20 +31,21 @@ window.TutorialManager = (function() {
         },
         {
             text: "Du gelangst am Anfang zu Statusseite deines Helden. Hier kannst du deine Statuswerte, gelernte Talente, dein Erz und andere Ausrüstung, sowie Erfahrung Lernpunkte und Level sehen. Bereiten wir zur besseren Übersicht und zum Lernen mal einen fertigen Charakter vor.",
-            shape: "none",
+            shape: "rect",
+            findHighlight: function() { return document.getElementById('app-content'); },
             requireExtraOk: true
         },
         {
             text: "Hier sind bereits deine ersten Statuswerte angezeigt. Von Anfang hat man 10 Lebenspunkte und 3 Rüstung. Diese Rüstung ergibt sich aus deiner Kleidung, die du von Anfang an ausgerüstet hast. Mit dem + und – Buttons neben deinen Lebenspunkten kannst du auch außerhalb des Kampfes dein Leben verändern, falls du beispielsweise durch ein Ereignis Leben verlierst oder erhälst.",
             shape: "rect",
-            findHighlight: function() { return Array.from(document.querySelectorAll('.wood-card')).find(c => c.textContent.includes('Lebenspunkte') && c.textContent.includes('Rüstung')); },
+            findHighlight: function() { return document.getElementById('tutorial-hp-armor'); },
             scrollFn: function() { window.scrollTo(0,0); },
             requireExtraOk: true
         },
         {
             text: "Hier siehst du deine Lernpunkte und deinen aktuellen Erfahrungsfortschritt. Du erhältst automatisch bei jedem Aufleveln 2 Lernpunkte, 2 maximale Lebenspunkte hinzu und heilst dein Mana und deine Lebenspunkte voll.",
             shape: "rect",
-            findHighlight: function() { return Array.from(document.querySelectorAll('.wood-card')).find(c => c.textContent.includes('Lernpunkte') && c.textContent.includes('Erfahrungsfortschritt')); },
+            findHighlight: function() { return document.getElementById('tutorial-lp-xp'); },
             requireExtraOk: true
         },
         {
@@ -56,10 +57,9 @@ window.TutorialManager = (function() {
         {
             text: "Hier kannst du dir die notwendige Erfahrung eintragen und über den OK Button bestätigen. Die Erfahrung wird dir dann automatisch gutgeschrieben.",
             shape: "rect",
+            preAction: function() { const t = document.querySelector('#resource-input'); if(t) t.value = "150"; },
             findHighlight: function() { return document.querySelector('#resource-popup .wood-card'); },
-            findTarget: function() { return Array.from(document.querySelectorAll('#resource-popup button')).find(b => b.textContent.includes('OK')); },
-            expectedInput: "150",
-            inputTarget: function() { return document.querySelector('#resource-input'); }
+            findTarget: function() { return Array.from(document.querySelectorAll('#resource-popup button')).find(b => b.textContent.includes('OK')); }
         },
         {
             text: "Nachdem die Erfahrung zugefügt wird, kehrt man automatisch zum Startbildschirm zurück. Hier sehen wir schon, dass wir 12/12 Lebenspunkte, also 2 zusätzliche Lebenspunkte erhalten haben. Zusätzlich sehen wir, dass wir 2 Lernpunkte erhalten haben. Diese können verwendet werden um Attribute zu erhöhen oder Talente zu erlernen. Außerdem steht sie Leiste Erfahrungsfortschritt auf 50 /200. Das liegt daran, dass man das erste Level nach 100 Erfahrungspunkten erreicht und sich dann die Leiste auf 0 zurücksetzt. Überschüssige Erfahrung wird selbstverständlich anschließend addiert. Das zweite Level erreicht man nach 200 Erfahrungspunkten, das 3. Nach 300 usw.",
@@ -75,9 +75,8 @@ window.TutorialManager = (function() {
         {
             text: "In diesem Fenster kannst du deinem Speicherstand einen Namen geben und diesen unter dem Namen abspeichern. Hast du bereits gespeicherte Spielstände, kannst du ebenso gut einen vorhandenen Spielstand auswählen und mit deinem aktuellen überschreiben. Wir wollen unseren Spielstand unter dem Namen Test einmal abspeichern.",
             shape: "none",
-            findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Speichern')); },
-            expectedInput: "Test",
-            inputTarget: function() { return document.querySelector('#save-name-input'); }
+            preAction: function() { const t = document.querySelector('#save-name-input'); if(t) t.value = "Test"; },
+            findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Speichern')); }
         },
         {
             text: "In diesem Bereich auf deiner Statusseite kannst du das Kapitel wechseln, in dem du dich befindest, die Musik ein und ausstellen, dein Erz einblicken, ins Hauptmenü zurückkehren und dich mit anderen Spielern im gleichen Netzwerk verbinden, um ihren aktuellen Status überblicken zu können oder gemeinsam mit ihnen kämpfen zu können. Um ein Kapitel zu wechseln, musst du zunächst auf das Kapitel 1: Die Ankunft klicken, das neue Kapitel auswählen und im Anschluss direkt mit dem Kapitel bestätigen Button speichern.",
@@ -113,10 +112,9 @@ window.TutorialManager = (function() {
         {
             text: "In diesem Fenster kannst du deiner Partie einen Namen geben und diese dann starten. Nennen wir unsere Partie Test und starten diese einmal.",
             shape: "rect",
+            preAction: function() { const t = document.getElementById('new-party-name-input'); if(t) t.value = "Test"; },
             findHighlight: function() { return document.getElementById('sync-screen-new'); },
-            findTarget: function() { return Array.from(document.querySelectorAll('#sync-screen-new button')).find(b => b.textContent.includes('PARTIE STARTEN')); },
-            expectedInput: "Test",
-            inputTarget: function() { return document.getElementById('new-party-name-input'); }
+            findTarget: function() { return Array.from(document.querySelectorAll('#sync-screen-new button')).find(b => b.textContent.includes('PARTIE STARTEN')); }
         },
         {
             text: "In diesem Fenster siehst du alle Mitglieder der Partie und ihren aktuellen Status. Hier kannst du auch eine Partie speichern und eine Partie endgültig starten.",
@@ -152,10 +150,9 @@ window.TutorialManager = (function() {
         {
             text: "Hier kannst du den Wert eingeben, den du im Spielverlauf findest und der dir nicht automatisch (wie z.B. in Quests) gutgeschrieben wird. Wir wollen einmal 100 Erz finden.",
             shape: "rect",
+            preAction: function() { const t = document.querySelector('#resource-input'); if(t) t.value = "100"; },
             findHighlight: function() { return document.querySelector('#resource-popup .wood-card'); },
-            findTarget: function() { return Array.from(document.querySelectorAll('#resource-popup button')).find(b => b.textContent.includes('OK')); },
-            expectedInput: "100",
-            inputTarget: function() { return document.querySelector('#resource-input'); }
+            findTarget: function() { return Array.from(document.querySelectorAll('#resource-popup button')).find(b => b.textContent.includes('OK')); }
         },
         {
             text: "Wir sehen jetzt, dass das Erhöhen von Attributen wie z.B. Stärke und Geschick möglich ist, da wir über genug Lernpunkte und Erz verfügen. Erhöhen wir beides nun auf 2.",
@@ -669,9 +666,15 @@ window.TutorialManager = (function() {
         }
 
         let popupHtml = `
-            <div style="position:fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(30, 20, 10, 0.95); border: 2px solid #e4c375; color: #e7e2dd; padding: 15px; border-radius: 8px; z-index: 1000000; box-shadow: 0 10px 25px rgba(0,0,0,0.8); pointer-events: auto;">
-                <p style="font-family: 'Work Sans', sans-serif; font-size: 14px; margin-bottom: 10px;">${step.text}</p>
-                ${step.requireExtraOk ? `<button id="tutorial-ok-btn" style="background: #e4c375; color: #3e2e00; padding: 8px 16px; border-radius: 4px; font-weight: bold; width: 100%;">OK</button>` : ''}
+            <div style="position:fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(30, 20, 10, 0.95); border: 2px solid #e4c375; color: #e7e2dd; border-radius: 8px; z-index: 1000000; box-shadow: 0 10px 25px rgba(0,0,0,0.8); pointer-events: auto; display: flex; flex-direction: column;">
+                <div style="padding: 10px 15px; border-bottom: 1px solid #e4c375; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(0,0,0,0.4);" onclick="const body = document.getElementById('tutorial-popup-body'); body.style.display = body.style.display === 'none' ? 'block' : 'none';">
+                    <strong style="color: #e4c375; font-family: 'Georgia', serif;">Tutorial</strong>
+                    <span style="color: #e4c375; font-size: 10px; font-weight: bold; text-transform: uppercase;">▼ Aufklappen / Zuklappen</span>
+                </div>
+                <div id="tutorial-popup-body" style="padding: 15px; display: block;">
+                    <p style="font-family: 'Work Sans', sans-serif; font-size: 14px; margin-bottom: 10px;">${step.text}</p>
+                    ${step.requireExtraOk ? `<button id="tutorial-ok-btn" style="background: #e4c375; color: #3e2e00; padding: 8px 16px; border-radius: 4px; font-weight: bold; width: 100%; border: none; cursor: pointer; text-transform: uppercase;">OK</button>` : ''}
+                </div>
             </div>
         `;
 
