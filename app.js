@@ -1,4 +1,4 @@
-console.log("Stitch RPG Companion - Version 4.4");
+﻿console.log("Stitch RPG Companion - Version 4.4");
 const APP_VERSION = "4.4";
 
 // Background Music (BGM) Manager
@@ -1046,6 +1046,10 @@ window.normalizeLoadedHero = function(hero) {
         const xpNum = typeof hero.xp === 'number' ? hero.xp : 0;
         const nextXp = (hero.level || 1) * 100;
         hero.xp = { current: xpNum, next: nextXp };
+    }
+    
+    if (hero.lastKnownMaxHp === undefined) {
+        hero.lastKnownMaxHp = window.getTotalMaxHp ? window.getTotalMaxHp() : (hero.hp ? hero.hp.max : 10);
     }
     
     if (hero.xpPaused === undefined) {
@@ -4447,8 +4451,8 @@ const templates = {
                                                 }
                                                 if (isEquippedSlot) {
                                                     return `
-                                                    <button disabled class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-sm text-[10px] font-bold uppercase transition-all shadow-sm w-full text-center opacity-50 cursor-not-allowed">
-                                                        Ausgerüstet
+                                                    <button onclick="window.handleUnequipItem('${item.name.replace(/'/g, "\\'")}')" class="bg-error/20 hover:bg-error text-error hover:text-on-error px-3 py-1 rounded-sm text-[10px] font-bold uppercase transition-all shadow-sm w-full text-center">
+                                                        Ablegen
                                                     </button>
                                                     `;
                                                 }
@@ -5854,6 +5858,7 @@ function selectHero(heroName) {
     state.hero.level = 0;
     state.hero.xp = { current: 0, next: 100 };
     state.hero.hp = { current: 10, max: 10 };
+    state.hero.lastKnownMaxHp = 10;
     state.hero.ore = 0;
     state.hero.lp = 0;
     state.hero.chapter = 1;
@@ -6928,8 +6933,10 @@ function checkLevelUp() {
         const manfredQuestDone = hero.quests && !hero.quests.some(q => q.id === 'hero_quest');
         if (hero.name === 'Manfred der Stämmige' && manfredQuestDone) {
             hero.hp.max += 4;
+            if(hero.lastKnownMaxHp !== undefined) hero.lastKnownMaxHp += 4;
         } else {
             hero.hp.max += 2;
+            if(hero.lastKnownMaxHp !== undefined) hero.lastKnownMaxHp += 2;
         }
         hero.hp.current = window.getTotalMaxHp();
         hero.lp += 2;
@@ -7377,6 +7384,7 @@ window.applyConsumeEffects = function(itemName) {
 
         case 'Trank des puren Lebens':
             hero.hp.max += 1;
+            if(hero.lastKnownMaxHp !== undefined) hero.lastKnownMaxHp += 1;
             hero.hp.current = Math.min(window.getTotalMaxHp(), hero.hp.current + 1);
             break;
 
@@ -7392,6 +7400,21 @@ window.applyConsumeEffects = function(itemName) {
             setTimeout(() => alert("Die Gesamtbewegung jeder Aktionskarte im nächsten Zug wird verdoppelt!"), 100);
             break;
     }
+};
+
+window.handleUnequipItem = function(itemName) {
+    const hero = state.hero;
+    const eq = hero.equipment;
+    if (eq.melee?.name === itemName) eq.melee = null;
+    else if (eq.ranged?.name === itemName) eq.ranged = null;
+    else if (eq.armor?.name === itemName) eq.armor = null;
+    else if (eq.artifacts?.amulet?.name === itemName) eq.artifacts.amulet = null;
+    else if (eq.artifacts?.ring1?.name === itemName) eq.artifacts.ring1 = null;
+    else if (eq.artifacts?.ring2?.name === itemName) eq.artifacts.ring2 = null;
+    
+    if (window.syncAuraHp) window.syncAuraHp();
+    saveGame();
+    render();
 };
 
 window.handleEquipItem = function(itemName) {
@@ -8305,341 +8328,6 @@ window.playIntroVideo = function() {
     }, 6000);
 };
 
-
-// ─── TUTORIAL SYSTEM ─────────────────────────────────────────────────────────
-(function() {
-    const IMG = 'bilder_karten/tutorial/';
-
-    // Each slide: { title, image (optional), desc, highlights: [{x,y,w,h,label,color}] }
-    const SLIDES = [
-        {
-            title: '1 · Hauptmenü',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Das <strong>Hauptmenü</strong> erscheint beim Öffnen der App.</p>
-<ul>
-<li><strong>Weiterspielen</strong> – Letzten Spielstand fortsetzen</li>
-<li><strong>Neues Spiel</strong> – Helden wählen &amp; starten</li>
-<li><strong>Spiel laden / speichern</strong> – Manuelle Slots verwalten</li>
-<li><strong>❓ Tutorial</strong> – Diese Anleitung öffnen</li>
-</ul>`
-        },
-        {
-            title: '2 · Kopfzeile – Erz &amp; Navigation',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Die <strong>Kopfzeile</strong> ist immer sichtbar:</p>
-<table><tr><th>Element</th><th>Bedeutung</th></tr>
-<tr><td>☰ Menü-Icon (links)</td><td>Öffnet das Hauptmenü</td></tr>
-<tr><td>Heldenname + Level</td><td>Aktueller Charakter</td></tr>
-<tr><td>Kapitel bestätigen</td><td>Wechselt das Kapitel</td></tr>
-<tr><td>🔊 Lautsprecher</td><td>Musik an/aus</td></tr>
-<tr><td>🔗 Sync-Icon</td><td>Multiplayer-Verbindung</td></tr>
-<tr><td><strong style="color:#e9c176">N Erz (rechts)</strong></td><td>Deine aktuelle Währung</td></tr>
-</table>`
-        },
-        {
-            title: '3 · Navigationsleiste (unten)',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Die <strong>untere Navigationsleiste</strong> hat 5 Tabs:</p>
-<table><tr><th>Tab</th><th>Funktion</th></tr>
-<tr><td>👤 <strong>STATUS</strong></td><td>Heldenübersicht, HP, Ausrüstung, Talente</td></tr>
-<tr><td>🎒 <strong>BEUTEL</strong></td><td>Inventar nach Kategorie gefiltert</td></tr>
-<tr><td>🔄 <strong>HANDELN</strong></td><td>Mit Händlern tauschen</td></tr>
-<tr><td>🔍 <strong>FINDEN</strong></td><td>Items finden oder verlieren</td></tr>
-<tr><td>📖 <strong>QUESTLOG</strong></td><td>Lager, NSCs, aktive Quests</td></tr>
-</table>`
-        },
-        {
-            title: '4 · Status – Lebenspunkte &amp; LP',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Auf dem <strong>Status-Bildschirm</strong> (linke Spalte):</p>
-<ul>
-<li>❤️ <strong>Lebenspunkte</strong>: aktuell / maximal — mit <strong>–</strong> und <strong>+</strong> im Kampf anpassen</li>
-<li>🛡️ <strong>Rüstung (Gesamt)</strong>: wird automatisch aus Ausrüstung berechnet</li>
-<li>🎓 <strong>Lernpunkte (LP)</strong>: werden beim Levelaufstieg vergeben und für Attribute &amp; Talente ausgegeben</li>
-<li>📊 <strong>Erfahrungsfortschritt</strong>: XP-Balken bis zum nächsten Level (mit ➕ manuell hinzufügen)</li>
-<li><strong>Gilde</strong>: Dropdown zur aktuellen Lagerzugehörigkeit</li>
-</ul>`
-        },
-        {
-            title: '5 · Ausrüstungsslots',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Rechts auf dem Status-Bildschirm befindet sich die <strong>Ausrüstungsansicht</strong>.</p>
-<p>Du kannst folgendes anlegen:</p>
-<table><tr><th>Slot</th><th>Max.</th></tr>
-<tr><td>⚔️ Nahkampfwaffe</td><td>1</td></tr>
-<tr><td>🏹 Fernkampfwaffe (Bogen/Armbrust)</td><td>1</td></tr>
-<tr><td>🛡️ Rüstung</td><td>1</td></tr>
-<tr><td>💍 Amulett</td><td>1</td></tr>
-<tr><td>💍 Ringe</td><td>2</td></tr>
-<tr><td>✨ Sonstige Artefakte</td><td>unbegrenzt</td></tr>
-<tr><td>📜 Spruchrollen/Runen</td><td>mehrere</td></tr>
-</table>
-<p>Im <strong>Beutel</strong> auf ein Item tippen → Button <em>„Ausrüsten"</em> wählen.</p>
-<p>Angelegte Items erscheinen <strong>nicht</strong> in der Verlieren-Liste.</p>`
-        },
-        {
-            title: '6 · Statuswerte &amp; Training (Attribute aufleveln)',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Im unteren Teil des Status-Bildschirms: <strong>Statuswerte &amp; Training</strong>.</p>
-<p>Hier steigerst du die Basisattribute mit <strong>LP + Erz</strong>:</p>
-<table><tr><th>Attribut</th><th>Wirkung</th></tr>
-<tr><td>💪 <strong>Stärke</strong></td><td>Nahkampfschaden, Waffenanforderungen</td></tr>
-<tr><td>🏃 <strong>Geschick</strong></td><td>Bogen-/Armbrust­anforderungen</td></tr>
-<tr><td>👣 <strong>Bewegung</strong></td><td>Felder pro Kampfzug</td></tr>
-</table>
-<p>Jeder „<strong>Lernen</strong>"-Button zeigt Kosten (z.B. <em>2 LP / 100 Erz</em>).<br>
-LP gibt es bei jedem Levelaufstieg. Erz wird im Spiel gesammelt (rechts oben).</p>`
-        },
-        {
-            title: '7 · Talente &amp; Kampftechniken',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Direkt unter den Attributen: <strong>Talente &amp; Kampftechniken</strong>.</p>
-<table><tr><th>Talent</th><th>Max. Stufe</th><th>Kosten</th></tr>
-<tr><td>⚔️ Einhandkampf</td><td>2</td><td>2 LP / 100 Erz</td></tr>
-<tr><td>🗡️ Zweihandkampf</td><td>2</td><td>2 LP / 100 Erz</td></tr>
-<tr><td>🏹 Bogenschiessen</td><td>2</td><td>2 LP / 100 Erz</td></tr>
-<tr><td>🎯 Armbrustschießen</td><td>2</td><td>2 LP / 100 Erz</td></tr>
-<tr><td>✨ Kreise der Magie</td><td>6</td><td>1 LP / 50 Erz</td></tr>
-<tr><td>🔓 Schlösser öffnen</td><td>2</td><td>1 LP / 50 Erz</td></tr>
-<tr><td>👁️ Überw. Präsenz</td><td>1</td><td>2 LP / 100 Erz</td></tr>
-</table>
-<p>Das ⓘ-Symbol neben jedem Talent zeigt eine detaillierte Beschreibung.</p>`
-        },
-        {
-            title: '8 · Beutel (Inventar)',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Der <strong>Beutel</strong> zeigt alle Items nach Kategorie:</p>
-<ul>
-<li>⚔️ Waffen · 🛡️ Rüstungen · 🍖 Nahrung · 🔧 Ausrüstung · 📜 Magie · 🔑 Questgegenstände</li>
-</ul>
-<p>Klicke auf einen Gegenstand für Optionen:</p>
-<ul>
-<li><strong>Ausrüsten</strong> – Item anlegen (erscheint dann in den Slots)</li>
-<li><strong>Ablegen</strong> – Item ausrüsten rückgängig machen</li>
-<li><strong>Verbrauchen</strong> – bei Nahrung/Tränken</li>
-</ul>
-<p>Oben sind Filter-Buttons für jede Kategorie, darunter eine Liste aller Items mit Wert in Erz.</p>`
-        },
-        {
-            title: '9 · Finden &amp; Verlieren',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Der <strong>Finden</strong>-Tab ist zweigeteilt:</p>
-<p>⬅️ <strong>Links – Gegenstände finden:</strong><br>
-Wähle eine Kategorie → eine zufällige Auswahl passend zum Kapitel erscheint.<br>
-Gewählte Items kommen direkt in den Beutel.</p>
-<p>➡️ <strong>Rechts – Inventar (Verlieren):</strong><br>
-Entferne Items dauerhaft (z.B. verkauft, gestohlen, zerstört).<br>
-<strong>Angelegte Items sind ausgeblendet</strong> und müssen erst abgelegt werden.</p>`
-        },
-        {
-            title: '10 · Handeln',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Im <strong>Handeln</strong>-Tab tauscht du mit Händlern:</p>
-<ol>
-<li>Wähle oben ein Lager (Altes / Neues / Sektenlager)</li>
-<li>Wähle dann einen Händler aus dem Lager</li>
-<li>Das Interface zeigt 4 Spalten:<br>
-  <strong>Mein Inventar</strong> → <strong>Zum Tausch</strong> ⟷ <strong>Händler-Waren</strong> → <strong>Händler-Inventar</strong></li>
-<li>Items anklicken zum Verschieben, dann <strong>„Fertig mit Handeln"</strong></li>
-</ol>`
-        },
-        {
-            title: '11 · Questlog – Lager &amp; NSC-Symbole',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Im <strong>Questlog</strong> siehst du die aktuellen NSCs in den 3 Lagern.</p>
-<p>Unter jedem NSC-Portrait stehen Symbole:</p>
-<table><tr><th>Symbol</th><th>Bedeutung</th></tr>
-<tr><td>🛒 Einkaufswagen</td><td><strong>Händler</strong> – via HANDELN-Tab tauschen</td></tr>
-<tr><td>💬 Sprechblase</td><td><strong>Questgeber</strong> – Quest annehmen</td></tr>
-<tr><td>🎓 Abschlussmütze</td><td><strong>Lehrer</strong> – Talent erlernen (LP + Erz)</td></tr>
-</table>
-<p>Ein NSC kann mehrere Rollen haben.<br>
-<strong>🔄 Runde</strong> (oben rechts) würfelt alle Lager neu durch.</p>`
-        },
-        {
-            title: '12 · Aktive Quests',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Unter der Lager-Übersicht (scrollen) erscheinen <strong>Aktive Quests</strong>.</p>
-<p>Jede Questkarte zeigt:</p>
-<ul>
-<li>Questname &amp; Questgeber</li>
-<li>Beschreibung und aktuelle Aufgabe</li>
-<li><strong>„Bedingung erfüllen"</strong> → Quest-Schritt vorankommen</li>
-<li><strong>„Abbrechen"</strong> → Quest aufgeben</li>
-</ul>
-<p>Die Hauptquest <em>„Willkommen in der Kolonie!"</em> erfordert:<br>
-① Heldenquest abschließen (→ +100 XP + Heldenfähigkeit)<br>
-② 2 weitere Lagerquests abschließen</p>`
-        },
-        {
-            title: '13 · Kampf starten',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Auf dem Status-Bildschirm: <strong>„🗡️ Ein Kampf steht bevor"</strong> (roter Button).</p>
-<p>Es öffnet sich die <strong>Kampfvorbereitung</strong>:</p>
-<ul>
-<li><strong>Normaler Modus</strong> – Gegner auswählen → Kampfformat wählen → Schlachtfeld</li>
-<li><strong>Admin Modus</strong> – Passwort eingeben → direkt 1v1 ohne Abfragen starten<br>
-  + separates Analyse-Fenster mit Statistiken</li>
-</ul>
-<p>Im Normalen Modus wählst du dann:</p>
-<ul>
-<li>Den <strong>Gegner</strong> aus der Gegner-Liste (zeigt HP &amp; Rüstung)</li>
-<li>Das <strong>Kampfformat</strong>: 1v1 · 1v2 · 2v1 · 2v2</li>
-</ul>`
-        },
-        {
-            title: '14 · Schlachtfeld',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Das <strong>Schlachtfeld</strong> ist ein 15×15-Raster. Startpositionen:</p>
-<table><tr><th>Nr.</th><th>Position</th></tr>
-<tr><td>1 / 2 / 3</td><td>Helden-Startfelder (oben)</td></tr>
-<tr><td>4 / 5 / 6</td><td>Gegner-Startfelder (unten)</td></tr>
-</table>
-<p>Aktionsbuttons pro Zug:</p>
-<table><tr><th>Button</th><th>Funktion</th></tr>
-<tr><td><strong>Bewegen</strong></td><td>Felder anklicken (Reichweite = Bewegungswert)</td></tr>
-<tr><td><strong>Angriff (NK)</strong></td><td>Nahkampf auf direktes Nachbarfeld</td></tr>
-<tr><td><strong>Angriff (FK)</strong></td><td>Fernkampf auf Gegner in Reichweite</td></tr>
-<tr><td><strong>Zauber wirken</strong></td><td>Aktiven Zauber einsetzen</td></tr>
-<tr><td><strong>Waffenwechsel</strong></td><td>Kostet 1 Bewegungspunkt</td></tr>
-<tr><td><strong>Zug beenden</strong></td><td>Gegner ist dran</td></tr>
-</table>`
-        },
-        {
-            title: '15 · Speichern &amp; Laden',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Das Spiel <strong>speichert automatisch</strong> nach jeder Aktion.</p>
-<p>Für manuelle Slots:</p>
-<ol>
-<li>☰ Menü-Icon (oben links) → <strong>Hauptmenü</strong> öffnen</li>
-<li><strong>„Spiel speichern unter"</strong> → Namen vergeben → Slot wird erstellt</li>
-<li><strong>„Spiel laden"</strong> → gespeicherten Slot auswählen</li>
-<li><strong>„Spielstand löschen"</strong> → Slot dauerhaft entfernen</li>
-</ol>
-<p>Es können beliebig viele Slots angelegt werden.</p>`
-        },
-        {
-            title: '16 · Multiplayer-Sync',
-            image: null,
-            bg: '#1a1008',
-            desc: `<p>Das <strong>🔗 Sync-Icon</strong> (oben rechts) öffnet die Multiplayer-Verbindung.</p>
-<ul>
-<li>Verbinde mehrere Geräte über denselben <strong>Party-Namen</strong></li>
-<li>Heldenstatus wird automatisch synchronisiert</li>
-<li>Für 2v1- und 2v2-Kämpfe muss ein zweites Gerät verbunden sein</li>
-<li>Im 2-Helden-Kampf steuert jedes Gerät seinen eigenen Helden</li>
-</ul>
-<p>Das ist der letzte Schritt des Tutorials. Viel Erfolg in der Kolonie! ⚔️</p>`
-        }
-    ];
-
-    let currentSlide = 0;
-
-    window.openTutorial = function() {
-        currentSlide = 0;
-        renderTutorial();
-    };
-
-    window.tutorialNext = function() {
-        if (currentSlide < SLIDES.length - 1) { currentSlide++; renderTutorial(); }
-    };
-
-    window.tutorialPrev = function() {
-        if (currentSlide > 0) { currentSlide--; renderTutorial(); }
-    };
-
-    window.tutorialGoTo = function(i) {
-        currentSlide = i; renderTutorial();
-    };
-
-    window.closeTutorial = function() {
-        const el = document.getElementById('tutorial-overlay');
-        if (el) el.remove();
-    };
-
-    function renderTutorial() {
-        let el = document.getElementById('tutorial-overlay');
-        if (!el) {
-            el = document.createElement('div');
-            el.id = 'tutorial-overlay';
-            document.body.appendChild(el);
-        }
-
-        const s = SLIDES[currentSlide];
-        const total = SLIDES.length;
-        const isFirst = currentSlide === 0;
-        const isLast  = currentSlide === total - 1;
-
-        const dots = SLIDES.map((_, i) =>
-            `<button onclick="window.tutorialGoTo(${i})" style="width:10px;height:10px;border-radius:50%;border:none;cursor:pointer;background:${i===currentSlide?'#e9c176':'#555'};margin:0 3px;padding:0;transition:background 0.2s"></button>`
-        ).join('');
-
-        el.innerHTML = `
-        <div style="position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;padding:16px;font-family:'Georgia',serif;">
-          <div style="background:#1c1208;border:2px solid #6b4a1e;border-radius:4px;width:100%;max-width:680px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,0.9);">
-
-            <!-- Header -->
-            <div style="background:linear-gradient(to right,#2a1a06,#3a2410,#2a1a06);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #6b4a1e;">
-              <span style="color:#a07840;font-size:11px;font-family:monospace;letter-spacing:2px;text-transform:uppercase;">Bedienungsanleitung</span>
-              <span style="color:#e9c176;font-size:13px;font-family:monospace;">${currentSlide+1} / ${total}</span>
-              <button onclick="window.closeTutorial()" style="background:none;border:none;color:#a07840;font-size:20px;cursor:pointer;line-height:1;padding:0 4px;" title="Schließen">✕</button>
-            </div>
-
-            <!-- Title -->
-            <div style="padding:16px 24px 8px;border-bottom:1px solid #3a2410;">
-              <h2 style="margin:0;color:#e9c176;font-size:1.3rem;font-family:'Georgia',serif;">${s.title}</h2>
-            </div>
-
-            <!-- Content -->
-            <div style="flex:1;overflow-y:auto;padding:20px 24px;color:#d4b483;font-size:0.92rem;line-height:1.7;">
-              <style>
-                #tutorial-overlay table{border-collapse:collapse;width:100%;margin:10px 0}
-                #tutorial-overlay th{background:#2a1a06;color:#e9c176;padding:6px 10px;text-align:left;font-size:0.8rem;text-transform:uppercase;letter-spacing:1px}
-                #tutorial-overlay td{padding:6px 10px;border-bottom:1px solid #3a2410;color:#d4b483}
-                #tutorial-overlay ul{padding-left:20px;margin:8px 0}
-                #tutorial-overlay li{margin:4px 0}
-                #tutorial-overlay ol{padding-left:20px;margin:8px 0}
-                #tutorial-overlay strong{color:#e9c176}
-                #tutorial-overlay p{margin:8px 0}
-                #tutorial-overlay em{color:#a07840}
-              </style>
-              ${s.desc}
-            </div>
-
-            <!-- Dots -->
-            <div style="padding:10px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;border-top:1px solid #3a2410;">
-              ${dots}
-            </div>
-
-            <!-- Navigation -->
-            <div style="display:flex;gap:10px;padding:14px 24px;border-top:1px solid #3a2410;">
-              <button onclick="window.tutorialPrev()" ${isFirst?'disabled':''} style="flex:1;padding:10px;background:${isFirst?'#2a1a06':'#3a2410'};color:${isFirst?'#555':'#e9c176'};border:1px solid #6b4a1e;border-radius:2px;cursor:${isFirst?'default':'pointer'};font-family:'Georgia',serif;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;">◀ Zurück</button>
-              ${isLast
-                ? `<button onclick="window.closeTutorial()" style="flex:1;padding:10px;background:#4a2a00;color:#e9c176;border:1px solid #e9c176;border-radius:2px;cursor:pointer;font-family:'Georgia',serif;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;font-weight:bold;">✓ Fertig</button>`
-                : `<button onclick="window.tutorialNext()" style="flex:1;padding:10px;background:#3a2410;color:#e9c176;border:1px solid #6b4a1e;border-radius:2px;cursor:pointer;font-family:'Georgia',serif;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;">Weiter ▶</button>`
-              }
-            </div>
-
-          </div>
-        </div>`;
-    }
-})();
-// ─────────────────────────────────────────────────────────────────────────────
 
 window.onload = () => {
     loadGame(true); // Load saved game but stay on startseite
