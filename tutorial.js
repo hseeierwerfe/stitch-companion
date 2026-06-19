@@ -661,19 +661,19 @@ window.TutorialManager = (function() {
         if (rect.width > 0 && step.shape !== 'none') {
             let padding = 8;
             let br = step.shape === 'oval' ? '50%' : '8px';
-            highlightHtml = \`
-                <div style="position:fixed; top: \${rect.top - padding}px; left: \${rect.left - padding}px; width: \${rect.width + padding*2}px; height: \${rect.height + padding*2}px; border: 3px solid #e4c375; border-radius: \${br}; pointer-events: none; box-shadow: 0 0 0 9999px rgba(0,0,0,0.6); z-index: 999999; animation: pulse 2s infinite;"></div>
-            \`;
+            highlightHtml = `
+                <div style="position:fixed; top: ${rect.top - padding}px; left: ${rect.left - padding}px; width: ${rect.width + padding*2}px; height: ${rect.height + padding*2}px; border: 3px solid #e4c375; border-radius: ${br}; pointer-events: none; box-shadow: 0 0 0 9999px rgba(0,0,0,0.6); z-index: 999999; animation: pulse 2s infinite;"></div>
+            `;
         } else {
-            highlightHtml = \`<div style="position:fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: 999999;"></div>\`;
+            highlightHtml = `<div style="position:fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: 999999;"></div>`;
         }
 
-        let popupHtml = \`
+        let popupHtml = `
             <div style="position:fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(30, 20, 10, 0.95); border: 2px solid #e4c375; color: #e7e2dd; padding: 15px; border-radius: 8px; z-index: 1000000; box-shadow: 0 10px 25px rgba(0,0,0,0.8); pointer-events: auto;">
-                <p style="font-family: 'Work Sans', sans-serif; font-size: 14px; margin-bottom: 10px;">\${step.text}</p>
-                \${step.requireExtraOk ? \`<button id="tutorial-ok-btn" style="background: #e4c375; color: #3e2e00; padding: 8px 16px; border-radius: 4px; font-weight: bold; width: 100%;">OK</button>\` : ''}
+                <p style="font-family: 'Work Sans', sans-serif; font-size: 14px; margin-bottom: 10px;">${step.text}</p>
+                ${step.requireExtraOk ? `<button id="tutorial-ok-btn" style="background: #e4c375; color: #3e2e00; padding: 8px 16px; border-radius: 4px; font-weight: bold; width: 100%;">OK</button>` : ''}
             </div>
-        \`;
+        `;
 
         container.innerHTML = highlightHtml + popupHtml;
     }
@@ -753,7 +753,7 @@ window.TutorialManager = (function() {
 })();
 
 window.openTutorial = function() {
-    const html = \`
+    const html = `
         <div id="tutorial-start-popup" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
             <div class="wood-card w-full max-w-sm p-8 relative shadow-2xl border-2 border-secondary/30 text-center">
@@ -764,6 +764,6 @@ window.openTutorial = function() {
                 </div>
             </div>
         </div>
-    \`;
+    `;
     document.body.insertAdjacentHTML('beforeend', html);
 };
