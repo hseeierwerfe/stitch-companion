@@ -68,7 +68,7 @@ window.TutorialManager = (function() {
             preAction: function() { 
                 let ival = setInterval(() => {
                     const t = document.querySelector('#resource-amount');
-                    if(t) { t.value = "150"; clearInterval(ival); }
+                    if(t) { t.value = "150"; t.setAttribute('readonly', 'true'); t.blur(); clearInterval(ival); }
                 }, 50);
                 setTimeout(() => clearInterval(ival), 2000);
             },
@@ -85,7 +85,8 @@ window.TutorialManager = (function() {
             text: "Mit diesen Button kannst du deinen Spielstand speichern und gespeicherte Spielstände laden. Speichern wir einmal unseren Fortschritt ab.",
             shape: "rect",
             findHighlight: function() { let p = Array.from(document.querySelectorAll('.wood-card')).find(c => c.textContent.includes('Aktionen')); return p ? p.querySelector('.grid') : null; },
-            findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.toLowerCase().includes('spiel speichern unter')); }
+            findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.toLowerCase().includes('spiel speichern unter') || (b.getAttribute('onclick') && b.getAttribute('onclick').includes("savePopup"))); },
+            scrollFn: function() { let t = Array.from(document.querySelectorAll('button')).find(b => b.textContent.toLowerCase().includes('spiel speichern unter') || (b.getAttribute('onclick') && b.getAttribute('onclick').includes("savePopup"))); if(t) t.scrollIntoView({behavior: 'smooth', block: 'center'}); }
         },
         {
             text: "In diesem Fenster kannst du deinem Speicherstand einen Namen geben und diesen unter dem Namen abspeichern. Hast du bereits gespeicherte Spielstände, kannst du ebenso gut einen vorhandenen Spielstand auswählen und mit deinem aktuellen überschreiben. Wir wollen unseren Spielstand unter dem Namen Test einmal abspeichern.",
@@ -93,7 +94,7 @@ window.TutorialManager = (function() {
             preAction: function() { 
                 let ival = setInterval(() => {
                     const t = document.querySelector('#save-name-input');
-                    if(t) { t.value = "Test"; clearInterval(ival); }
+                    if(t) { t.value = "Test"; t.setAttribute('readonly', 'true'); t.blur(); clearInterval(ival); }
                 }, 50);
                 setTimeout(() => clearInterval(ival), 2000);
             },
@@ -137,7 +138,7 @@ window.TutorialManager = (function() {
             preAction: function() { 
                 let ival = setInterval(() => {
                     const t = document.getElementById('new-party-name-input');
-                    if(t) { t.value = "Test"; clearInterval(ival); }
+                    if(t) { t.value = "Test"; t.setAttribute('readonly', 'true'); t.blur(); clearInterval(ival); }
                 }, 50);
                 setTimeout(() => clearInterval(ival), 2000);
             },
@@ -181,7 +182,7 @@ window.TutorialManager = (function() {
             preAction: function() { 
                 let ival = setInterval(() => {
                     const t = document.querySelector('#resource-amount');
-                    if(t) { t.value = "100"; clearInterval(ival); }
+                    if(t) { t.value = "100"; t.setAttribute('readonly', 'true'); t.blur(); clearInterval(ival); }
                 }, 50);
                 setTimeout(() => clearInterval(ival), 2000);
             },
@@ -192,7 +193,7 @@ window.TutorialManager = (function() {
             text: "Wir sehen jetzt, dass das Erhöhen von Attributen wie z.B. Stärke und Geschick möglich ist, da wir über genug Lernpunkte und Erz verfügen. Erhöhen wir beides nun auf 2.",
             shape: "rect",
             findHighlight: function() { return Array.from(document.querySelectorAll('.wood-card')).find(c => c.textContent.includes('Statuswerte & Training')).querySelector('.grid'); },
-            findTarget: function() { return Array.from(document.querySelectorAll('button')).filter(b => (b.textContent.includes('+1 Stärke') || b.textContent.includes('+1 Geschick')) && !b.disabled); },
+            findTarget: function() { return Array.from(document.querySelectorAll('button')).filter(b => b.getAttribute('onclick') && (b.getAttribute('onclick').includes("changeAttribute('str'") || b.getAttribute('onclick').includes("changeAttribute('dex'")) && !b.disabled); },
             multipleClicks: 2,
             scrollFn: function() { let t = Array.from(document.querySelectorAll('.wood-card')).find(c => c.textContent.includes('Statuswerte & Training')); if(t) t.scrollIntoView({behavior: 'smooth', block: 'start'}); }
         },
@@ -694,31 +695,46 @@ window.TutorialManager = (function() {
                 }
                 setTimeout(() => {
                     rect = highlightEl.getBoundingClientRect();
-                    renderSVG(container, step, rect);
+                    renderSVG(container, step, rect, false);
                 }, 300);
             } else {
                 rect = highlightEl.getBoundingClientRect();
-                renderSVG(container, step, rect);
+                renderSVG(container, step, rect, true);
             }
         } else {
             if (!isScrollUpdate) {
                 container.innerHTML = '';
                 if (step.scrollFn) step.scrollFn();
-                renderSVG(container, step, rect);
+                renderSVG(container, step, rect, false);
             }
         }
     }
 
-    function renderSVG(container, step, rect) {
+    function renderSVG(container, step, rect, isUpdate = false) {
+        let padding = 8;
+        let br = step.shape === 'oval' ? '50%' : '8px';
+
+        if (isUpdate) {
+            let highlightDiv = container.querySelector('#tutorial-highlight-div');
+            if (highlightDiv) {
+                if (rect.width > 0 && step.shape !== 'none') {
+                    highlightDiv.style.top = `${rect.top - padding}px`;
+                    highlightDiv.style.left = `${rect.left - padding}px`;
+                    highlightDiv.style.width = `${rect.width + padding*2}px`;
+                    highlightDiv.style.height = `${rect.height + padding*2}px`;
+                    highlightDiv.style.borderRadius = br;
+                }
+            }
+            return;
+        }
+
         let highlightHtml = '';
         if (rect.width > 0 && step.shape !== 'none') {
-            let padding = 8;
-            let br = step.shape === 'oval' ? '50%' : '8px';
             highlightHtml = `
-                <div style="position:fixed; top: ${rect.top - padding}px; left: ${rect.left - padding}px; width: ${rect.width + padding*2}px; height: ${rect.height + padding*2}px; border: 3px solid #e4c375; border-radius: ${br}; pointer-events: none; box-shadow: 0 0 0 9999px rgba(0,0,0,0.6); z-index: 999999; animation: pulse 2s infinite;"></div>
+                <div id="tutorial-highlight-div" style="position:fixed; top: ${rect.top - padding}px; left: ${rect.left - padding}px; width: ${rect.width + padding*2}px; height: ${rect.height + padding*2}px; border: 3px solid #e4c375; border-radius: ${br}; pointer-events: none; box-shadow: 0 0 0 9999px rgba(0,0,0,0.6); z-index: 999999; animation: pulse 2s infinite; transition: top 0.1s, left 0.1s, width 0.1s, height 0.1s;"></div>
             `;
         } else {
-            highlightHtml = `<div style="position:fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: 999999;"></div>`;
+            highlightHtml = `<div id="tutorial-highlight-div" style="position:fixed; inset: 0; background: rgba(0,0,0,0.6); pointer-events: none; z-index: 999999;"></div>`;
         }
 
         let popupHtml = `
