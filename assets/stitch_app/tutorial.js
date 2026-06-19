@@ -3,6 +3,14 @@ window.TutorialManager = (function() {
     let currentStepIndex = 0;
     let clicksNeeded = 1;
     let clicksDone = 0;
+    let currentHighlightEl = null;
+
+    window.addEventListener('scroll', () => {
+        if (isActive && currentHighlightEl && document.getElementById('tutorial-overlay-container')) {
+            const step = steps[currentStepIndex];
+            if (step) drawOverlay(step, currentHighlightEl, true);
+        }
+    });
 
     const steps = [
         {
@@ -69,14 +77,15 @@ window.TutorialManager = (function() {
         },
         {
             text: "Nachdem die Erfahrung zugefügt wird, kehrt man automatisch zum Startbildschirm zurück. Hier sehen wir schon, dass wir 12/12 Lebenspunkte, also 2 zusätzliche Lebenspunkte erhalten haben. Zusätzlich sehen wir, dass wir 2 Lernpunkte erhalten haben. Diese können verwendet werden um Attribute zu erhöhen oder Talente zu erlernen. Außerdem steht sie Leiste Erfahrungsfortschritt auf 50 /200. Das liegt daran, dass man das erste Level nach 100 Erfahrungspunkten erreicht und sich dann die Leiste auf 0 zurücksetzt. Überschüssige Erfahrung wird selbstverständlich anschließend addiert. Das zweite Level erreicht man nach 200 Erfahrungspunkten, das 3. Nach 300 usw.",
-            shape: "none",
+            shape: "rect",
+            scrollFn: function() { window.scrollTo(0,0); },
             requireExtraOk: true
         },
         {
             text: "Mit diesen Button kannst du deinen Spielstand speichern und gespeicherte Spielstände laden. Speichern wir einmal unseren Fortschritt ab.",
             shape: "rect",
             findHighlight: function() { let p = Array.from(document.querySelectorAll('.wood-card')).find(c => c.textContent.includes('Aktionen')); return p ? p.querySelector('.grid') : null; },
-            findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Spiel speichern unter')); }
+            findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.toLowerCase().includes('spiel speichern unter')); }
         },
         {
             text: "In diesem Fenster kannst du deinem Speicherstand einen Namen geben und diesen unter dem Namen abspeichern. Hast du bereits gespeicherte Spielstände, kannst du ebenso gut einen vorhandenen Spielstand auswählen und mit deinem aktuellen überschreiben. Wir wollen unseren Spielstand unter dem Namen Test einmal abspeichern.",
@@ -655,9 +664,13 @@ window.TutorialManager = (function() {
                 if (Array.isArray(targetEl)) targetEl = targetEl[0];
                 if (Array.isArray(highlightEl)) highlightEl = highlightEl[0];
                 
+                if (!highlightEl && step.shape !== 'none') {
+                    highlightEl = document.getElementById('app-content');
+                }
+                
                 attempts++;
                 
-                if (highlightEl || (!step.findHighlight && !step.findTarget) || attempts > 30) {
+                if (highlightEl || (!step.findHighlight && !step.findTarget && step.shape === 'none') || attempts > 30) {
                     clearInterval(checkInterval);
                     drawOverlay(step, highlightEl);
                 }
@@ -665,26 +678,34 @@ window.TutorialManager = (function() {
         }, 50);
     }
 
-    function drawOverlay(step, highlightEl) {
+    function drawOverlay(step, highlightEl, isScrollUpdate = false) {
+        currentHighlightEl = highlightEl;
         const container = document.getElementById('tutorial-overlay-container');
         if (!container) return;
-        container.innerHTML = '';
         
         let rect = { left: 0, top: 0, width: 0, height: 0 };
         if (highlightEl) {
-            if (step.scrollFn) {
-                step.scrollFn();
+            if (!isScrollUpdate) {
+                container.innerHTML = '';
+                if (step.scrollFn) {
+                    step.scrollFn();
+                } else {
+                    highlightEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                setTimeout(() => {
+                    rect = highlightEl.getBoundingClientRect();
+                    renderSVG(container, step, rect);
+                }, 300);
             } else {
-                highlightEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            
-            setTimeout(() => {
                 rect = highlightEl.getBoundingClientRect();
                 renderSVG(container, step, rect);
-            }, 300);
+            }
         } else {
-            if (step.scrollFn) step.scrollFn();
-            renderSVG(container, step, rect);
+            if (!isScrollUpdate) {
+                container.innerHTML = '';
+                if (step.scrollFn) step.scrollFn();
+                renderSVG(container, step, rect);
+            }
         }
     }
 
