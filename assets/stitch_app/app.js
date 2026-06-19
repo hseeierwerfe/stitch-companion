@@ -7453,10 +7453,14 @@ window.handleEquipItem = function(itemName) {
     if (isRing) {
         if (!hero.equipment.artifacts.ring1) {
             hero.equipment.artifacts.ring1 = item;
+            if (window.syncAuraHp) window.syncAuraHp();
+            saveGame();
             render();
             return;
         } else if (!hero.equipment.artifacts.ring2) {
             hero.equipment.artifacts.ring2 = item;
+            if (window.syncAuraHp) window.syncAuraHp();
+            saveGame();
             render();
             return;
         } else {
@@ -8193,6 +8197,9 @@ window.executeEquip = function(slot, itemName) {
     } else {
         hero.equipment[slot] = item;
     }
+    // Sync HP after equip so aura bonuses (e.g. +3 Lebenspunkte) take effect immediately
+    if (window.syncAuraHp) window.syncAuraHp();
+    saveGame();
 };
 
 window.setPrimaryWeapon = function(type) {
