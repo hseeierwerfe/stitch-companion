@@ -33,13 +33,13 @@ window.TutorialManager = (function() {
             text: "Du gelangst am Anfang zu Statusseite deines Helden. Hier kannst du deine Statuswerte, gelernte Talente, dein Erz und andere Ausrüstung, sowie Erfahrung Lernpunkte und Level sehen. Bereiten wir zur besseren Übersicht und zum Lernen mal einen fertigen Charakter vor.",
             shape: "rect",
             findHighlight: function() { return document.getElementById('app-content'); },
+            scrollFn: function() { window.scrollTo(0,0); },
             requireExtraOk: true
         },
         {
             text: "Hier sind bereits deine ersten Statuswerte angezeigt. Von Anfang hat man 10 Lebenspunkte und 3 Rüstung. Diese Rüstung ergibt sich aus deiner Kleidung, die du von Anfang an ausgerüstet hast. Mit dem + und – Buttons neben deinen Lebenspunkten kannst du auch außerhalb des Kampfes dein Leben verändern, falls du beispielsweise durch ein Ereignis Leben verlierst oder erhälst.",
             shape: "rect",
             findHighlight: function() { return document.getElementById('tutorial-hp-armor'); },
-            scrollFn: function() { window.scrollTo(0,0); },
             requireExtraOk: true
         },
         {
@@ -51,15 +51,21 @@ window.TutorialManager = (function() {
         {
             text: "Hier kannst du deine Erfahrung außerhalb von Quests und Kämpfen beeinflussen. Mit dem Pausen Button kannst du jegliche Erfahrung, die du durch Quests oder Kämpfe erhältst, verhindern. Dies ist vor allem nützlich, wenn du einen bereits gespielten Spielstand vorher noch nicht in der App hattest, und diesen später hier reproduzieren willst. Bei erneuten Klick auf den Button wird die erhaltene Erfahrung wieder aktiviert. Klickt man auf den + Button kann man sich manuell Erfahrung geben, entweder um einen Spielstand zu rekonstruieren, oder falls man durch Ereignisse Erfahrung erhält. Wir tun mal so, als hätten wir bereits 150 Erfahrungspunkte gesammelt.",
             shape: "rect",
-            findHighlight: function() { let p = Array.from(document.querySelectorAll('.wood-card')).find(c => c.textContent.includes('Erfahrungsfortschritt')); return p ? p.querySelector('.flex.gap-2') : null; },
-            findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('add') && b.closest('.wood-card') && b.closest('.wood-card').textContent.includes('Erfahrungsfortschritt')); }
+            findHighlight: function() { return document.getElementById('tutorial-xp-buttons'); },
+            findTarget: function() { return Array.from(document.querySelectorAll('#tutorial-xp-buttons button')).find(b => b.textContent.includes('add')); }
         },
         {
             text: "Hier kannst du dir die notwendige Erfahrung eintragen und über den OK Button bestätigen. Die Erfahrung wird dir dann automatisch gutgeschrieben.",
             shape: "rect",
-            preAction: function() { const t = document.querySelector('#resource-input'); if(t) t.value = "150"; },
-            findHighlight: function() { return document.querySelector('#resource-popup .wood-card'); },
-            findTarget: function() { return Array.from(document.querySelectorAll('#resource-popup button')).find(b => b.textContent.includes('OK')); }
+            preAction: function() { 
+                let ival = setInterval(() => {
+                    const t = document.querySelector('#resource-amount');
+                    if(t) { t.value = "150"; clearInterval(ival); }
+                }, 50);
+                setTimeout(() => clearInterval(ival), 2000);
+            },
+            findHighlight: function() { return document.getElementById('resource-popup') ? document.getElementById('resource-popup').querySelector('.wood-card') : null; },
+            findTarget: function() { return document.getElementById('resource-popup') ? Array.from(document.getElementById('resource-popup').querySelectorAll('button')).find(b => b.textContent.includes('OK')) : null; }
         },
         {
             text: "Nachdem die Erfahrung zugefügt wird, kehrt man automatisch zum Startbildschirm zurück. Hier sehen wir schon, dass wir 12/12 Lebenspunkte, also 2 zusätzliche Lebenspunkte erhalten haben. Zusätzlich sehen wir, dass wir 2 Lernpunkte erhalten haben. Diese können verwendet werden um Attribute zu erhöhen oder Talente zu erlernen. Außerdem steht sie Leiste Erfahrungsfortschritt auf 50 /200. Das liegt daran, dass man das erste Level nach 100 Erfahrungspunkten erreicht und sich dann die Leiste auf 0 zurücksetzt. Überschüssige Erfahrung wird selbstverständlich anschließend addiert. Das zweite Level erreicht man nach 200 Erfahrungspunkten, das 3. Nach 300 usw.",
@@ -75,7 +81,13 @@ window.TutorialManager = (function() {
         {
             text: "In diesem Fenster kannst du deinem Speicherstand einen Namen geben und diesen unter dem Namen abspeichern. Hast du bereits gespeicherte Spielstände, kannst du ebenso gut einen vorhandenen Spielstand auswählen und mit deinem aktuellen überschreiben. Wir wollen unseren Spielstand unter dem Namen Test einmal abspeichern.",
             shape: "none",
-            preAction: function() { const t = document.querySelector('#save-name-input'); if(t) t.value = "Test"; },
+            preAction: function() { 
+                let ival = setInterval(() => {
+                    const t = document.querySelector('#save-name-input');
+                    if(t) { t.value = "Test"; clearInterval(ival); }
+                }, 50);
+                setTimeout(() => clearInterval(ival), 2000);
+            },
             findTarget: function() { return Array.from(document.querySelectorAll('button')).find(b => b.textContent.includes('Speichern')); }
         },
         {
@@ -112,7 +124,13 @@ window.TutorialManager = (function() {
         {
             text: "In diesem Fenster kannst du deiner Partie einen Namen geben und diese dann starten. Nennen wir unsere Partie Test und starten diese einmal.",
             shape: "rect",
-            preAction: function() { const t = document.getElementById('new-party-name-input'); if(t) t.value = "Test"; },
+            preAction: function() { 
+                let ival = setInterval(() => {
+                    const t = document.getElementById('new-party-name-input');
+                    if(t) { t.value = "Test"; clearInterval(ival); }
+                }, 50);
+                setTimeout(() => clearInterval(ival), 2000);
+            },
             findHighlight: function() { return document.getElementById('sync-screen-new'); },
             findTarget: function() { return Array.from(document.querySelectorAll('#sync-screen-new button')).find(b => b.textContent.includes('PARTIE STARTEN')); }
         },
@@ -150,9 +168,15 @@ window.TutorialManager = (function() {
         {
             text: "Hier kannst du den Wert eingeben, den du im Spielverlauf findest und der dir nicht automatisch (wie z.B. in Quests) gutgeschrieben wird. Wir wollen einmal 100 Erz finden.",
             shape: "rect",
-            preAction: function() { const t = document.querySelector('#resource-input'); if(t) t.value = "100"; },
-            findHighlight: function() { return document.querySelector('#resource-popup .wood-card'); },
-            findTarget: function() { return Array.from(document.querySelectorAll('#resource-popup button')).find(b => b.textContent.includes('OK')); }
+            preAction: function() { 
+                let ival = setInterval(() => {
+                    const t = document.querySelector('#resource-amount');
+                    if(t) { t.value = "100"; clearInterval(ival); }
+                }, 50);
+                setTimeout(() => clearInterval(ival), 2000);
+            },
+            findHighlight: function() { return document.getElementById('resource-popup') ? document.getElementById('resource-popup').querySelector('.wood-card') : null; },
+            findTarget: function() { return document.getElementById('resource-popup') ? Array.from(document.getElementById('resource-popup').querySelectorAll('button')).find(b => b.textContent.includes('OK')) : null; }
         },
         {
             text: "Wir sehen jetzt, dass das Erhöhen von Attributen wie z.B. Stärke und Geschick möglich ist, da wir über genug Lernpunkte und Erz verfügen. Erhöhen wir beides nun auf 2.",
@@ -667,7 +691,7 @@ window.TutorialManager = (function() {
 
         let popupHtml = `
             <div style="position:fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(30, 20, 10, 0.95); border: 2px solid #e4c375; color: #e7e2dd; border-radius: 8px; z-index: 1000000; box-shadow: 0 10px 25px rgba(0,0,0,0.8); pointer-events: auto; display: flex; flex-direction: column;">
-                <div style="padding: 10px 15px; border-bottom: 1px solid #e4c375; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(0,0,0,0.4);" onclick="const body = document.getElementById('tutorial-popup-body'); body.style.display = body.style.display === 'none' ? 'block' : 'none';">
+                <div id="tutorial-popup-header" style="padding: 10px 15px; border-bottom: 1px solid #e4c375; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(0,0,0,0.4);">
                     <strong style="color: #e4c375; font-family: 'Georgia', serif;">Tutorial</strong>
                     <span style="color: #e4c375; font-size: 10px; font-weight: bold; text-transform: uppercase;">▼ Aufklappen / Zuklappen</span>
                 </div>
@@ -701,6 +725,13 @@ window.TutorialManager = (function() {
     document.addEventListener('click', (e) => {
         if (!isActive) return;
         
+        if (e.target.closest('#tutorial-popup-header')) {
+            e.preventDefault(); e.stopPropagation();
+            const body = document.getElementById('tutorial-popup-body');
+            if (body) body.style.display = body.style.display === 'none' ? 'block' : 'none';
+            return;
+        }
+
         if (e.target.closest('#tutorial-ok-btn')) {
             e.preventDefault(); e.stopPropagation();
             nextStep();

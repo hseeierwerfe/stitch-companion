@@ -3653,7 +3653,7 @@ const templates = {
                                 <div class="wood-card p-4">
                                     <div class="flex justify-between text-[10px] uppercase text-on-surface-variant mb-1 font-bold">
                                         <span>Erfahrungsfortschritt</span>
-                                        <div class="flex items-center gap-2">
+                                        <div id="tutorial-xp-buttons" class="flex items-center gap-2">
                                             <button onclick="toggleXpPause()" class="w-6 h-6 flex items-center justify-center rounded-full transition-all border ${hero.xpPaused ? 'bg-error/20 hover:bg-error text-error hover:text-on-error border-error/30' : 'bg-emerald-500/20 hover:bg-emerald-500 text-emerald-400 hover:text-white border-emerald-500/30'}" title="${hero.xpPaused ? 'Erfahrung pausiert (klicken zum Fortsetzen)' : 'Erfahrung aktiv (klicken zum Pausieren)'}">
                                                 <span class="material-symbols-outlined text-[14px]">${hero.xpPaused ? 'play_arrow' : 'pause'}</span>
                                             </button>
@@ -3927,7 +3927,7 @@ const templates = {
 
                         <!-- Resource Adjustment Popup -->
                         ${state.resourcePopup.type ? `
-                        <div class="fixed inset-0 z-[150] flex items-center justify-center p-4">
+                        <div id="resource-popup" class="fixed inset-0 z-[150] flex items-center justify-center p-4">
                             <div class="modal-overlay absolute inset-0" onclick="closeResourcePopup()"></div>
                             <div class="wood-card w-full max-w-xs p-6 relative shadow-2xl border-2 border-primary/50 flex flex-col gap-4">
                                 <h4 class="font-headline text-xl text-primary text-center">
