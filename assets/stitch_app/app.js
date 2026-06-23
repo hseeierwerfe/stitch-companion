@@ -72,6 +72,7 @@ const DEFAULT_STATE = {
         guild: "keine",
         crime: "Unbekannt",
         hp: { current: 10, max: 10 },
+        lastKnownMaxHp: 10,
         lp: 0,
         xp: { current: 0, next: 100 },
         xpPaused: false,
@@ -1111,7 +1112,7 @@ window.normalizeLoadedHero = function(hero) {
         hero.quests.forEach(q => {
             if (q.id === 'main_quest' || q.name === 'Hauptquest' || q.name === 'Die Aufnahme bei den Schatten') {
                 q.name = 'Willkommen in der Kolonie!';
-                q.icon = 'Bilder Karten/Barriere außen.jfif';
+                q.icon = 'bilder_karten/questkarten/barriere_aussen.jfif';
                 q.description = 'Angekommen als Neuling in der Kolonie, musst du zunächst das Minental und seine Bewohner kennen lernen! Im Zuge dessen musst du Erfahrung sammeln und deine Talente wieder erlernen, die du vor deiner Gefangenschaft hattest. Hierfür musst du deine eigene Quest zum Erlangen deiner passiven Fähigkeit erfüllen! Hast du die Quest erfüllt, erhältst du 100 Erfahrungspunkte und die für den weiteren Verlauf des Spiels entscheidende Heldenfähigkeit. Zusätzlich dazu muss man zwei Quests aus den Lagern absolviert haben, welche man sich frei aussuchen kann!';
             }
             if (q.id === 'hero_quest' || q.name === 'Quest zum Erlangen der passiven Fähigkeit') {
@@ -1535,7 +1536,7 @@ window.startCombatSimulator = function(selectedEnemy, isAdmin = false, multiOpts
         mode: 'idle',
         actionDone: false,
         chargingSpell: null,
-        log: ['Mehrfachkampf (' + multiMode + ') beginnt! ' + (hero.name || 'Held') + ' positioniert sich...'],
+        log: [(multiMode === '1v1' ? 'Kampf beginnt! ' : 'Mehrfachkampf (' + multiMode + ') beginnt! ') + (hero.name || 'Held') + ' positioniert sich...'],
         flashRed: false,
         confirmMoveDialog: false,
         endScreen: null
@@ -3493,7 +3494,7 @@ const templates = {
                     
                     <footer class="absolute bottom-10 w-full text-center pointer-events-none">
                         <p class="font-label-sm text-[10px] md:text-xs text-on-surface-variant opacity-60 uppercase tracking-[0.3em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
-                            Version ${APP_VERSION}
+                            
                         </p>
                     </footer>
                 </div>
@@ -4487,7 +4488,7 @@ const templates = {
             if (found) traderObj = found;
         });
 
-        const categories = ["Nahrung", "Ausrüstung", "Waffen", "Magie", "Rüstung"];
+        const categories = ["Nahrung", "Ausrüstung", "Waffen", "Magie", "Rüstung", "Questgegenstände"];
         
         // Calculate hero value: Nahrung full, others half (rounded up)
         const heroValue = tr.heroOffer.reduce((sum, i) => {
@@ -4695,7 +4696,7 @@ const templates = {
                                                         <div class="p-2 flex flex-col gap-1">
                                                             <span class="text-[11px] font-bold text-on-surface leading-tight line-clamp-2">${item.name}</span>
                                                             <span class="text-[10px] text-primary font-headline">${item.value} Erz</span>
-                                                            <button onclick="addToTradeOffer('trader', {name: '${item.name.replace(/\'/g, "\\\'")}', value: ${item.value}, icon: '${item.icon}', image: '${item.image || ''}', category: '${item.category}'})" class="w-full mt-1 bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-1.5 rounded-sm text-[9px] font-bold uppercase transition-all">KAUFEN</button>
+                                                            <button onclick="addToTradeOffer('trader', {name: '${item.name.replace(/\'/g, "\\\'")}', value: ${item.value}, icon: '${item.icon}', image: '${item.image || ''}', category: '${item.category}', art: '${item.art || ''}', type: '${item.type || ''}', damage: ${item.damage ? `'${item.damage}'` : 'undefined'}, style: '${item.style || ''}'})" class="w-full mt-1 bg-primary/20 hover:bg-primary text-primary hover:text-on-primary py-1.5 rounded-sm text-[9px] font-bold uppercase transition-all">KAUFEN</button>
                                                         </div>
                                                     </div>
                                                 `).join('');
@@ -4801,7 +4802,7 @@ const templates = {
         `;
     },
     finden: () => {
-        const categories = ["Waffen", "Rüstung", "Nahrung", "Ausrüstung", "Magie"];
+        const categories = ["Waffen", "Rüstung", "Nahrung", "Ausrüstung", "Magie", "Questgegenstände"];
         
         return `
             <main class="max-w-screen-xl mx-auto px-6 py-8 flex flex-col gap-8">
@@ -5867,7 +5868,7 @@ function selectHero(heroName) {
     state.hero.lp = 0;
     state.hero.chapter = 1;
     state.hero.attributes = { str: 1, dex: 1, mana: 5, mov: 5 };
-    const starterArmor = { id: Date.now(), name: "Sträflingsklamotten", value: 0, chapter: 0, effect: "Aura +3 Rüstung", category: "Rüstung", icon: "shield", image: "Bilder Karten/Rüstungen/Kapitel 1 & 2/Sträflingsklamotten.png" };
+    const starterArmor = { id: Date.now(), name: "Sträflingsklamotten", value: 0, chapter: 0, effect: "Aura +3 Rüstung", category: "Rüstung", icon: "shield", image: "bilder_karten/ruestungen/kapitel_1_und_2/straeflingsklamotten.png" };
     state.hero.inventory = [starterArmor];
     state.hero.equipment = {
         melee: null,
@@ -6187,8 +6188,10 @@ window.completeQuestWithOption = function(questId, finalStepKey, status = 'Erfol
         }
     }
     
+    // Only run onEnter if we haven't already entered this step via progressQuestToNext
+    const alreadyEntered = heroQuest.currentStep === finalStepKey;
     heroQuest.currentStep = finalStepKey;
-    if (stepData && typeof stepData.onEnter === 'function') {
+    if (!alreadyEntered && stepData && typeof stepData.onEnter === 'function') {
         try {
             stepData.onEnter(state.hero);
         } catch(e) {
@@ -6395,6 +6398,18 @@ function moveItemToOffer(side, itemTemplate, amount) {
 
 function addToTradeOffer(side, data) {
     if (side === 'trader') {
+        if (!data.effect || !data.req) {
+            if (typeof itemPools !== 'undefined') {
+                let fullItem = null;
+                for (let key in itemPools) {
+                    fullItem = itemPools[key].find(i => i.name === data.name);
+                    if (fullItem) break;
+                }
+                if (fullItem) {
+                    data = { ...fullItem, ...data };
+                }
+            }
+        }
         const isScroll = data.art === 'Spruchrolle' || (data.category === 'Magie' && data.name.toLowerCase().includes('spruchrolle'));
         if (isScroll) {
             state.trading.quantityPopup = { 
@@ -7396,9 +7411,34 @@ window.applyConsumeEffects = function(itemName) {
             window.gainXp((hero.chapter || 1) * 30);
             break;
 
-        case 'Bierchen':
-            setTimeout(() => alert("Bierchen getrunken: Im nächsten Kampf erhältst du +1 Stärke, aber -1 Geschick und Bewegung!"), 100);
+        case 'Bierchen': {
+            // Apply temporary stat modifiers
+            hero.attributes.str = (hero.attributes.str || 0) + 1;
+            hero.attributes.dex = (hero.attributes.dex || 0) - 1;
+            hero.attributes.mov = (hero.attributes.mov || 0) - 1;
+            // Mark as active bierchen effect for cleanup later
+            hero._bierchenActive = true;
+            // Check if equipped ranged weapon now fails dex requirement
+            const rangedItem = hero.equipment && hero.equipment.ranged;
+            if (rangedItem) {
+                const req = window._parseReq ? window._parseReq(rangedItem.req) : null;
+                if (req && req.stat === 'DEX' && window.getTotalStat('dex') < req.amount) {
+                    hero.equipment.ranged = null;
+                    setTimeout(() => alert(
+                        `Bierchen Effekt: Durch den gesunkenen Geschicklichkeitswert wurde "${rangedItem.name}" automatisch abgelegt, da die Anforderung nicht mehr erfüllt wird.\n\nEffekt: +1 Stärke, -1 Geschick, -1 Bewegung (bis Ende des nächsten Kampfes).`
+                    ), 100);
+                } else {
+                    setTimeout(() => alert(
+                        'Bierchen getrunken!\n\nEffekt (bis Ende des nächsten Kampfes):\n+1 Stärke, -1 Geschick, -1 Bewegung'
+                    ), 100);
+                }
+            } else {
+                setTimeout(() => alert(
+                    'Bierchen getrunken!\n\nEffekt (bis Ende des nächsten Kampfes):\n+1 Stärke, -1 Geschick, -1 Bewegung'
+                ), 100);
+            }
             break;
+        }
 
         case 'Trank der Geschwindigkeit':
             setTimeout(() => alert("Die Gesamtbewegung jeder Aktionskarte im nächsten Zug wird verdoppelt!"), 100);
@@ -8248,6 +8288,15 @@ window.exitCombatSimulator = function() {
         // Ensure equipment.spells exists on older saves
         if (!state.hero.equipment.spells) state.hero.equipment.spells = [];
         if (state.hero.equipment.primarySpell === undefined) state.hero.equipment.primarySpell = 0;
+
+        // Clear Bierchen temporary effect on any combat end (win or close)
+        if (state.hero._bierchenActive) {
+            state.hero.attributes.str = Math.max(0, (state.hero.attributes.str || 0) - 1);
+            state.hero.attributes.dex = (state.hero.attributes.dex || 0) + 1;
+            state.hero.attributes.mov = (state.hero.attributes.mov || 0) + 1;
+            state.hero._bierchenActive = false;
+        }
+
         saveGame();
     }
     if (state.analyseWindow) {
